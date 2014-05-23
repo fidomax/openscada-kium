@@ -1,0 +1,157 @@
+# OpenSCADA.UI.WebUser translate to Ukrainian.
+# Copyright (C) 2010 Roman Savochenko
+# This file is distributed under the same license as the OpenSCADA.UI.WebUser package module.
+#
+# Roman Savochenko <rom_as@fromru.com>, 2010.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: OpenSCADA.UI.WebUser 0.6.2\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-08-23 16:14+0300\n"
+"PO-Revision-Date: 2010-03-16 16:43+0200\n"
+"Last-Translator: Roman Savochenko <rom_as@fromru.com>\n"
+"Language-Team: <uk@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "Web interface from user"
+msgstr "Web-інтерфейс від користувача"
+
+msgid "Roman Savochenko"
+msgstr "Роман Савоченко"
+
+msgid "Allow creation self-user web-interfaces on any OpenSCADA language."
+msgstr ""
+"Дозволяє створювати користувачу власні web-інтерфейси на мові OpenSCADA."
+
+msgid "ID"
+msgstr ""
+
+msgid "Name"
+msgstr "Ім'я"
+
+msgid "Description"
+msgstr "Опис"
+
+msgid "To enable"
+msgstr "Включати"
+
+msgid "Program"
+msgstr "Програма"
+
+msgid "Date of modification"
+msgstr "Дата модифікації"
+
+msgid "Search and create new user page error."
+msgstr "Помилка пошуку та створення нової сторінки користувача."
+
+msgid "Welcome to Web-users pages of OpenSCADA system."
+msgstr "Ласкаво просимо до Web-сторінок користувачів системи OpenSCADA."
+
+msgid "Present web-users pages"
+msgstr "Наявні Web-сторінки користувачів"
+
+msgid "Page error"
+msgstr "Помилка сторінки"
+
+#, c-format
+msgid "Page '%s' error: %s"
+msgstr "Сторінка '%s' помилка: %s"
+
+msgid "User page"
+msgstr "Сторінка користувача"
+
+msgid "User pages"
+msgstr "Сторінки користувача"
+
+msgid "Default page"
+msgstr "Сторінка по замовченню"
+
+msgid "Pages"
+msgstr "Сторінки"
+
+msgid "<Page index display>"
+msgstr "<Відображати індекс сторінок>"
+
+msgid "Result"
+msgstr "Результат"
+
+msgid "HTTP request"
+msgstr "Запит HTTP"
+
+msgid "URL"
+msgstr ""
+
+msgid "Page"
+msgstr "Сторінка"
+
+msgid "Sender"
+msgstr "Відправник"
+
+msgid "User"
+msgstr "Користувач"
+
+msgid "HTTP variables"
+msgstr "HTTP змінні"
+
+msgid "URL's parameters"
+msgstr "Параметри URL"
+
+msgid "Content items"
+msgstr "Елементи вмісту"
+
+msgid "Disabled. "
+msgstr "Виключено. "
+
+msgid "Enabled. "
+msgstr "Включено. "
+
+#, c-format
+msgid "Requests %.4g."
+msgstr "Запитів %.4g."
+
+msgid "User page: "
+msgstr "Сторінка користувача: "
+
+msgid "State"
+msgstr "Стан"
+
+msgid "Status"
+msgstr "Стан"
+
+msgid "Enable"
+msgstr "Включено"
+
+msgid "DB"
+msgstr "БД"
+
+msgid "Configuration"
+msgstr "Конфігурація"
+
+msgid "Program language"
+msgstr "Мова програми"
+
+msgid ""
+"Next attributes has defined for requests processing:\n"
+"   'rez' - processing result (by default - 200 OK);\n"
+"   'HTTPreq' - HTTP request method (GET,POST);\n"
+"   'url' - requested URI;\n"
+"   'page' - Get/Post page content;\n"
+"   'sender' - request sender;\n"
+"   'user' - auth user;\n"
+"   'HTTPvars' - HTTP variables into Object;\n"
+"   'URLprms' - URL's parameters into Object;\n"
+"   'cnts' - content items for POST into Array<XMLNodeObj>."
+msgstr ""
+"Наступні атрибути визначено для обробки запитів:\n"
+"   'rez' - результат обробки (по замовченню - 200 OK);\n"
+"   'HTTPreq' - метод HTTP запиту (GET,POST);\n"
+"   'url' - URI запиту;\n"
+"   'page' - вміст сторінки Get/Post;\n"
+"   'sender' - відправник запиту;\n"
+"   'user' - аутентифікований користувач;\n"
+"   'HTTPvars' - змінні HTTP у Object;\n"
+"   'URLprms' - параметри URL у Object;\n"
+"   'cnts' - елементи вмісту у Array<XMLNodeObj>."

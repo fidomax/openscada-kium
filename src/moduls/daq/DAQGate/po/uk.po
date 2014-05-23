@@ -1,0 +1,172 @@
+# OpenSCADA.DAQ.DAQGate translate to Ukrainian.
+# This file is distributed under the same license as the OpenSCADA.DAQ.DAQGate package module.
+#
+# Roman Savochenko <rom_as@fromru.com>, 2007-2013.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: OpenSCADA.DAQ.DAQGate 0.9.5\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-08-29 16:39+0300\n"
+"PO-Revision-Date: 2007-10-29 12:40+0200\n"
+"Last-Translator: Roman Savochenko <rom_as@fromru.com>\n"
+"Language-Team: <uk@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "Data sources gate"
+msgstr "Шлюз джерел даних"
+
+msgid "Roman Savochenko"
+msgstr "Роман Савоченко"
+
+msgid ""
+"Allow to make gate data sources of remote OpenSCADA station to local "
+"OpenSCADA station."
+msgstr ""
+"Дозволяє шлюзувати джерела даних віддалених OpenSCADA станцій до локальних."
+
+msgid "Parameters cache table"
+msgstr "Таблиця кеша параметрів"
+
+msgid "Gather data period (s)"
+msgstr "Період збору даних (с)"
+
+msgid "Acquisition schedule"
+msgstr "Планування опитування"
+
+msgid "Gather task priority"
+msgstr "Рівень пріоритету задачі збору даних"
+
+msgid "Restore timeout (s)"
+msgstr "Час відновлення (с)"
+
+msgid "Restore data depth time (hour)"
+msgstr "Глибина часу відновлення даних (годин)"
+
+msgid "Gather messages level"
+msgstr "Рівень запитуваних повідомлень"
+
+msgid ""
+"Debug (0);Information (1);Notice (2);Warning (3);Error (4);Critical (5);"
+"Alert (6);Emergency (7)"
+msgstr ""
+
+msgid "Sync inter remote station period (s)"
+msgstr "Період синхронізації з віддаленою станцією (с)"
+
+msgid "Remote stations list"
+msgstr "Перелік віддалених станцій"
+
+msgid "Remote cotrollers and parameters list"
+msgstr "Перелік віддалених контролерів та параметрів"
+
+msgid "Standard"
+msgstr "Стандарт"
+
+msgid "Attributes configuration cache"
+msgstr "Кеш конфігурації атрибутів"
+
+msgid "Call now. "
+msgstr "Виклик зараз. "
+
+#, c-format
+msgid "Call by period: %s. "
+msgstr "Виклик за періодом: %s. "
+
+#, c-format
+msgid "Call next by cron '%s'. "
+msgstr "Наступний виклик за cron '%s'. "
+
+#, c-format
+msgid "Spent time: %s. "
+msgstr "Витрачено часу: %s. "
+
+#, c-format
+msgid "Station '%s' error, restoring in %.3g s."
+msgstr "Помилка станції '%s', відновлення через %.6g с."
+
+#, c-format
+msgid "Requests to station '%s': %.6g."
+msgstr "Запитів до станції '%s': %.6g."
+
+#, c-format
+msgid ""
+"Deletion parameter '%s' is error but it no present on configuration or "
+"remote station."
+msgstr ""
+"Помилка видалення параметру '%s', однак він відсутній у конфігурації або на "
+"віддаленій станції."
+
+#, c-format
+msgid "DAQ.%s: connect to data source: %s."
+msgstr "DAQ.%s: підключення до джерела даних: %s."
+
+msgid "STOP"
+msgstr "ЗУПИНЕНО"
+
+msgid "10:Data not allow."
+msgstr "10:Дані не доступні."
+
+msgid "OK"
+msgstr "НОРМА"
+
+#, c-format
+msgid "DAQ.%s: connect to data source '%s': %s."
+msgstr "DAQ.%s: підключення до джерела даних '%s': %s."
+
+msgid "Zero for disable archive access."
+msgstr "Нуль для виключення доступу до архіву."
+
+msgid "Zero for disable periodic sync."
+msgstr "Нуль для виключення періодичної синхронізації."
+
+msgid "Remote OpenSCADA stations' identifiers list used into it controller."
+msgstr ""
+"Перелік ідентифікаторів віддалених OpenSCADA станцій використаних у цьому "
+"контролері."
+
+msgid ""
+"Remote OpenSCADA full controller's or separated controller's parameters "
+"list. Address example:\n"
+"  System.AutoDA - for controller;\n"
+"  System.AutoDA.UpTimeStation - for controller's parameter."
+msgstr ""
+"Перелік віддалених OpenSCADA повних контролерів або окремих параметрів "
+"контролерів. Приклад адреси:\n"
+"  System.AutoDA - для контролерів;\n"
+"  System.AutoDA.UpTimeStation - для параметрів контролерів."
+
+msgid "Go to remote stations list configuration"
+msgstr "Перехід до конфігурації переліку віддалених станцій"
+
+msgid "Parameter: "
+msgstr "Параметр: "
+
+msgid "Parameter"
+msgstr "Параметр"
+
+msgid "State"
+msgstr "Стан"
+
+msgid "Type"
+msgstr "Тип"
+
+msgid "Enable"
+msgstr "Ввімкнено"
+
+msgid "Id"
+msgstr ""
+
+msgid "Name"
+msgstr "Ім'я"
+
+msgid "Configuration"
+msgstr "Конфігурація"
+
+msgid "Remote station configuration"
+msgstr "Конфігурація віддаленої станції"
+
+msgid "Controller is not started!"
+msgstr "Контролер не запущено!"

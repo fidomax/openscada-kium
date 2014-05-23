@@ -1,0 +1,323 @@
+# OpenSCADA.Archive.FSArch translate to German.
+# Copyright (C) 2008-2009 Irina Popkova
+# This file is distributed under the same license as the OpenSCADA.Archive.FSArch module.
+#
+# Irina Popkova <IrischkaPopkova@yandex.ru>, 2008-2009.
+# Klaus Fetscher <k.fetscher@fetron.de>, 2009.
+# Roman Savochenko <rom_as@oscada.org>, 2010-2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: OpenSCADA.Archive.FSArch 1.5.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-02-15 18:08+0200\n"
+"PO-Revision-Date: 2009-08-17 10:44+0200\n"
+"Last-Translator: Roman Savochenko <rom_as@oscada.org>\n"
+"Language-Team: de <>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Lokalize 0.3\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "File system archivator"
+msgstr "Archivar für das Dateisystem"
+
+msgid "Roman Savochenko"
+msgstr "Roman Savotschenko"
+
+msgid ""
+"The Archive module. Allow functions for messages and values archiving to "
+"file system."
+msgstr ""
+"Archivmodul. Funktionen zum Archivieren von Nachrichten und Werten in "
+"dasDateisystem"
+
+msgid "Compress error!"
+msgstr "Fehler bei der Komprimierung"
+
+#, c-format
+msgid "Decompress error: '%s'!"
+msgstr "Fehler '%s' beim Entpacken!"
+
+#, c-format
+msgid ""
+"======================= The module <%s:%s> options =======================\n"
+"    --noArchLimit        Disable archives limit to file number. Use for see "
+"archives mode, not work.\n"
+"    --copyErrValFiles    Copy sourced error value archive's files before it "
+"restore.\n"
+"                         Used for debug value archive's errors and correct "
+"restore.\n"
+"\n"
+msgstr ""
+"======================= Optionen des Moduls <%s:%s> "
+"========================\n"
+"    --noArchLimit        Deaktivieren Limit für die Anzahl der Dateien.\n"
+"                         Verwenden Sie den Anzeigemodus von Archiven, nicht "
+"für die Arbeit.\n"
+"    --copyErrValFiles    Kopieren Sie die Quelldateien in das Archiv der "
+"fehlerhaften Werte zu erholen.\n"
+"                         Wird für Debugging-Fehler-Wert Archiven und "
+"Richtigkeit der Erholung.\n"
+"\n"
+
+#, c-format
+msgid "Check message archivator '%s' error."
+msgstr "Fehler beim Prüfen des Nachrichtnarchivars '%s'."
+
+#, c-format
+msgid "Check value archivator '%s' error."
+msgstr "Fehler beim Prüfen des Wertearchivars '%s'."
+
+msgid "Archive is not started!"
+msgstr "Archiv ist nicht gestartet!"
+
+#, c-format
+msgid "Error create new archive file '%s'!"
+msgstr "Fehler beim Erstellen der Archivdatei '%s'!"
+
+#, c-format
+msgid "Can not create directory '%s'."
+msgstr "Kann das Verzeichnis '%s' nicht erstellen !"
+
+msgid "Archivator files size"
+msgstr "Größe der Archivardateien"
+
+msgid "Archiving time"
+msgstr "Archivierungszeit"
+
+msgid "Path to directory for archivator's of messages files."
+msgstr "Verzeichnispfad zu den Dateien des Nachrichtarchivars"
+
+msgid "Additional options"
+msgstr "Zusätzliche Optionen"
+
+msgid "XML archive files"
+msgstr "XML Archivdateien"
+
+msgid ""
+"Enables archiving of messages in XML-format files, rather than plain text.\n"
+"The use of XML-format archiving requires more RAM because is needed full "
+"download file,\n"
+"XML-parsing and storing in memory at the time of use."
+msgstr ""
+
+msgid "Maximum archive file size (kB)"
+msgstr "Maximale Dateigrösse des Archivs (kB)"
+
+msgid ""
+"Sets a limit on the size of one archive file.\n"
+"Disable the restriction can be by setting the parameter to zero."
+msgstr ""
+
+msgid "Maximum files number"
+msgstr "Maximale Dateianzahl"
+
+msgid ""
+"Limits the maximum number of archive files and share with the size of single "
+"file\n"
+"determines the size of archive on disk. Completely remove this restriction "
+"can be set to zero."
+msgstr ""
+
+msgid "File's time size (days)"
+msgstr "Dateiumfang (Tage)"
+
+msgid "Sets a limit on the size of a single archive file on time."
+msgstr ""
+
+msgid "Pack files timeout (min)"
+msgstr "Zeitüberschreitung beim Packen der Dateien (min)"
+
+msgid ""
+"Sets the time after which, in the absence of appeals, archive files will be "
+"packaged in gzip archiver.\n"
+"Set to zero for disable packing by gzip."
+msgstr ""
+
+msgid "Check archives period (min)"
+msgstr "Zyklus Prüfung der Archive (min)"
+
+msgid ""
+"Sets the frequency of checking the archives for the emergence or delete new "
+"files\n"
+"in a directory of archives, as well as exceeding the limits and removing old "
+"archive files."
+msgstr ""
+
+msgid "Use info files for packed archives"
+msgstr "Verwenden Sie Info-Dateien für gepackten Archiven"
+
+msgid ""
+"Specifies whether to create files with information about the packed archive "
+"files by gzip-archiver.\n"
+"When copying files of archive on another station, these info files can speed "
+"up the target station\n"
+"process of first run by eliminating the need to decompress by gzip-archives "
+"in order to obtain information."
+msgstr ""
+
+msgid "Prevent duplicates"
+msgstr "Verhindern Duplikate"
+
+msgid ""
+"Enables checks for duplicate messages at the time put a message in the "
+"archive.\n"
+"If there is a duplicate the message does not fit into the archive.\n"
+"This feature some increases the recording time to archive, but in cases of\n"
+"placing messages in the archive by past time from external sources it allows "
+"to eliminate duplication."
+msgstr ""
+
+msgid "Check archivator directory now"
+msgstr "Archivarverzeichnis prüfen"
+
+msgid ""
+"The command, which allows you to immediately start checking the archives,\n"
+"for example, after manual changes to the directory archiver."
+msgstr ""
+
+#, c-format
+msgid "Can not create file: '%s'!"
+msgstr "Kann die Datei: '%s' nicht erstellen!"
+
+#, c-format
+msgid "Write to file error: %s"
+msgstr "Fehler: %s beim Schreiben in die Datei"
+
+#, c-format
+msgid "File '%s' header error!"
+msgstr "Datei '%s' Dateikopf Fehler!"
+
+#, c-format
+msgid "Archive file: '%s' is not mine."
+msgstr "Nicht meine Archivdatei '%s'."
+
+#, c-format
+msgid "Archive '%s' file error."
+msgstr "Archiv '%s' Dateifehler."
+
+msgid "Inserting message to an error Archive file!"
+msgstr "Hinzufügen einer Nachricht in das Fehler-Archivdatei"
+
+#, c-format
+msgid "Archive file '%s' isn't attached!"
+msgstr "Archivdatei '%s' ist nicht verbunden!"
+
+msgid "Getting messages from an error Archive file!"
+msgstr "Empfange Nachrichten aus der Fehler-Archivdatei!"
+
+msgid "Archive file isn't attached!"
+msgstr "Archivdatei ist nicht verbunden!"
+
+#, c-format
+msgid "Unpack '%s' for information get."
+msgstr "Entpacken '%s' für weitere Informationen."
+
+msgid "Full archives size"
+msgstr "Vollständige Archive Größe"
+
+msgid "Path to directory for archivator's of values files."
+msgstr "Verzeichnispfad zu den Dateien des Wertearchivars"
+
+msgid "Archive's file time size (hours)"
+msgstr "Die Backup-Datei (Stunden)"
+
+msgid ""
+"The parameter is set automatically when you change the frequency values by "
+"archiver\n"
+"and generally proportional to the frequency values of the archiver.\n"
+"Attention! Large archive files will be processed long by long unpacking gzip-"
+"files\n"
+"and the primary indexing, when accessing to parts of deep in the archives of "
+"history."
+msgstr ""
+
+msgid "Maximum files number for one archive"
+msgstr "Maximale Dateianzahl pro Archiv"
+
+msgid "Maximum capacity by all archives (MB)"
+msgstr "Die maximale Größe aller Dateien (MB)"
+
+msgid ""
+"Sets a limit on the maximum amount of disk space occupied by all archive "
+"files by archiver.\n"
+"Testing is done by periodicity checking the archives, which resulted in, on "
+"exceeding the limit,\n"
+"removes the oldest files of all archives. Completely remove this restriction "
+"can be set to zero."
+msgstr ""
+
+msgid "Numeric values rounding (%)"
+msgstr "Rundung der numerischen Werte (%)"
+
+msgid ""
+"Sets the percentage of boundary difference values of parameters integer and "
+"real types\n"
+"where they are considered identical and will be archived as a single value\n"
+"through sequential packaging. Allows well-packaged slightly changing "
+"parameters\n"
+"which outside certainty. Disable this property can be set to zero."
+msgstr ""
+
+msgid "Files size"
+msgstr "Dateiumfang"
+
+msgid "Export"
+msgstr "Export"
+
+msgid "Archive"
+msgstr "Archiv"
+
+msgid "Begin"
+msgstr "Beginn"
+
+msgid "End"
+msgstr "Ende"
+
+msgid "Type"
+msgstr "Typ"
+
+msgid "To file"
+msgstr "Zur Datei"
+
+#, c-format
+msgid "Archive file '%s' no opened!"
+msgstr "Archivdatei '%s' ist nicht geöffnet!"
+
+#, c-format
+msgid "Attach file '%s' error."
+msgstr "Fehler beim Verbinden der Datei '%s'."
+
+msgid "Archive file error!"
+msgstr "Fehler in der Archivdatei!"
+
+#, c-format
+msgid ""
+"Write data block to archive file '%s' error. Will structure break. mSize=%d, "
+"foff_end=%d, vSize=%d"
+msgstr ""
+"Fehler beim Schreiben Datenblöcke in die Archiv-Datei '%s'. Die Struktur "
+"wird aufgebrochen werden. mGröße=%d, foff_end=%d, VSIZE=%d"
+
+#, c-format
+msgid "Error archive file structure: '%s'. Margin = %d byte. Will try fix it!"
+msgstr ""
+"Fehler in der Dateistruktur: '%s'. Differenz = %d byte. Reparaturversuch!"
+
+msgid "Error open new archive file for copy."
+msgstr ""
+"Fehler beim Erstellen einer neuen Archivdatei für das Backup zu öffnen."
+
+#~ msgid "Use zero for limit disable"
+#~ msgstr "Verwenden Sie Null, um die Einschränkung zu deaktivieren."
+
+#~ msgid ""
+#~ "Allow fast archives append to other station by prevent long unpack for "
+#~ "info get."
+#~ msgstr ""
+#~ "Damit können Sie schnell hinzufügen, Dateien auf einen anderen "
+#~ "Arbeitsplatz \n"
+#~ "durch die Verhinderung längerer Extraktion, um Informationen zu erhalten."

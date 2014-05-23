@@ -1,0 +1,89 @@
+# OpenSCADA.DAQ.SoundCard translate to Ukrainian.
+# Copyright (C) 2008-2010 Roman Savochenko
+# This file is distributed under the same license as the OpenSCADA.DAQ.SoundCard package module.
+#
+# Roman Savochenko <rom_as@fromru.com>, 2008-2010.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: OpenSCADA.DAQ.SoundCard 0.6.2\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-06-26 11:40+0300\n"
+"PO-Revision-Date: 2008-03-27 18:49+0200\n"
+"Last-Translator: Roman Savochenko <rom_as@fromru.com>\n"
+"Language-Team: LANGUAGE <uk@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "Sound card"
+msgstr "Звукова карта"
+
+msgid "Roman Savochenko"
+msgstr "Роман Савоченко"
+
+msgid "Allow access to sound card data."
+msgstr "Надає доступ до даних звукової карти."
+
+msgid "Parameters' table"
+msgstr "Таблиця параметрів"
+
+msgid "Card device"
+msgstr "Пристрій карти"
+
+msgid "Card sample rate (Hz)"
+msgstr "Частота вибірки значень (Гц)"
+
+msgid "Card sample type"
+msgstr "Тип вибірки карти"
+
+msgid "Float 32;Int 32;Int 16"
+msgstr "Реальне 32;Ціле 32;Ціле 16"
+
+msgid "Gather task priority"
+msgstr "Пріоритет задачі збору"
+
+msgid "Standard"
+msgstr "Стандарт"
+
+msgid "Channel"
+msgstr "Канал"
+
+msgid "Value"
+msgstr "Значення"
+
+#, c-format
+msgid "Allowed %d input channels"
+msgstr "Наявно %d вхідних каналів"
+
+#, c-format
+msgid ""
+"Gathering from %d channels. Recieved %.2f MB. Adjusted samplerate %d. Lost "
+"frames %g"
+msgstr ""
+"Збір з %d каналів. Отримано %.2f МБ. Підлаштована частота вибірки %d. "
+"Втрачено кадрів %g"
+
+#, c-format
+msgid "Selected device '%s' is error or default device no allow."
+msgstr "Помилка вибраного пристрою '%s' або пристрій по замовченню не наявний."
+
+msgid "No one channel is configured for acquisition."
+msgstr "Жодного каналу не налаштовано для збору."
+
+msgid "Sample type set is error."
+msgstr "Помилка встановлення типу вибірки."
+
+msgid "Sound input stream is not stopped!"
+msgstr "Звуковий потік не зупинено!"
+
+#, c-format
+msgid ""
+"CallBack: Lost frames correct: framesPerBuffer=%lu; sRt=%d; t_sz=%lld; err="
+"%g; diff=%lld."
+msgstr "Зворотній виклик: Корекція втрати кадрів: framesPerBuffer=%lu; sRt=%d; t_sz=%lld; err="
+"%g; diff=%lld."
+
+#, c-format
+msgid "CallBack: Sound counter difference fix: sRt=%d; dTm=%lld."
+msgstr "Зворотній виклик: Виправлення різниці лічильника звуку: sRt=%d; dTm=%lld."

@@ -1,0 +1,114 @@
+# OpenSCADA.DAQ.LogicLev translate to Ukrainian.
+# Copyright (C) 2006-2010 Roman Savochenko
+# This file is distributed under the same license as the OpenSCADA.DAQ.LogicLev module.
+#
+# Roman Savochenko <rom_as@fromru.com>, 2006-2010.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: OpenSCADA.DAQ.LogicLev 1.2.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-06-24 09:39+0300\n"
+"PO-Revision-Date: 2004-03-20 10:37+0200\n"
+"Last-Translator: Roman Savochenko <rom_as@fromru.com>\n"
+"Language-Team: <uk@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "Logic level"
+msgstr "Логічний рівень"
+
+msgid "Roman Savochenko"
+msgstr "Роман Савоченко"
+
+msgid "Allow logic level parameters."
+msgstr "Надає логічний рівень параметрів."
+
+msgid "Parameters table by template"
+msgstr "Таблиця параметрів за шаблоном"
+
+msgid "Parameters table for reflection"
+msgstr "Таблиця параметрів для відображення"
+
+msgid "Request data period (ms)"
+msgstr "Період отримання даних (мс)"
+
+msgid "Calculate schedule"
+msgstr "Політика планування"
+
+msgid "Request task priority"
+msgstr "Рівень пріоритету задачі отримання даних"
+
+msgid "Logical"
+msgstr "Логічний"
+
+msgid "Parameter template"
+msgstr "Шаблон параметру"
+
+msgid "Parameter ID"
+msgstr "ID параметру"
+
+msgid "ID"
+msgstr ""
+
+msgid "Value"
+msgstr "Значення"
+
+msgid "Parameter reflection"
+msgstr "Відображення параметру"
+
+msgid "Source parameter"
+msgstr "Вихідний параметр"
+
+msgid "Call now. "
+msgstr "Виклик зараз. "
+
+#, c-format
+msgid "Call by period: %s. "
+msgstr "Виклик за періодом: %s. "
+
+#, c-format
+msgid "Call next by cron '%s'. "
+msgstr "Наступний виклик за cron '%s'. "
+
+#, c-format
+msgid "Spent time: %s. "
+msgstr "Витрачено часу: %s. "
+
+msgid "1:Parameter is disabled."
+msgstr "1:Параметр вимкнено."
+
+msgid "2:Controller is stopped."
+msgstr "2:Контролер зупинено."
+
+msgid "Parameter is disabled or is not based on the template."
+msgstr "Параметр вимкнено або він не ґрунтується на шаблоні."
+
+msgid "Parameter id error."
+msgstr "Помилковий id параметру."
+
+msgid "Error calculate template."
+msgstr "Помилка обчислення шаблону."
+
+msgid "No template parameter or error."
+msgstr "Помилка або нешаблонний параметр."
+
+msgid "Template configuration"
+msgstr "Конфігурація шаблону"
+
+msgid "Only attributes are to be shown"
+msgstr "Показувати тільки атрибути"
+
+msgid "Parameters"
+msgstr "Параметри"
+
+msgid "Self to self linking error."
+msgstr "Помилка, рекурсивне підключення."
+
+msgid "Parameter has no one attribute!"
+msgstr "Параметр не має жодного атрибута!"
+
+#, c-format
+msgid "Parameter has not attributes: %s !"
+msgstr "Параметр не має атрибутів: %s !"

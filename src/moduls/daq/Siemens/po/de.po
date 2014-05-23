@@ -1,0 +1,365 @@
+# OpenSCADA.DAQ.Siemens translate to German.
+# Copyright (C) 2009 Irina Popkova
+# This file is distributed under the same license as the OpenSCADA.DAQ.Siemens package module.
+#
+# Irina Popkova <IrischkaPopkova@yandex.ru>, 2009.
+# Klaus Fetscher <k.fetscher@fetron.de>, 2009.
+# Roman Savochenko <rom_as@oscada.org>, 2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: OpenSCADA.DAQ.Siemens 1.3.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-03-07 13:36+0200\n"
+"PO-Revision-Date: 2009-08-18 09:05+0200\n"
+"Last-Translator: Roman Savochenko <rom_as@oscada.org>\n"
+"Language-Team: de <>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Lokalize 0.3\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Siemens DAQ"
+msgstr "Datenerfassung Siemens"
+
+msgid "Roman Savochenko"
+msgstr "Roman Savotschenko"
+
+msgid ""
+"Allow data source Siemens PLC by CP of Hilscher CIF cards use MPI protocol "
+"and library Libnodave for other."
+msgstr ""
+"Ermöglicht Datenquelle Siemens PLC-Karten mit Hilscher CIF. Für Andere "
+"werden MPI-Protokoll und Bibliothek Libnodave verwendet."
+
+msgid "Parameters table"
+msgstr "Tabelle der Parameter"
+
+msgid "Request data period (ms)"
+msgstr "Datenerfassungsperiode (msek)"
+
+msgid "Acquisition schedule"
+msgstr "Planung der Befragung"
+
+msgid "Request task priority"
+msgstr "Priorität der Datenerfassung"
+
+msgid "Asynchronous write mode"
+msgstr "Asynchroner Schreibmodus"
+
+msgid "Connection type"
+msgstr "Typ der Verbindung"
+
+msgid "Remote controller address"
+msgstr "Adresse des entfernen Controllers"
+
+msgid "Output transport"
+msgstr "Output Transport"
+
+msgid "Slot CPU"
+msgstr "CP-Slot"
+
+msgid "CIF board"
+msgstr "CIF Karte"
+
+msgid "Logical"
+msgstr "Logisch"
+
+msgid "Parameter template"
+msgstr "Vorlage des Parameters"
+
+msgid "Parameter ID"
+msgstr "Bezeichner des Parameters"
+
+msgid "ID"
+msgstr ""
+
+msgid "Value"
+msgstr "Wert"
+
+msgid "Address"
+msgstr "Adresse"
+
+msgid "Speed"
+msgstr "Geschwindigkeit"
+
+msgid "No device"
+msgstr "Kein Baustein"
+
+#, c-format
+msgid "CIF device %d or device driver error!"
+msgstr "Fehler im CIF-Baustein %d oder im Treiber!"
+
+#, c-format
+msgid "CIF device %d running (DevSetHostState(HOST_READY)) error!"
+msgstr "CIF-Baustein %d Laufehler! (DevSetHostState(HOST_READY))!  "
+
+#, c-format
+msgid "CIF device %d. DevPutTaskParameter() error!"
+msgstr "CIF-Baustein %d. Fehler DevPutTaskParameter()!"
+
+#, c-format
+msgid "CIF device %d. DevPutMessage() error!"
+msgstr "CIF-Baustein %d. Fehler DevPutMessage()!"
+
+#, c-format
+msgid "CIF device %d. DevGetMessage() error!"
+msgstr "CIF-Baustein %d. Fehler DevGetMessage()!"
+
+#, c-format
+msgid "Sending request error: %d."
+msgstr "Fehler beim Senden der Anfrage: %d."
+
+#, c-format
+msgid "Getting request error: %d."
+msgstr "Fehler: %d beim Empfang der Anfrage."
+
+#, c-format
+msgid "15:Board %d is not present."
+msgstr "15:Karte %d fehlt."
+
+#, c-format
+msgid "12:Sending request error %d."
+msgstr "12:Fehler beim Senden der Anfrage %d."
+
+#, c-format
+msgid "13:Getting request error %d."
+msgstr "13:Fehler beim Empfang der Anfrage %d."
+
+msgid "CIF"
+msgstr ""
+
+msgid "Status"
+msgstr "Status"
+
+msgid "CIF driver"
+msgstr "CIF-Treiber"
+
+msgid "CIF devices"
+msgstr "CIF-Bausteine"
+
+msgid "Board"
+msgstr "Karte"
+
+msgid "Firmware name"
+msgstr "Name der Firmware"
+
+msgid "Firmware version"
+msgstr "Version der Firmware"
+
+msgid "Physical address"
+msgstr "Physikalische Adresse"
+
+msgid "IRQ"
+msgstr ""
+
+msgid "PB address"
+msgstr "PB Adresse"
+
+msgid "PB speed"
+msgstr "PB (Profibus) Geschwindigkeit"
+
+msgid "Profibus"
+msgstr ""
+
+msgid "CIF device"
+msgstr "CIF Baustein"
+
+msgid "Life stations list"
+msgstr "Liste von aktiven Stationen"
+
+#, c-format
+msgid "Board number %d error!"
+msgstr "Fehler in der Karte, Nummer %d!"
+
+msgid "9600Baud"
+msgstr "9600Baud"
+
+msgid "19.2kBaud"
+msgstr "19.2kBaud"
+
+msgid "93.75kBaud"
+msgstr "93.75kBaud"
+
+msgid "187.5kBaud"
+msgstr "187.5kBaud"
+
+msgid "500kBaud"
+msgstr "500kBaud"
+
+msgid "1.5MBaud"
+msgstr "1.5MBaud"
+
+msgid "3MBaud"
+msgstr "3MBaud"
+
+msgid "6MBaud"
+msgstr "6МBaud"
+
+msgid "12MBaud"
+msgstr "12Мbaud"
+
+msgid " : -------"
+msgstr ""
+
+msgid " : Active station"
+msgstr " : Aktive Station"
+
+msgid " : Passive station"
+msgstr " : Passive Station"
+
+msgid "Call now. "
+msgstr "Rufen Sie jetzt an. "
+
+#, c-format
+msgid "Call by period: %s. "
+msgstr "Aufruf mit einer Periode: %s. "
+
+#, c-format
+msgid "Call next by cron '%s'. "
+msgstr "Call nächsten durch cron '%s'. "
+
+#, c-format
+msgid "Spent time: %s. "
+msgstr "Verbrauchte Zeit: %s. "
+
+msgid "-1:No data"
+msgstr "-1:Keine Daten"
+
+msgid "No one driver or board are present."
+msgstr "Treiber oder CP (Karte) sind nicht vorhanden."
+
+msgid "Open socket of remote PLC error."
+msgstr "Fehler beim Öffnen des Sockets des entfernten PLC."
+
+msgid "10:Connection error."
+msgstr "10:Fehler beim Anschluss."
+
+msgid "Connection to PLC error."
+msgstr "Fehler beim Anschluss an PLC."
+
+#, c-format
+msgid "Connection type '%d' is not supported."
+msgstr "Verbindungstyp '%d' wird nicht unterstützt."
+
+msgid "14:Request block is too big."
+msgstr "14:Der angefragte Block ist zu groß."
+
+msgid "12:Sending request is timeouted."
+msgstr "12:Zeitüberschreitung beim Senden der Anfrage."
+
+#, c-format
+msgid "19:Request to DB error %d."
+msgstr "19:Fehler der Datenbank-Anfrage: %d."
+
+msgid "13:Get request is timeouted."
+msgstr "13:Zeitüberschreitung beim Empfang der Anfrage."
+
+msgid "17:There is no response from the remote station."
+msgstr "17:Keine Antwort von der entfernten Station."
+
+msgid "18:Master is out of the logical token ring."
+msgstr "18:Master ist nicht Teil des logischen Rings."
+
+msgid "20:Specified offset address or DB error."
+msgstr "20:Fehler im vorgegebenen Offset oder in der Datenbank."
+
+#, c-format
+msgid "Read block '%d' error: %s"
+msgstr "Fehler beim Lesen des Blocks '%d': %s"
+
+#, c-format
+msgid "12:Read DB '%d' from controller error: %s"
+msgstr "12:Fehler beim Lesen der Datenbank '%d' aus dem Kontroller: %s"
+
+msgid "13:Error server respond"
+msgstr "13:Fehler Antwort vom Server"
+
+msgid "13:Not full respond"
+msgstr "13:Ein partielles Ansprechen"
+
+#, c-format
+msgid "13:Error server respond: %d"
+msgstr "13:Fehler Antwort vom Server: %d"
+
+#, c-format
+msgid "13:Error server '%s' respond"
+msgstr "13:Fehler '%s' Antwort vom Server"
+
+#, c-format
+msgid "13:Error server '%s' respond: %d"
+msgstr "13:Fehler '%s' Antwort vom Server: %d"
+
+msgid "16:Transmitted block is too big."
+msgstr "16:Übermittelter Block ist zu groß."
+
+msgid "13:Getting request is timeouted."
+msgstr "13:Zeitüberschreitung beim Empfang der Anfrage."
+
+#, c-format
+msgid "Write block '%d' error: %s"
+msgstr "Fehler beim Schreibens des Blocks '%d': %s"
+
+#, c-format
+msgid "12:Write DB '%d' to controller error: %s"
+msgstr "12:Fehler beim Schreiben der Datenbank '%d' in den Controller: %s"
+
+msgid "11:Value is not gathered."
+msgstr "11:Wert wurde nicht erfasst."
+
+msgid "Value type error."
+msgstr "Fehler im Wertetyp."
+
+msgid "11:Value not gathered."
+msgstr "11:Wert wurde nicht erfasst."
+
+msgid ""
+"Connection type:\n"
+"  CIF_PB - connection to controllers series S7, by firm Siemens, by "
+"communication unit CIF-50PB or like;\n"
+"  ISO_TCP, ISO_TCP243 - connection to controllers series S7, by firm "
+"Siemens, by Ethernet network (TCP243 by CP243);\n"
+"  ADS - TwinCAT ADS/AMS protocol for connection to controllers firm Beckhoff."
+msgstr ""
+
+msgid ""
+"Remote controller address. For connections:\n"
+"  CIF_PB - controller address in \"Profibus\" network, digit 0-255;\n"
+"  ISO_TCP, ISO_TCP243 - IP-address into Ethernet network;\n"
+"  ADS - Network identifier and port for target and source stations, in view\n"
+"      \"{Target_AMSNetId}:{Target_AMSPort}|{Source_AMSNetId}:"
+"{Source_AMSPort}\"\n"
+"      (for example: \"192.168.0.1.1.1:801|82.207.88.73.1.1:801\"), where:\n"
+"    AMSNetId - network identifier, write into view of six digits 0-255, for "
+"example: \"192.168.0.1.1.1\";\n"
+"    AMSPort - port, write into view digit 0-65535."
+msgstr ""
+
+msgid "1:Parameter is disabled."
+msgstr "1:Parameter ist abgeschaltet."
+
+msgid "2:Controller is stopped."
+msgstr "2:Controller ist angehalten."
+
+msgid "Parameter is disabled."
+msgstr "Parameter ist abgeschaltet."
+
+msgid "Parameter is disabled or id error."
+msgstr "Parameter ist abgeschaltet oder Fehler des Bezeichners."
+
+msgid "Error calculate template."
+msgstr "Fehler bei der Berechnung der Vorlage."
+
+msgid "Parameter disabled or error."
+msgstr "Parameter ist abgeschaltet oder Fehler."
+
+msgid "Template configuration"
+msgstr "Konfiguration der Vorlage"
+
+msgid "Only DB offsets are to be shown"
+msgstr "Nur Datenbank Offsets anzeigen"
+
+msgid "Parameters"
+msgstr "Parameter"

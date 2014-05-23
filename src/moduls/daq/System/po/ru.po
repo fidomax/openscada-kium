@@ -1,0 +1,231 @@
+# OpenSCADA.DAQ.System translate to Russian.
+# Copyright (C) 2005-2010 Roman Savochenko
+# This file is distributed under the same license as the OpenSCADA.DAQ.System package module.
+#
+# Roman Savochenko <rom_as@fromru.com>, 2005-2010.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: OpenSCADA.DAQ.System 1.7.5\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-06-23 20:12+0300\n"
+"PO-Revision-Date: OpenSCADA.DAQ.System 1.2.0\n"
+"Last-Translator: Roman Savochenko <rom_as@fromru.com>\n"
+"Language-Team: LANGUAGE <ru@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "Load (%)"
+msgstr "Загрузка (%)"
+
+msgid "System (%)"
+msgstr "Система (%)"
+
+msgid "User (%)"
+msgstr "Пользователь (%)"
+
+msgid "Idle (%)"
+msgstr "Простой (%)"
+
+msgid "General"
+msgstr "В общем"
+
+msgid "10:Device is not available."
+msgstr "10:Устройство недоступно."
+
+msgid "Full CPU Load"
+msgstr "Общая нагрузка процессора"
+
+msgid "CPU Load :"
+msgstr "Нагрузка процессора: "
+
+msgid "Read (B)"
+msgstr "Прочитано (Б)"
+
+msgid "Read speed (B/s)"
+msgstr "Скорость чтения (Б/c)"
+
+msgid "Write (B)"
+msgstr "Записано (Б)"
+
+msgid "Write speed (B/s)"
+msgstr "Скорость записи (Б/c)"
+
+msgid "Disk(part)"
+msgstr "Диск(раздел)"
+
+msgid "HD statistic: "
+msgstr "Статистика НЖМД: "
+
+msgid "Name"
+msgstr "Имя"
+
+msgid "Measure unit"
+msgstr "Единица измерения"
+
+msgid "Temperature"
+msgstr "Температура"
+
+msgid "Disk"
+msgstr "Диск"
+
+msgid "Parameter Hddtemp"
+msgstr "Параметр Hddtemp"
+
+msgid "HD temperature: "
+msgstr "Температура НЖМД: "
+
+msgid "Free (kB)"
+msgstr "Свободно (кБ)"
+
+msgid "Total (kB)"
+msgstr "Всего (кБ)"
+
+msgid "Use (kB)"
+msgstr "Использовано (кБ)"
+
+msgid "Buffers (kB)"
+msgstr "Буфера (кБ)"
+
+msgid "Cached (kB)"
+msgstr "Кеши (кБ)"
+
+msgid "Swap free (kB)"
+msgstr "Своп свободно (кБ)"
+
+msgid "Swap total (kB)"
+msgstr "Своп всего (кБ)"
+
+msgid "Swap use (kB)"
+msgstr "Своп использовано (кБ)"
+
+msgid "Memory info"
+msgstr "Информация про память"
+
+msgid "Receive (B)"
+msgstr "Принято (Б)"
+
+msgid "Receive speed (B/s)"
+msgstr "Скорость приёма (Б/с)"
+
+msgid "Transmit (B)"
+msgstr "Передано (Б)"
+
+msgid "Transmit speed (B/s)"
+msgstr "Скорость передачи (Б/с)"
+
+msgid "Interface"
+msgstr "Интерфейс"
+
+msgid "Interface statistic: "
+msgstr "Статистика интерфейсов: "
+
+msgid "Data sensors"
+msgstr "Данные сенсоров"
+
+msgid "HD smart: "
+msgstr ""
+
+msgid "Full seconds"
+msgstr "Секунды полные"
+
+msgid "Seconds"
+msgstr "Секунды"
+
+msgid "Minutes"
+msgstr "Минуты"
+
+msgid "Hours"
+msgstr "Часы"
+
+msgid "Days"
+msgstr "Дни"
+
+msgid "System"
+msgstr "Система"
+
+msgid "Station"
+msgstr "Станция"
+
+msgid "System up time"
+msgstr "Время работы системы"
+
+msgid "Station up time"
+msgstr "Время работы станции"
+
+msgid "System DA"
+msgstr "Сбор данных системы"
+
+msgid "Roman Savochenko"
+msgstr "Роман Савоченко"
+
+msgid ""
+"Allow operation system data acquisition. Support OS Linux data sources: "
+"HDDTemp, Sensors, Uptime, Memory, CPU and other."
+msgstr ""
+"Предоставляет сбор данных операционной системы. Поддерживаются источники "
+"данных ОС Linux: HDDTemp, Sensors, Uptime, Memory, CPU и другие."
+
+msgid "Auto create active DA"
+msgstr "Авт. создавать активные ист. данных"
+
+msgid "System parameters table"
+msgstr "Таблица системных параметров"
+
+msgid "Request data period (ms)"
+msgstr "Период опроса данных (мс)"
+
+msgid "Acquisition schedule"
+msgstr "Планирование опроса"
+
+msgid "Request task priority"
+msgstr "Приоритет задачи опроса"
+
+msgid "Standard"
+msgstr "Стандартный"
+
+msgid "System part"
+msgstr "Часть системы"
+
+msgid "Call now. "
+msgstr "Вызов сейчас. "
+
+#, c-format
+msgid "Call by period: %s. "
+msgstr "Вызовы с периодом: %s. "
+
+#, c-format
+msgid "Call next by cron '%s'. "
+msgstr "Следующий вызов по cron '%s'. "
+
+#, c-format
+msgid "Spent time: %s. "
+msgstr "Затрачено времени: %s. "
+
+msgid "2:Controller stopped"
+msgstr "2:Контроллер остановлен"
+
+msgid "1:Parameter disabled"
+msgstr "1:Параметр отключен"
+
+msgid "CPU"
+msgstr "Процессор"
+
+msgid "HDD statistic"
+msgstr "Статистика HDD"
+
+msgid "HDD temperature"
+msgstr "Температура HDD"
+
+msgid "Memory"
+msgstr "Память"
+
+msgid "Net statistic"
+msgstr "Статистика сети"
+
+msgid "Sensors"
+msgstr "Сенсоры"
+
+msgid "Up time"
+msgstr "Время работы"

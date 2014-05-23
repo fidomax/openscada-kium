@@ -1,0 +1,208 @@
+# OpenSCADA.UI.WebCfgD translate to Russian.
+# Copyright (C) 2008-2010 Roman Savochenko
+# This file is distributed under the same license as the OpenSCADA.UI.WebCfgD package module.
+#
+# Roman Savochenko <rom_as@fromru.com>, 2008-2010.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: OpenSCADA.UI.WebCfgD 0.8.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-07-14 14:53+0300\n"
+"PO-Revision-Date: 2008-12-15 15:28+0200\n"
+"Last-Translator: Roman Savochenko <rom_as@fromru.com>\n"
+"Language-Team: <ru@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "Dynamic WEB configurator"
+msgstr "Динамический WEB конфигуратор"
+
+msgid "Roman Savochenko"
+msgstr "Роман Савоченко"
+
+msgid ""
+"Allow the dynamic WEB based OpenSCADA system configurator. Use XHTML, CSS "
+"and JavaScript technologies."
+msgstr ""
+"Предоставляет динамический WEB основанный конфигуратор. Использует XHTML, "
+"CSS и JavaScript технологии."
+
+msgid "OpenSCADA. Dynamic WEB configurator"
+msgstr "OpenSCADA. Динамический WEB конфигуратор"
+
+msgid "About"
+msgstr "Про..."
+
+msgid "Load"
+msgstr "Загрузить"
+
+msgid "Save"
+msgstr "Сохранить"
+
+msgid "Up"
+msgstr "На уровень выше"
+
+msgid "Previous"
+msgstr "Предыдущий"
+
+msgid "Next"
+msgstr "Следующий"
+
+msgid "Add item"
+msgstr "Добавить элемент"
+
+msgid "Delete item"
+msgstr "Удалить элемент"
+
+msgid "Copy item"
+msgstr "Копировать элемент"
+
+msgid "Cut item"
+msgstr "Вырезать элемент"
+
+msgid "Paste item"
+msgstr "Вставить элемент"
+
+msgid "Reload item and tree"
+msgstr "Перегрузить элемент и дерево"
+
+msgid "Start periodic update"
+msgstr "Запуск периодического обновления"
+
+msgid "Stop periodic update"
+msgstr "Останов периодического обновления"
+
+msgid "Ready"
+msgstr "Готов"
+
+msgid "Go"
+msgstr "Перейти"
+
+msgid "Add"
+msgstr "Добавить"
+
+msgid "Insert"
+msgstr "Вставить"
+
+msgid "Edit"
+msgstr "Редактировать"
+
+msgid "Delete"
+msgstr "Удалить"
+
+msgid "Item up"
+msgstr "Поднять"
+
+msgid "Item down"
+msgstr "Опустить"
+
+msgid "Add new element."
+msgstr "Добавление нового элемента."
+
+msgid "Insert new element."
+msgstr "Вставка нового элемента."
+
+msgid "Rename element."
+msgstr "Переименование элемента."
+
+msgid "Select image file for download to picture field."
+msgstr "Выбор файла изображения для загрузки в поле изображения."
+
+msgid "Add row"
+msgstr "Добавить строку"
+
+msgid "Insert row"
+msgstr "Вставить строку"
+
+msgid "Delete row"
+msgstr "Удалить строку"
+
+msgid "Up row"
+msgstr "Поднять строку"
+
+msgid "Down row"
+msgstr "Опустить строку"
+
+msgid "No one editable container present."
+msgstr "Нет ни одного редактируемого контейнера."
+
+msgid "Add item to node '%1'."
+msgstr "Добавление элемента '%1' в узел."
+
+msgid "Item '%1' already present."
+msgstr "Элемент '%1' уже присутствует."
+
+msgid "You sure for delete node '%1'?"
+msgstr "Вы действительно хотите удалить узел '%1'?"
+
+msgid "Copy is impossible."
+msgstr "Копирование невозможно."
+
+msgid "Selected"
+msgstr "Выбранный"
+
+msgid "Move node '%1' to '%2'."
+msgstr "Перемещение узла '%1' в '%2'."
+
+msgid "Copy node '%1' to '%2'."
+msgstr "Копирование узла '%1' в '%2'."
+
+msgid "Node '%1' already present. Continue?"
+msgstr "Узел '%1' уже присутствует. Продолжить?"
+
+msgid "Element type:"
+msgstr "Тип элемента:"
+
+msgid "Name:"
+msgstr "Имя:"
+
+msgid "Ok"
+msgstr "Принять"
+
+msgid "Close"
+msgstr "Закрыть"
+
+msgid "Page loaded."
+msgstr "Страница загружена."
+
+msgid "Node id and/or name select"
+msgstr "Выбор идентификатора и/или имени"
+
+msgid "Item name set"
+msgstr "Установка имени элемента"
+
+msgid "Image set"
+msgstr "Установка изображения"
+
+msgid "Add node"
+msgstr "Добавление элемента"
+
+msgid "Move or copy node"
+msgstr "Перемещение или копирование узла"
+
+#, c-format
+msgid "Unknown command: %s."
+msgstr "Неизвестная команда: %s."
+
+msgid "Name: "
+msgstr "Имя: "
+
+msgid "Description: "
+msgstr "Описание: "
+
+msgid "License: "
+msgstr "Лицензия: "
+
+msgid "Author: "
+msgstr "Автор: "
+
+msgid "Web site: "
+msgstr "Web сайт: "
+
+msgid "Module options"
+msgstr "Опции модуля"
+
+msgid "Go to remote stations list configuration"
+msgstr "Перейти к конфигурации списка удалённых станций"

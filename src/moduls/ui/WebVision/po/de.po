@@ -1,0 +1,177 @@
+# OpenSCADA.UI.WebVision translate to German.
+# Copyright (C) 2009 Irina Popkova
+# This file is distributed under the same license as the OpenSCADA.UI.WebVision package module.
+#
+# Irina Popkova <IrischkaPopkova@yandex.ru>, 2009.
+# Klaus Fetscher <k.fetscher@fetron.de>, 2009.
+# Roman Savochenko <rom_as@oscada.org>, 2010-2013.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: OpenSCADA.UI.WebVision 1.0.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-07-01 16:30+0300\n"
+"PO-Revision-Date: 2009-08-26 08:21+0200\n"
+"Last-Translator: Roman Savochenko <rom_as@oscada.org>\n"
+"Language-Team: de <>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Lokalize 0.3\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#, c-format
+msgid "Unknown command: %s."
+msgstr "Unbekanntes Kommando: %s."
+
+msgid "Fill image type is not supported."
+msgstr "Füllen Bildtyp wird nicht unterstützt."
+
+msgid ""
+"At least one of the elementary figures from each the 'fill' consists of is "
+"out of drawing area."
+msgstr ""
+"Mindestens eine Elementarfigur, die das 'Einfüllen' betrifft, ist ausserhalb "
+"der Grenzen des Feldes."
+
+#, c-format
+msgid "gdImageStringFTex for font '%s' error: %s."
+msgstr "gdImageStringFTex für Schrift '%s' Fehler: %s."
+
+#, c-format
+msgid "gdImageStringFTEx for font '%s' error: %s."
+msgstr "gdImageStringFTEx für Schrift '%s' Fehler: %s."
+
+#, c-format
+msgid "%ds"
+msgstr "%ds"
+
+#, c-format
+msgid "%gs"
+msgstr "%gs"
+
+#, c-format
+msgid "%gms"
+msgstr "%gms"
+
+#, c-format
+msgid "Trend creation time %gms"
+msgstr "Trend Erstellungszeit %gms"
+
+#, c-format
+msgid "+ PNG-image(%d) creation time %gms"
+msgstr "+ PNG-Bild (%d) Erstellungszeit %gms"
+
+msgid "kHz"
+msgstr "KHz"
+
+msgid "Hz"
+msgstr "Hz"
+
+#, c-format
+msgid "Document '%s' parsing is error: %s"
+msgstr "Dokument '%s' ist Parsing-Fehler: %s"
+
+msgid "Operation user interface (WEB)"
+msgstr "Benutzerschnittstelle (WEB)"
+
+msgid "Roman Savochenko"
+msgstr "Roman Savotschenko"
+
+msgid "Roman Savochenko, Lysenko Maxim, Yashina Kseniya"
+msgstr "Roman Savotschenko, Maxim Lysjenko, Ksenija Jaschina"
+
+msgid ""
+"Web operation user interface for visual control area (VCA) projects playing."
+msgstr ""
+"Web Benutzerschnittstelle für die Steuerung der sichtbaren Bereiche (VCA)."
+
+msgid "Date and time"
+msgstr "Datum und Uhrzeit"
+
+msgid "Level"
+msgstr "Stufe"
+
+msgid "Category"
+msgstr "Kategorie"
+
+msgid "Message"
+msgstr "Nachricht"
+
+msgid "mcsec"
+msgstr "mcsek"
+
+msgid "Ready"
+msgstr "Fertig"
+
+msgid "Developers"
+msgstr "Entwickler"
+
+#, c-format
+msgid ""
+"======================= The module <%s:%s> options =======================\n"
+"---------- Parameters of the module section '%s' in config-file ----------\n"
+"SessTimeLife <time>      Time of the session life, minutes (default 10).\n"
+"\n"
+msgstr ""
+"======================== Optionen des Moduls <%s:%s> "
+"============================\n"
+"------- Parameter des Abschnitts '%s' in der Konfigurationsdatei ---------\n"
+"SessTimeLife <time>     Lebensdauer der Sitzung, Minuten (default 10).\n"
+"\n"
+
+msgid "Connect to opened session"
+msgstr "Verbindung zur geöffneten Sitzung"
+
+msgid "Create new session for present project"
+msgstr "Neue Sitzung für das aktuelle Projekt erstellen"
+
+msgid "No one sessions and projects of VCA engine are present for user!"
+msgstr ""
+"Keine Sitzung und Projekte der VCA Maschine für den Benutzer vorhanden!"
+
+msgid "Sorry, opened sessions number reach limit!"
+msgstr "Leider erreichen öffnen Sitzungen Anzahl unbegrenzt!"
+
+#, c-format
+msgid "An inaccessible request is received: '%s'"
+msgstr "Unzulässige Anfrage wird empfangen: '%s'"
+
+msgid "Name: "
+msgstr "Name: "
+
+msgid "License: "
+msgstr "Lizenz: "
+
+msgid "Author: "
+msgstr "Autor: "
+
+msgid "Description: "
+msgstr "Beschreibung: "
+
+msgid "Module options"
+msgstr "Optionen des Moduls"
+
+msgid "Life time of session (min)"
+msgstr "Lebensdauer der Sitzung (Min)"
+
+msgid "Sessions limit"
+msgstr "Session Limit"
+
+msgid "PNG compression level"
+msgstr "PNG Komprimierungsstufe"
+
+msgid ""
+"PNG (ZLib) compression level:\n"
+"  -1  - optimal speed-size;\n"
+"  0   - disable;\n"
+"  1-9 - direct level."
+msgstr ""
+"Kompressionsstufe PNG(ZLib):\n"
+"  -1  - optimale Geschwindigkeit-Grösse;\n"
+"  0   - abgeschaltet;\n"
+"  1-9 - direkte Stufe."
+
+msgid "Options help"
+msgstr "Optionen Hilfe"
