@@ -21,15 +21,29 @@
 
 #include <sys/types.h>
 #include <sys/un.h>
+#include <sys/ioctl.h>
 #include <netinet/in.h>
 #include <netdb.h>
 #include <sys/socket.h>
 #include <sys/wait.h>
 #include <sys/select.h>
 #include <arpa/inet.h>
+#include <net/if.h>
+ 
+#include <linux/can.h>
+#include <linux/can/raw.h>
+
+#ifndef PF_CAN
+#define PF_CAN 29
+#endif
+ 
+#ifndef AF_CAN
+#define AF_CAN PF_CAN
+#endif
 
 #include <fcntl.h>
 #include <unistd.h>
+#include <getopt.h>
 #include <string>
 #include <errno.h>
 
@@ -51,6 +65,7 @@
 #define LICENSE		"GPL2"
 //************************************************
 
+#define OSC_DEBUG 1
 Sockets::TTransSock *Sockets::mod;
 
 extern "C"
@@ -208,7 +223,16 @@ void TSocketIn::start( )
 	    throw TError(nodePath().c_str(), _("Error create '%s' socket!"), s_type.c_str());
 	type = SOCK_UNIX;
     }
-    else throw TError(nodePath().c_str(), _("Socket type '%s' error!"), s_type.c_str());
+    else if( s_type == S_NM_RAWCAN)
+    {
+	if( (sock_fd = socket( PF_CAN, SOCK_RAW, CAN_RAW))== -1)
+	    throw TError(nodePath().c_str(),_("Error create %s socket!"),s_type.c_str());
+	type = SOCK_RAWCAN;
+#if OSC_DEBUG >= 1
+        mess_info( nodePath().c_str(), _("Socket <%s> created <%d>!"), s_type.c_str(), sock_fd );
+#endif
+    }
+    else throw TError(nodePath().c_str(), _("Socket type '%s' error!"),s_type.c_str());
 
     if(type == SOCK_TCP || type == SOCK_UDP)
     {
@@ -275,9 +299,41 @@ void TSocketIn::start( )
 	    close(sock_fd);
 	    throw TError(nodePath().c_str(),_("UNIX socket doesn't bind to '%s'!"),addr().c_str());
 	}
-	listen(sock_fd, maxQueue());
+	listen(sock_fd,maxQueue());
     }
+    else if (type == SOCK_RAWCAN)
+    {
+	path	= TSYS::strSepParse(addr(),1,':');
+        struct can_filter rfilter;
+        rfilter.can_id   = strtoul(TSYS::strSepParse(addr(),2,':').c_str() , NULL, 0);
+        rfilter.can_mask = strtoul(TSYS::strSepParse(addr(),3,':').c_str(), NULL, 0);
+        setsockopt(sock_fd, SOL_CAN_RAW, CAN_RAW_FILTER, &rfilter, sizeof(rfilter));
+        if( !path.size() ) path = "can0";
+        struct ifreq ifr;
+        strcpy(ifr.ifr_name, path.c_str());
+        ioctl(sock_fd, SIOCGIFINDEX, &ifr); /* ifr.ifr_ifindex gets filled 
+                                  * with that device's index */
+        struct sockaddr_can name_can;
+        name_can.can_family = AF_CAN;
+        name_can.can_ifindex = ifr.ifr_ifindex;
+        if( bind( sock_fd, (struct sockaddr*)&name_can, sizeof(name_can) ) == -1)
+	{
+	    close( sock_fd );
+	    throw TError(nodePath().c_str(),_("RAWCAN socket doesn't bind to '%s'!"),addr().c_str());
+	}
+#if OSC_DEBUG >= 1
+        else
+        {
+	    mess_info(nodePath().c_str(),_("!!!RAWCAN socket binded '%s'!"),addr().c_str());
+        }
+mess_info(nodePath().c_str(),_("!!!still alive!!! '%s'!"),addr().c_str());
+#endif
+    //SYS->taskCreate(nodePath('.',true), taskPrior(), Task, this);
 
+    }
+#if OSC_DEBUG >= 1
+	    mess_info( nodePath().c_str(), _("Socket task creation "));
+#endif
     SYS->taskCreate(nodePath('.',true), taskPrior(), Task, this);
 
     TTransportIn::start();
@@ -348,7 +404,11 @@ void *TSocketIn::Task( void *sock_in )
     char		*buf = NULL;
     fd_set		rd_fd;
     struct timeval	tv;
+
     TSocketIn *sock = (TSocketIn*)sock_in;
+#if OSC_DEBUG >= 1
+	    mess_debug( sock->nodePath().c_str(), _("Socket task "));
+#endif
     AutoHD<TProtocolIn> prot_in;
 
     pthread_attr_t pthr_attr;
@@ -366,14 +426,22 @@ void *TSocketIn::Task( void *sock_in )
 	tv.tv_sec  = 0; tv.tv_usec = STD_WAIT_DELAY*1000;
 	FD_ZERO(&rd_fd); FD_SET(sock->sock_fd,&rd_fd);
 
+#if OSC_DEBUG >= 1
+	    mess_debug( sock->nodePath().c_str(), _("Socket select call "));
+#endif
 	int kz = select(sock->sock_fd+1, &rd_fd, NULL, NULL, &tv);
 	if(kz < 0 && errno != EINTR)
 	{
 	    mess_err(sock->nodePath().c_str(), _("Close input transport by error: %s"), strerror(errno));
 	    break;
 	}
+#if OSC_DEBUG >= 1
+	    mess_debug( sock->nodePath().c_str(), _("Socket fd_isset "));
+#endif
 	if(kz <= 0 || !FD_ISSET(sock->sock_fd, &rd_fd)) continue;
-
+#if OSC_DEBUG >= 1
+	    mess_debug( sock->nodePath().c_str(), _("Socket !!!! "));
+#endif
 	struct sockaddr_in name_cl;
 	socklen_t          name_cl_len = sizeof(name_cl);
 	if(sock->type == SOCK_TCP)
@@ -453,8 +521,24 @@ void *TSocketIn::Task( void *sock_in )
 	    if(mess_lev() == TMess::Debug)
 		mess_debug(sock->nodePath().c_str(), _("Socket replied datagram '%d' to '%s'!"), answ.size(), inet_ntoa(name_cl.sin_addr));
 
-	    r_len = sendto(sock->sock_fd, answ.c_str(), answ.size(), 0, (sockaddr *)&name_cl, name_cl_len);
-	    sock->trOut += vmax(0,r_len);
+	    r_len = sendto(sock->sock_fd, answ.c_str() ,answ.size(), 0, (sockaddr *)&name_cl, name_cl_len);
+		sock->trOut += vmax(0,r_len);
+	}
+	else if( sock->type == SOCK_RAWCAN )
+	{
+	    int r_len;
+            struct can_frame frame;
+	    string  req, answ;
+            r_len = recv(sock->sock_fd, &frame, sizeof(frame), 0); sock->trIn += (float)r_len/1024;
+	    if( r_len <= 0 ) continue;
+	    req.assign((char *)frame.data,frame.can_dlc);
+
+#if OSC_DEBUG >= 1
+	    mess_info( sock->nodePath().c_str(), _("Socket received can frame id:<%08X> dlc: <%d> data:%02X%02X%02X%02X%02X%02X%02X%02X!"), frame.can_id, frame.can_dlc,frame.data[0],frame.data[1],frame.data[2],frame.data[3],frame.data[4],frame.data[5],frame.data[6],frame.data[7] );
+#endif
+	    sock->messPut(sock->sock_fd, req, answ, TSYS::uint2str(frame.can_id),prot_in);
+	    if( !prot_in.freeStat() ) continue;
+
 	}
     }
     pthread_attr_destroy(&pthr_attr);
@@ -564,6 +648,7 @@ void *TSocketIn::ClTask( void *s_inf )
 
 void TSocketIn::messPut( int sock, string &request, string &answer, string sender, AutoHD<TProtocolIn> &prot_in )
 {
+mess_info("messPut"," sender");
     AutoHD<TProtocol> proto;
     string n_pr;
     try
@@ -575,6 +660,7 @@ void TSocketIn::messPut( int sock, string &request, string &answer, string sende
 	    if(!proto.at().openStat(n_pr)) proto.at().open(n_pr, this, sender+"\n"+i2s(sock));
 	    prot_in = proto.at().at(n_pr);
 	}
+mess_info("messPut"," to protocol %s",prot_in.at().nodePath().c_str());
 	if(prot_in.at().mess(request,answer)) return;
 	if(proto.freeStat()) proto = AutoHD<TProtocol>(&prot_in.at().owner());
 	n_pr = prot_in.at().name();
@@ -770,6 +856,7 @@ void TSocketOut::start( )
     else if(s_type == S_NM_TCP)	type = SOCK_TCP;
     else if(s_type == S_NM_UDP)	type = SOCK_UDP;
     else if(s_type == S_NM_UNIX)type = SOCK_UNIX;
+    else if( s_type == S_NM_RAWCAN )	type = SOCK_RAWCAN;
     else throw TError(nodePath().c_str(),_("Type socket '%s' error!"),s_type.c_str());
 
     if(type == SOCK_FORCE)
@@ -854,7 +941,41 @@ void TSocketOut::start( )
 	    sock_fd = -1;
 	    throw TError(nodePath().c_str(), _("Connect to UNIX error: %s!"), strerror(errno));
 	}
-	fcntl(sock_fd, F_SETFL, fcntl(sock_fd,F_GETFL,0)|O_NONBLOCK);
+	fcntl(sock_fd, F_SETFL, fcntl(sock_fd, F_GETFL, 0)|O_NONBLOCK);
+    }
+    else if (type == SOCK_RAWCAN)
+    {
+	if( (sock_fd = socket( PF_CAN, SOCK_RAW, CAN_RAW ) )== -1)
+	    throw TError(nodePath().c_str(),_("Error create %s socket!"),s_type.c_str());
+		int flags = fcntl(sock_fd,F_GETFL,0);
+		fcntl(sock_fd,F_SETFL,flags|O_NONBLOCK);
+#if OSC_DEBUG >= 1
+        mess_info( nodePath().c_str(), _("Socket <%s> created <%d>!"), s_type.c_str(), sock_fd );
+#endif
+	string path	= TSYS::strSepParse(addr(),1,':');
+        struct can_filter rfilter;
+        rfilter.can_id   = strtoul(TSYS::strSepParse(addr(),2,':').c_str() , NULL, 0);
+        rfilter.can_mask = strtoul(TSYS::strSepParse(addr(),3,':').c_str(), NULL, 0);
+        setsockopt(sock_fd, SOL_CAN_RAW, CAN_RAW_FILTER, &rfilter, sizeof(rfilter));
+        if( !path.size() ) path = "can0";
+        struct ifreq ifr;
+        strcpy(ifr.ifr_name, path.c_str());
+        ioctl(sock_fd, SIOCGIFINDEX, &ifr); /* ifr.ifr_ifindex gets filled 
+                                  * with that device's index */
+        struct sockaddr_can name_can;
+        name_can.can_family = AF_CAN;
+        name_can.can_ifindex = ifr.ifr_ifindex;
+        if( bind( sock_fd, (struct sockaddr*)&name_can, sizeof(name_can) ) == -1)
+	{
+	    close( sock_fd );
+	    throw TError(nodePath().c_str(),_("RAWCAN socket doesn't bind to <%s>!"),addr().c_str());
+	}
+#if OSC_DEBUG >= 1
+        else
+        {
+	    mess_info(nodePath().c_str(),_("RAWCAN socket binded <%s>!"),addr().c_str());
+        }
+#endif
     }
 
     mLstReqTm = TSYS::curTime();
@@ -988,6 +1109,10 @@ void TSocketOut::cntrCmdProc( XMLNode *opt )
 	    "  UDP:{addr}:{port} - UDP socket:\n"
 	    "    addr - address for remote socket to be opened;\n"
 	    "    port - network port (/etc/services).\n"
+	    "  RAWCAN:{if}:{mask}:{id} - CAN socket:\n"
+            "    if - interface name;\n"
+            "    mask - can frame id mask;\n"
+            "    id - can id;\n"
 	    "  UNIX:{name} - UNIX socket:\n"
 	    "    name - UNIX-socket's file name."));
 	ctrMkNode("fld",opt,-1,"/prm/cfg/TMS",_("Timings"),RWRWR_,"root",STR_ID,2,"tp","str","help",

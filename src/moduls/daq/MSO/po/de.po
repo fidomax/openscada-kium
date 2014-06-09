@@ -1,0 +1,420 @@
+# OpenSCADA.DAQ.ModBus translate to German.
+# Copyright (C) 2009 Irina Popkova
+# This file is distributed under the same license as the OpenSCADA.DAQ.ModBus package module.
+#
+# Irina Popkova <IrischkaPopkova@yandex.ru>, 2009-2010.
+# Klaus Fetscher <k.fetscher@fetron.de>, 2009.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: OpenSCADA.ModBus 1.1.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2010-10-11 09:13+0300\n"
+"PO-Revision-Date: 2010-10-10 23:11+0400\n"
+"Last-Translator: Irina Popkova <IrischkaPopkova@yandex.ru>\n"
+"Language-Team: Russian <de@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: \n"
+"X-Generator: Lokalize 1.0\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Parameteres table"
+msgstr "Tabelle der Parameter"
+
+msgid "Acquisition schedule"
+msgstr "Planung der Befragung"
+
+msgid "Gather task priority"
+msgstr "Priorität der Datenerfassung"
+
+msgid "Modbus protocol"
+msgstr "Modbus-Protokoll"
+
+msgid "TCP/IP;RTU;ASCII"
+msgstr ""
+
+msgid "Transport address"
+msgstr "Adresse der Übertragung"
+
+msgid "Destination node"
+msgstr "Zielknoten"
+
+msgid "Data fragments merge"
+msgstr "Datenfragmente zusammenfügen"
+
+msgid "Connection timeout (ms)"
+msgstr "Zeitüberschreitung beim Verbinden (msek)"
+
+msgid "Restore timeout (s)"
+msgstr "Zeit der Wiederherstellung (sek)"
+
+msgid "Request tries"
+msgstr "Anfrageversuche"
+
+msgid "Standard"
+msgstr "Standard"
+
+msgid "Attributes list"
+msgstr "Liste der Attribute"
+
+#, c-format
+msgid "Connection error. Restoring in %.6g s."
+msgstr "Fehler beim Verbinden. Wiederherstellung in %.6g sek."
+
+#, c-format
+msgid "Call by period %g s. "
+msgstr "Herausforderung mit der Periode  %g s."
+
+#, c-format
+msgid "Call by cron '%s'. "
+msgstr "Herausforderung nach dem Cron '%s'."
+
+#, c-format
+msgid ""
+"Gather data time %.6g ms. Read %g(%g) registers, %g(%g) coils. Write %g "
+"registers, %g coils. Errors of connection %g, of respond %g."
+msgstr ""
+"Datenerfassungszeit %.6g msek. Gelesen %g(%g) Register, %g(%g) Bits. "
+"Geschrieben %g Register, %g Bits. Fehler in der Verbindung %g, in der "
+"Antwort %g."
+
+msgid "Fetch coils' and registers' blocks."
+msgstr "Ermittlung von Bitblocks und Register."
+
+msgid "4:Server failure."
+msgstr "4:Serverfehler."
+
+msgid "15:Response PDU size error."
+msgstr "Fehler des Umfangs der PDU - Antwort."
+
+msgid ""
+"Schedule is writed in seconds periodic form or in standard Cron form.\n"
+"Seconds form is one real number (1.5, 1e-3).\n"
+"Cron it is standard form '* * * * *'. Where:\n"
+"  - minutes (0-59);\n"
+"  - hours (0-23);\n"
+"  - days (1-31);\n"
+"  - month (1-12);\n"
+"  - week day (0[sunday]-6)."
+msgstr ""
+"Planung wird eingeschrieben in der Form der Sekundenperiodizität oder des "
+"Standardes Cron.\n"
+"Sekundenform ist eine reele Zahl (1.5, 1e-3).\n"
+"Form des Standardes Cron ist '* * * * *'. Wo:\n"
+"  - Minuten (0-59);\n"
+"  - Stunden (0-23);\n"
+"  - Tage (1-31);\n"
+"  - Monate (1-12);\n"
+"  - Wochentage (0[Sonntag]-6)."
+
+msgid "11:Value not gathered."
+msgstr "11:Werte sind nicht erfasst."
+
+msgid "1:Parameter is disabled."
+msgstr "1:Parameter ist abgeschaltet."
+
+msgid "2:Acquisition is stoped."
+msgstr "2:Anfrage ist angehalten."
+
+msgid ""
+"Attributes configuration list. List must be written by lines in format: [dt:"
+"numb:rw:id:name]\n"
+"Where:\n"
+"  dt - Modbus data type (R-register,C-coil,RI-input register,CI-input "
+"coil).\n"
+"       R and RI can expanded by suffixes: i2-Int16, i4-Int32, f-Float, b5-"
+"Bit5;\n"
+"  numb - ModBus device's data address (dec, hex or octal);\n"
+"  rw - read-write mode (r-read; w-write; rw-readwrite);\n"
+"  id - created attribute identifier;\n"
+"  name - created attribute name.\n"
+"Example:\n"
+"  'R:0x300:rw:var:Variable' - register access;\n"
+"  'C:100:r:var1:Variable 1' - coin access;\n"
+"  'R_f:200:r:float:Float' - get float from registers 200 and 201;\n"
+"  'R_i4:300,400:r:int32:Int32' - get int32 from registers 300 and 400;\n"
+"  'R_b10:25:r:rBit:Reg bit' - get bit 10 from register 25."
+msgstr ""
+"Liste der Konfiguration der Attribute. Die Liste wird gemacht zeilenweise im "
+"Format: [dt:numb:rw:id:name]\n"
+"Wo:\n"
+"  dt - ModBus Datentyp (R-Register, C-Bit, RI-Eingansregister, CI-Bit des "
+"Eingangs).\n"
+"       R und RI können mit den Suffixen erweitert werden: i2-Int16, i4-"
+"Int32, f-Float, b5-Bit5;\n"
+"  numb - Adresse der ModBus - Anlage (dec., hex., oder octal);\n"
+"  rw - Regime Lesen-Einschreiben (r-lesen; w-einschreiben, rw-lesen und "
+"einschreiben);\n"
+"  id - Bezeichner des gebildeten Attributs;\n"
+"  name - Name des gebildeten Attributs .\n"
+"Beispiel:\n"
+"  'R:0x300:rw:var:Variable' - Zugang zum Register;\n"
+"  'C:100:r:var1:Variable 1' - Zugang zum Bit;\n"
+"  'R_f:200:r:float:Float' - das Reele bekommen aus den Registern 200 und "
+"201;\n"
+"  'R_i4:300,400:r:int32:Int32' - bekommen int32 aus den Registern 300 und "
+"400;\n"
+"  'R_b10:25:r:rBit:Reg bit' - Bit 10 aus dem Register 25 bekommen."
+
+msgid "ID"
+msgstr ""
+
+msgid "Name"
+msgstr "Name"
+
+msgid "Description"
+msgstr "Beschreibung"
+
+msgid "To enable"
+msgstr "Einschalten"
+
+msgid "Address"
+msgstr "Adresse"
+
+msgid "Input transport"
+msgstr "Eingangsübertragung"
+
+msgid "Protocol"
+msgstr "Protokoll"
+
+msgid "RTU;ASCII;TCP/IP;All"
+msgstr "RTU;ASCII;TCP/IP;All"
+
+msgid "Mode"
+msgstr "Modus"
+
+msgid "Data;Gateway node;Gateway net"
+msgstr "Daten;Knotenschnittstelle;Netzschnittstelle"
+
+msgid "Calc data period (s)"
+msgstr "Daten Rechenzeit (sek)"
+
+msgid "Programm"
+msgstr "Programm"
+
+msgid "To transport"
+msgstr "Zur Übertragung"
+
+msgid "To protocol"
+msgstr "Ins Protokoll"
+
+msgid "RTU;ASCII;TCP/IP"
+msgstr ""
+
+msgid "To address"
+msgstr "An die Adresse"
+
+msgid "Node ID"
+msgstr "Knoten-ID"
+
+msgid "Value type"
+msgstr "Typ des Wertes"
+
+msgid "Flags"
+msgstr "Schalter"
+
+msgid "Value"
+msgstr "Wert"
+
+msgid "Real position"
+msgstr "Reale Position"
+
+msgid "Search and create new node error."
+msgstr "Fehler bem Suchen und Erstellen des neuen Knotens."
+
+msgid "13:Error server respond"
+msgstr "13:Fehler in der Antwort des Server"
+
+msgid "13:Error respond: Too short."
+msgstr "13:Fehlerin der Anwort: Zu kurz."
+
+msgid "13:Error respond: CRC check error."
+msgstr "13:Fehler in der Antwort: Fehler der CRC-Prüfung."
+
+msgid "13:Error respond: Error format."
+msgstr "13:Fehler in der Antwort: Formatfehler."
+
+msgid "13:Error respond: LRC check error."
+msgstr "13:Fehler in der Antwort: Fehler der LRC-Prüfung."
+
+#, c-format
+msgid "Protocol '%s' error."
+msgstr "Fehler des Protokolls '%s'."
+
+msgid "13:Error respond"
+msgstr "13:Fehler in der Antwort"
+
+#, c-format
+msgid "1:Function %xh is not supported."
+msgstr "1:Funktion %xh wird nicht unterstützt."
+
+msgid "2:Requested address not allow or request area too long."
+msgstr ""
+"2:Angefragte Adresse ist nicht zulässig oder Anfragebereich ist zu gross."
+
+msgid "3:Illegal data value into request."
+msgstr "3:Illegale Datenwert in der Anfrage."
+
+msgid "5:Request requires too long time for execute."
+msgstr "5:Anfrage benötigt zu viel Zeit für die Ausführung."
+
+msgid "6:Server is busy."
+msgstr "6:Server ist beschäftigt."
+
+msgid "7:Programm function is error. By request functions 13 or 14."
+msgstr "7:Fehler in Programmfunktion. In Anfragefunctions 13 or 14."
+
+msgid "10:Gateway problem."
+msgstr "10:Schnittstellenproblem."
+
+#, c-format
+msgid "12:Unknown error: %xh."
+msgstr "12:Unbekannter Fehler: %xh."
+
+msgid "14:Device error: "
+msgstr "14:Fehler im Baustein: "
+
+msgid "REQ -> "
+msgstr "Anfrage -> "
+
+msgid "ERR -> "
+msgstr "Fehler -> "
+
+msgid "RESP -> "
+msgstr "Antwort -> "
+
+msgid "Node"
+msgstr "Knoten"
+
+msgid "Nodes"
+msgstr "Knoten"
+
+msgid "Report"
+msgstr "Bericht"
+
+msgid "Report length"
+msgstr "Berichtsgrösse"
+
+msgid "Zero use for report disabling"
+msgstr "Null wird für das Abschalten des Berichtes verwendet."
+
+msgid "Function calculate frequency (Hz)"
+msgstr "Funktionberechnungsfrequenz (Hz)"
+
+msgid "Function start flag"
+msgstr "Schalter für das Anhalten der Funktion"
+
+msgid "Function stop flag"
+msgstr "Schalter für das Starten der Funktion"
+
+#, c-format
+msgid "Compile function by language '%s' error: %s"
+msgstr "Fehler für die Sprache '%s' bei der Funktionskompilation : %s"
+
+msgid "Disabled. "
+msgstr "Abgeschaltet. "
+
+msgid "Enabled. "
+msgstr "Eingeschaltet. "
+
+#, c-format
+msgid ""
+"Process time %.2f ms. Requests %.4g. Read registers %.4g, coils %.4g. Writed "
+"registers %.4g, coils %.4g."
+msgstr ""
+"Bearbeitungszeit %.2f msek. Anfragen %.4g. Gelesen %.4g Register, %.4g Bits. "
+"Geschrieben %.4g Register, %.4g Bits."
+
+#, c-format
+msgid "Requests %.4g."
+msgstr "Anfragen %.4g."
+
+msgid "Calc node's function error."
+msgstr "Fehler bei der Berechnung der Funktion des Knotens."
+
+msgid "Node: "
+msgstr "Knoten: "
+
+msgid "State"
+msgstr "Zustand"
+
+msgid "Status"
+msgstr "Status"
+
+msgid "Enable"
+msgstr "Einschalten"
+
+msgid "DB"
+msgstr "DB"
+
+msgid ""
+"DB address in format [<DB module>.<DB name>].\n"
+"For use main work DB set '*.*'."
+msgstr ""
+"Datenbank Parameter im Format [<DB-Modul>.<DB-Name>].\n"
+"Für die Hauptdatenbank '*.*' verwenden."
+
+msgid "Config"
+msgstr "Konfiguration"
+
+msgid "Data"
+msgstr "Daten"
+
+msgid "IO"
+msgstr ""
+
+msgid "Id"
+msgstr ""
+
+msgid "Type"
+msgstr "Typ"
+
+msgid "Real;Integer;Boolean;String"
+msgstr "Reele Zahl;Ganzzahl;Logisch;Text"
+
+msgid "Link"
+msgstr "Verbindung"
+
+msgid "Programm language"
+msgstr "Programmsprache."
+
+msgid "Links"
+msgstr "Verbindungen"
+
+msgid "Disable node for this operation"
+msgstr "Knoten abschalten für diese Operation"
+
+msgid "New IO"
+msgstr "Neu IO"
+
+msgid "Deleting lock attribute in not allow."
+msgstr "Löschen Verriegelungsattribut ist nicht erlaubt."
+
+msgid "Changing locked attribute is not allowed."
+msgstr "Änderung des verriegelten Attributs ist nicht erlaubt"
+
+msgid "Empty value is not valid."
+msgstr "Leerer Wert ist nicht zulässig."
+
+msgid "ModBUS"
+msgstr ""
+
+msgid "Roman Savochenko"
+msgstr "Roman Savotschenko"
+
+msgid ""
+"Allow realisation of ModBus client service. Supported Modbus/TCP, Modbus/RTU "
+"and Modbus/ASCII protocols."
+msgstr ""
+"Ermöglicht die Realisierung des Klientservices des ModBus-Protokolls. "
+"Unterstützt werden Modbus/TCP, Modbus/RTU und Modbus/ASCII Protokolle."
+
+msgid ""
+"Allow realisation of ModBus protocols. Supported Modbus/TCP, Modbus/RTU and "
+"Modbus/ASCII protocols."
+msgstr ""
+"Ermöglicht die Realisierung der ModBus-Protokolle. Unterstützt werden Modbus/"
+"TCP, Modbus/RTU und Modbus/ASCII Protokolle."
