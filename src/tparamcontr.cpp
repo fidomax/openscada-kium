@@ -1,8 +1,7 @@
 
 //OpenSCADA system file: tparamcontr.cpp
 /***************************************************************************
- *   Copyright (C) 2003-2013 by Roman Savochenko                           *
- *   rom_as@oscada.org, rom_as@fromru.com                                  *
+ *   Copyright (C) 2003-2014 by Roman Savochenko, <rom_as@oscada.org>      *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -256,20 +255,16 @@ void TParamContr::preDisable( int flag )
 
 void TParamContr::postDisable( int flag )
 {
-    if(flag)
-    {
-	//> Delete parameter from DB
-	try
-	{
-	    cfg("OWNER") = ownerPath();
-	    SYS->db().at().dataDel(owner().DB()+"."+type().DB(&owner()), owner().owner().nodePath()+type().DB(&owner()), *this, true);
-	}catch(TError err) { mess_err(err.cat.c_str(),"%s",err.mess.c_str()); }
+    if(flag) {
+	//Delete the parameter from DB
+	cfg("OWNER") = ownerPath();
+	SYS->db().at().dataDel(owner().DB()+"."+type().DB(&owner()), owner().owner().nodePath()+type().DB(&owner()), *this, true);
     }
 }
 
 void TParamContr::load_( )
 {
-    if(!SYS->chkSelDB(owner().DB())) return;
+    if(!SYS->chkSelDB(owner().DB())) throw TError();
 
     cfgViewAll(true);
     cfg("OWNER") = ownerPath();
@@ -502,7 +497,13 @@ void TParamContr::cntrCmdProc( XMLNode *opt )
 	    vector<string> c_list;
 	    list(c_list);
 	    for(unsigned i_a = 0; i_a < c_list.size(); i_a++)
-	        opt->childAdd("el")->setAttr("id",c_list[i_a])->setText(at(c_list[i_a]).at().name());
+	    {
+	        XMLNode *cN = opt->childAdd("el")->setAttr("id",c_list[i_a])->setText(at(c_list[i_a]).at().name());
+		if(!s2i(opt->attr("recurs"))) continue;
+		cN->setName(opt->name())->setAttr("path",TSYS::strEncode(opt->attr("path"),TSYS::PathEl))->setAttr("recurs","1");
+		at(c_list[i_a]).at().cntrCmd(cN);
+		cN->setName("el")->setAttr("path","")->setAttr("rez","")->setAttr("recurs","")->setText("");
+	    }
 	}
 	if(ctrChkNode(opt,"add",RWRWR_,"root",SDAQ_ID,SEC_WR))
 	{

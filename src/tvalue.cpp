@@ -1,8 +1,7 @@
 
 //OpenSCADA system file: tvalue.cpp
 /***************************************************************************
- *   Copyright (C) 2003-2014 by Roman Savochenko                           *
- *   rom_as@oscada.org, rom_as@fromru.com                                  *
+ *   Copyright (C) 2003-2014 by Roman Savochenko, <rom_as@oscada.org>      *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -270,7 +269,7 @@ void TValue::cntrCmdProc( XMLNode *opt )
 			case TFld::Object:	sType = _("Object");	break;
 			default: break;
 		    }
-		    if(vl.at().fld().flg()&TFld::Selected) sType = _("-select");
+		    if(vl.at().fld().flg()&TFld::Selected) sType += _("-select");
 		    n_e->setAttr("help",
 			TSYS::strMess(_("Parameter's attribute\n"
 			    "  ID: '%s'\n"

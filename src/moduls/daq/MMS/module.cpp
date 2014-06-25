@@ -1,8 +1,7 @@
 
 //OpenSCADA system module DAQ.MMS file: module.cpp
 /***************************************************************************
- *   Copyright (C) 2013-2014 by Roman Savochenko                           *
- *   rom_as@oscada.org, rom_as@fromru.com                                  *
+ *   Copyright (C) 2013-2014 by Roman Savochenko, <rom_as@oscada.org>      *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -227,7 +226,6 @@ void TMdContr::protIO( MMS::XML_N &io )
 
 int TMdContr::messIO( const char *obuf, int len_ob, char *ibuf, int len_ib )
 {
-    //printf("TEST 00: req=%d: '%s'\n", len_ob, TSYS::strDecode(string(obuf,len_ob),TSYS::Bin).c_str());
     return tr.at().messIO(obuf, len_ob, ibuf, len_ib, 0, true);
 }
 
@@ -370,7 +368,7 @@ void *TMdContr::Task( void *icntr )
 		    value = valCtr.childGet(i_ch);
 		    nId = (value->attr("domainId").size()?value->attr("domainId"):"*")+"/"+value->attr("itemId");
 		    if(isErr || value->attr("err").size()) value = NULL;
-		    if(!value) { cntr.mVars[nId] = TVariant(); continue; }
+		    if(!value) { cntr.mVars[nId] = TVariant(EVAL_REAL); continue; }
 		    switch(s2i(value->attr("tp")))
 		    {
 			case MMS::VT_Bool: case MMS::VT_Int: case MMS::VT_UInt:
@@ -498,8 +496,7 @@ bool TMdContr::cfgChange( TCfg &icfg )
 {
     TController::cfgChange(icfg);
 
-    try
-    {
+    try {
 	if(icfg.name() == "ADDR" && enableStat()) tr.at().setAddr("TCP:"+icfg.getS());
     } catch(...) { }
 
@@ -587,10 +584,7 @@ string TMdPrm::attrPrc( )
 
 	aid = TSYS::strParse(itS,0,":",&offIt);
 	aid = TSYS::strEncode((aid.empty()?TSYS::pathLev(var,1):aid), TSYS::oscdID);
-	if(vlPresent(aid))
-	    for(int i_v = 1; true; i_v++)
-		if(!vlPresent(aid+i2s(i_v)))
-		{ aid += i2s(i_v); break; }
+	if(vlPresent(aid)) for(aid += "_1"; vlPresent(aid); ) aid = TSYS::strLabEnum(aid);
 
 	anm = TSYS::strParse(itS,0,":",&offIt);
 	if(anm.empty()) anm = TSYS::pathLev(var,1);
@@ -698,7 +692,7 @@ void TMdPrm::cntrCmdProc( XMLNode *opt )
 	      "    array - array;\n"
 	      "  {id} - force attribute ID.\n"
 	      "  {name} - force attribute name."),NULL);
-	ctrMkNode("fld",opt,-1,"/prm/cfg/SEL_VAR",_("Variable append"),RWRW__,"root",SDAQ_ID,2,"dest","select","select","/prm/cfg/SEL_VAR_lst");
+	ctrMkNode("fld",opt,-1,"/prm/cfg/SEL_VAR",_("Variable append"),enableStat()?0:RWRW__,"root",SDAQ_ID,2,"dest","select","select","/prm/cfg/SEL_VAR_lst");
 	return;
     }
 

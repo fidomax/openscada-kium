@@ -1,8 +1,7 @@
 
 //OpenSCADA system module UI.Vision file: vis_widgs.h
 /***************************************************************************
- *   Copyright (C) 2007-2008 by Roman Savochenko                           *
- *   rom_as@diyaorg.dp.ua                                                  *
+ *   Copyright (C) 2007-2014 by Roman Savochenko, <rom_as@oscada.org>      *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -253,6 +252,7 @@ namespace VISION
 	public:
 	    TextEdit( QWidget *parent, bool prev_dis = false );
 
+	    bool isEdited( );
 	    QString text( );
 
 	    void setText( const QString & );
@@ -328,6 +328,7 @@ namespace VISION
 
 	    void	moveF( const QPointF &pos );
 	    void	resizeF( const QSizeF &size );
+	    void	setZ( int vl )	{ z_coord = vl; }
 	    void	setAllAttrLoad( bool vl )	{ mAllAttrLoad = vl; }
 
 	    void	attrsSet( AttrValS &attrs );

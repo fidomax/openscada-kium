@@ -1,12 +1,12 @@
 AC_PREREQ([2.50])
 
 # After LTS relese append third stabilisation level/number to the version
-AC_INIT([OpenSCADA],[0.9],[rom_as@oscada.org, rom_as@fromru.com])
+AC_INIT([OpenSCADA],[0.9],[rom_as@oscada.org])
 
 # Increase major for next Work version.
 # Increase minor after significant changes into API of the Work version
 # Full freeze for LTS stabilisation levels/updates, after the release
-oscd_LIBREVISION="3:0:0"
+oscd_LIBREVISION="3:1:0"
 
 AC_PREFIX_DEFAULT([/usr])
 oscd_modulpref="oscd_"
@@ -34,6 +34,7 @@ AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
 AC_PROG_LIBTOOL
+AM_PROG_LIBTOOL
 
 if test "$ac_cv_prog_cc_g" = "no" -o "$ac_cv_prog_cxx_g" = "no"; then
     AC_MSG_ERROR([No C or C++ compiler present. Install GCC and G++.]);
@@ -118,11 +119,7 @@ AX_DEFINE_DIR([localedir_full],[localedir],[I18N locales location for configurat
 AX_DEFINE_DIR([oscd_datadir_full],[oscd_datadir_full],[OpenSCADA data location for configurations])
 AX_DEFINE_DIR([oscd_moddir_full],[oscd_moddir_full],[OpenSCADA modules location for configurations])
 
-AC_CONFIG_FILES(Makefile openscada.pc
-    src/Makefile src_call/Makefile src/moduls/Makefile
-    src/moduls/arhiv/Makefile src/moduls/bd/Makefile src/moduls/protocol/Makefile
-    src/moduls/special/Makefile src/moduls/daq/Makefile src/moduls/transport/Makefile
-    src/moduls/ui/Makefile)
+AC_CONFIG_FILES(Makefile openscada.pc src/Makefile src_call/Makefile)
 
 if test -d data; then
     AC_CONFIG_FILES(data/openscada.desktop data/openscada_start data/oscada.xml
@@ -174,6 +171,16 @@ AC_CHECK_HEADERS([pcre.h],[],
     [AC_MSG_ERROR(PCRE header not found. Install or check PCRE developing package!)])
 AC_CHECK_LIB([pcre],[pcre_compile],[AC_MSG_NOTICE([PCRE: Pass global library using])],
     [AC_MSG_ERROR(PCRE library not found. Install or check PCRE package!)])
+
+AC_SUBST(BldMods)
+AC_SUBST(BldInclMods)
+AC_SUBST(DBSub_mod)
+AC_SUBST(DAQSub_mod)
+AC_SUBST(ArchSub_mod)
+AC_SUBST(TranspSub_mod)
+AC_SUBST(ProtSub_mod)
+AC_SUBST(UISub_mod)
+AC_SUBST(SpecSub_mod)
 
 AC_MSG_RESULT(========== Build modules check =============)
 #> DB modules

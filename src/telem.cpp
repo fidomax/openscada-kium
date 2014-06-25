@@ -1,8 +1,7 @@
 
 //OpenSCADA system file: telem.cpp
 /***************************************************************************
- *   Copyright (C) 2003-2014 by Roman Savochenko                           *
- *   rom_as@oscada.org, rom_as@fromru.com                                  *
+ *   Copyright (C) 2003-2014 by Roman Savochenko, <rom_as@oscada.org>      *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -216,7 +215,7 @@ void TFld::setFlg( unsigned iflg )
     m_flg = iflg;
 }
 
-string TFld::values()
+string TFld::values( )
 {
     if(m_val.s == NULL) return "";
 
@@ -246,7 +245,7 @@ string TFld::values()
     return rez.size()?rez.substr(0,rez.size()-1):"";
 }
 
-string TFld::selNames()
+string TFld::selNames( )
 {
     if(m_sel == NULL) return "";
 
@@ -260,8 +259,7 @@ string TFld::selNames()
 void TFld::setValues( const string &vls )
 {
     //> Set value list
-    if(flg()&TFld::Selected)
-    {
+    if(flg()&TFld::Selected) {
 	//> Count alements amount
 	int i_lvl = 0, i_off = 0;
 	while(TSYS::strSepParse(vls,0,';',&i_off).size()) i_lvl++;

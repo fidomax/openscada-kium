@@ -1,8 +1,7 @@
 
 //OpenSCADA system module DAQ.JavaLikeCalc file: freefunc.cpp
 /***************************************************************************
- *   Copyright (C) 2005-2014 by Roman Savochenko                           *
- *   rom_as@fromru.com                                                     *
+ *   Copyright (C) 2005-2014 by Roman Savochenko, <rom_as@oscada.org>      *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -127,12 +126,12 @@ void Func::setProg( const string &prg )
 
 void Func::load_( )
 {
-    if(owner().DB().empty() || (!SYS->chkSelDB(owner().DB())))	return;
+    if(owner().DB().empty() || (!SYS->chkSelDB(owner().DB())))	throw TError();
 
     cfg("FORMULA").setNoTransl(!owner().progTr());
     SYS->db().at().dataGet(owner().fullDB(), mod->nodePath()+owner().tbl(), *this);
 
-    loadIO( );
+    loadIO();
 }
 
 void Func::loadIO( )
@@ -196,8 +195,7 @@ void Func::saveIO( )
 
     //Save allow IO
     cfg.cfg("F_ID").setS(id(), true);
-    for(int i_io = 0; i_io < ioSize(); i_io++)
-    {
+    for(int i_io = 0; i_io < ioSize(); i_io++) {
 	if(io(i_io)->flg()&Func::SysAttr) continue;
 	cfg.cfg("ID").setS(io(i_io)->id());
 	cfg.cfg("NAME").setS(io(i_io)->name());
@@ -213,9 +211,8 @@ void Func::saveIO( )
     //Clear IO
     cfg.cfgViewAll(false);
     for(int fld_cnt = 0; SYS->db().at().dataSeek(io_bd,io_cfgpath,fld_cnt++,cfg); )
-	if(ioId(cfg.cfg("ID").getS()) < 0)
-	{
-	    SYS->db().at().dataDel(io_bd,io_cfgpath,cfg,true);
+	if(ioId(cfg.cfg("ID").getS()) < 0) {
+	    SYS->db().at().dataDel(io_bd, io_cfgpath, cfg, true, false, true);
 	    fld_cnt--;
 	}
 }

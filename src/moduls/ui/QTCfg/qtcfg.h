@@ -1,8 +1,7 @@
 
 //OpenSCADA system module UI.QTCfg file: qtcfg.h
 /***************************************************************************
- *   Copyright (C) 2004-20014 by Roman Savochenko                           *
- *   rom_as@fromru.com                                                     *
+ *   Copyright (C) 2004-2014 by Roman Savochenko, <rom_as@oscada.org>      *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -96,6 +95,7 @@ class ConfApp: public QMainWindow
 
 	void about( );
 	void aboutQt( );
+	void enterManual( );
 	void enterWhatsThis( );
 
 	void editToolUpdate( );				//Edit tools visible update
@@ -121,7 +121,7 @@ class ConfApp: public QMainWindow
 	void tablePopup( const QPoint &pos );		//QTable popup menu
 	void tableSet( int row, int col );		//QTable set
 	void editChange( const QString& );		//Change Edit (LineEdit and TextEdit)
-	void applyButton( );				//Apply button
+	void applyButton( QWidget *src = NULL );	//Apply button
 	void cancelButton( );				//Cancel button
 	void imgPopup( const QPoint &pos );		//Image popup
 
@@ -160,7 +160,8 @@ class ConfApp: public QMainWindow
 			*actStartUpd, *actStopUpd,
 			*actDBLoad, *actDBSave,
 			*actItAdd, *actItDel,
-			*actItCut, *actItCopy, *actItPaste;
+			*actItCut, *actItCopy, *actItPaste,
+			*actManualPage;
 
 	XMLNode		pg_info, genReqs;
 	XMLNode 	*root;
@@ -172,6 +173,8 @@ class ConfApp: public QMainWindow
 	vector<string>	next;
 
 	vector<string>	stMess;
+
+	map<string, QWidget* >	noApplyWdgs;
 
 	bool		tbl_init;
     };

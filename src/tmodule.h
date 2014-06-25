@@ -1,8 +1,7 @@
 
 //OpenSCADA system file: tmodule.h
 /***************************************************************************
- *   Copyright (C) 2003-2010 by Roman Savochenko                           *
- *   rom_as@oscada.org, rom_as@fromru.com                                  *
+ *   Copyright (C) 2003-2014 by Roman Savochenko, <rom_as@oscada.org>      *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -54,9 +53,8 @@ class TModule : public TCntrNode
 		SAt( const string &iid, const string &itype = "", int itver = 0 ) :
 		    id(iid), type(itype), t_ver(itver)	{ }
 
-		bool operator==( const TModule::SAt &amst ) const
-		{
-		    if( amst.id == id && amst.type == type && amst.t_ver == t_ver ) return true;
+		bool operator==( const TModule::SAt &amst ) const {
+		    if(amst.id == id && amst.type == type && amst.t_ver == t_ver) return true;
 		    return false;
 		}
 

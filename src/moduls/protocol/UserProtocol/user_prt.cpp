@@ -1,8 +1,7 @@
 
 //OpenSCADA system module Protocol.UserProtocol file: user_prt.cpp
 /***************************************************************************
- *   Copyright (C) 2010 by Roman Savochenko                                *
- *   rom_as@oscada.org, rom_as@fromru.com                                  *
+ *   Copyright (C) 2010-2014 by Roman Savochenko, <rom_as@oscada.org>      *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -94,7 +93,7 @@ TProt::TProt( string name ) : TProtocol(MOD_ID)
     mUPrtEl.fldAdd(new TFld("OutPROG",_("Output program"),TFld::String,TFld::FullText|TCfg::TransltText,"1000000"));
 }
 
-TProt::~TProt()
+TProt::~TProt( )
 {
     nodeDelAll();
 }
@@ -102,7 +101,7 @@ TProt::~TProt()
 void TProt::itemListIn( vector<string> &ls, const string &curIt )
 {
     ls.clear();
-    if( TSYS::strParse(curIt,1,".").empty() )	uPrtList(ls);
+    if(TSYS::strParse(curIt,1,".").empty())	uPrtList(ls);
 }
 
 void TProt::uPrtAdd( const string &iid, const string &db )
@@ -316,11 +315,7 @@ TCntrNode &UserPrt::operator=( TCntrNode &node )
 
 void UserPrt::postDisable( int flag )
 {
-    try
-    {
-	if( flag ) SYS->db().at().dataDel(fullDB(),owner().nodePath()+tbl(),*this,true);
-    }catch(TError err)
-    { mess_err(err.cat.c_str(),"%s",err.mess.c_str()); }
+    if(flag) SYS->db().at().dataDel(fullDB(),owner().nodePath()+tbl(),*this,true);
 }
 
 TProt &UserPrt::owner( )	{ return *(TProt*)nodePrev(); }
@@ -389,7 +384,7 @@ void UserPrt::setOutProg( const string &iprg )
 
 void UserPrt::load_( )
 {
-    if( !SYS->chkSelDB(DB()) ) return;
+    if(!SYS->chkSelDB(DB())) throw TError();
     cfgViewAll(true);
     SYS->db().at().dataGet(fullDB(),owner().nodePath()+tbl(),*this);
 }

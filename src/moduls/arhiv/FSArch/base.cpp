@@ -1,8 +1,7 @@
 
 //OpenSCADA system module Archive.FSArch file: base.cpp
 /***************************************************************************
- *   Copyright (C) 2003-2010 by Roman Savochenko                           *
- *   rom_as@oscada.org, rom_as@fromru.com                                  *
+ *   Copyright (C) 2003-2014 by Roman Savochenko, <rom_as@oscada.org>      *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -106,31 +105,23 @@ void ModArch::postEnable( int flag )
     }
 }
 
-ModArch::~ModArch()
+ModArch::~ModArch( )
 {
     try{ modStop(); }catch(...){}
 }
 
-string ModArch::filesDB()
-{
-    return SYS->workDB()+"."+modId()+"_Pack";
-}
+string ModArch::filesDB( )	{ return SYS->workDB()+"."+modId()+"_Pack"; }
 
-bool ModArch::filePack( const string &anm )
-{
-    if(anm.size() > 3 && anm.substr(anm.size()-3,3) == ".gz") return true;
-    return false;
-}
+bool ModArch::filePack( const string &anm )	{ return (anm.size() > 3 && anm.substr(anm.size()-3,3) == ".gz"); }
 
 string ModArch::packArch( const string &anm, bool replace )
 {
-    string rez_nm = anm+".gz";
+    string rez_nm = anm + ".gz";
 
     //sighandler_t prevs = signal(SIGCHLD,SIG_DFL);
     int sysres = system((string("gzip -c \"")+anm+"\" > \""+rez_nm+"\"").c_str());
     //signal(SIGCHLD,prevs);
-    if(sysres)
-    {
+    if(sysres) {
 	remove(rez_nm.c_str());
 	throw TError(nodePath().c_str(),_("Compress error!"));
     }
@@ -146,8 +137,7 @@ string ModArch::unPackArch( const string &anm, bool replace )
     //sighandler_t prevs = signal(SIGCHLD,SIG_DFL);
     int sysres = system((string("gzip -cd \"")+anm+"\" > \""+rez_nm+"\"").c_str());
     //signal(SIGCHLD,prevs);
-    if(sysres)
-    {
+    if(sysres) {
 	remove(rez_nm.c_str());
 	throw TError(nodePath().c_str(),_("Decompress error: '%s'!"),anm.c_str());
     }
@@ -168,7 +158,7 @@ string ModArch::optDescr( )
 
 void ModArch::load_( )
 {
-    //> Load parameters from command line
+    //Load parameters from command line
     string argCom, argVl;
     for(int argPos = 0; (argCom=SYS->getCmdOpt(argPos,&argVl)).size(); )
         if(argCom == "h" || argCom == "help")	fprintf(stdout, "%s", optDescr().c_str());
@@ -185,49 +175,41 @@ void ModArch::perSYSCall( unsigned int cnt )
 	vector<string> a_list;
 	time_t end_tm = time(NULL)+STD_WAIT_TM;
 
-	//> Check message archivators
+	//Check message archivators
 	messList(a_list);
 	for(unsigned i_a = 0; time(NULL) < end_tm && i_a < a_list.size(); i_a++)
 	    if(messAt(a_list[i_a]).at().startStat())
 		try{ messAt(a_list[i_a]).at().checkArchivator(); }
-		catch(TError err)
-		{
+		catch(TError err) {
 		    mess_err(err.cat.c_str(),"%s",err.mess.c_str());
 		    mess_err(nodePath().c_str(),_("Check message archivator '%s' error."),a_list[i_a].c_str());
 		}
 
-	//> Check value archivators
+	//Check value archivators
 	valList(a_list);
 	for(unsigned i_a = 0; time(NULL) < end_tm && i_a < a_list.size(); i_a++)
 	    if(valAt(a_list[i_a]).at().startStat())
 		try{ valAt(a_list[i_a]).at().checkArchivator(); }
-		catch(TError err)
-		{
+		catch(TError err) {
 		    mess_err(err.cat.c_str(),"%s",err.mess.c_str());
 		    mess_err(nodePath().c_str(),_("Check value archivator '%s' error."),a_list[i_a].c_str());
 		}
 
-	//> Check to nopresent archive files
+	//Check to nopresent archive files
 	struct stat file_stat;
 	TConfig c_el(&mod->packFE());
 	c_el.cfgViewAll(false);
 	for(int fld_cnt = 0; time(NULL) < end_tm && SYS->db().at().dataSeek(mod->filesDB(),mod->nodePath()+"Pack",fld_cnt++,c_el); )
 	    if(stat(c_el.cfg("FILE").getS().c_str(),&file_stat) != 0 || (file_stat.st_mode&S_IFMT) != S_IFREG)
 	    {
-		if(!SYS->db().at().dataDel(mod->filesDB(),mod->nodePath()+"Pack",c_el,true))	break;
+		if(!SYS->db().at().dataDel(mod->filesDB(),mod->nodePath()+"Pack",c_el,true,false,true))	break;
 		fld_cnt--;
 	    }
     }
     catch(TError err) { mess_err(nodePath().c_str(),"%s",err.mess.c_str()); }
 }
 
-TMArchivator *ModArch::AMess(const string &iid, const string &idb)
-{
-    return new ModMArch(iid,idb,&owner().messE());
-}
+TMArchivator *ModArch::AMess( const string &iid, const string &idb )	{ return new ModMArch(iid,idb,&owner().messE()); }
 
 
-TVArchivator *ModArch::AVal(const string &iid, const string &idb)
-{
-    return new ModVArch(iid,idb,&owner().valE());
-}
+TVArchivator *ModArch::AVal( const string &iid, const string &idb )	{ return new ModVArch(iid,idb,&owner().valE()); }

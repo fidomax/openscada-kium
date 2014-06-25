@@ -1,8 +1,7 @@
 
 //OpenSCADA system file: tsys.h
 /***************************************************************************
- *   Copyright (C) 2003-2014 by Roman Savochenko                           *
- *   rom_as@oscada.org, rom_as@fromru.com                                  *
+ *   Copyright (C) 2003-2014 by Roman Savochenko, <rom_as@oscada.org>      *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -81,20 +80,6 @@ class TSYS : public TCntrNode
 	//Data
 	enum Code	{ PathEl, HttpURL, Html, JavaSc, SQL, Custom, base64, FormatPrint, oscdID, Bin, Reverse, ShieldSimb };
 	enum IntView	{ Dec, Oct, Hex };
-	enum Errors
-	{
-	    //> DB errors code
-	    DBInit = 1,		//init DB error
-	    DBConn,		//connect to DB is error
-	    DBInernal,		//internal error
-	    DBRequest,		//request to DB is error
-	    DBOpen,		//open DB is error
-	    DBOpenTable,	//open table error
-	    DBClose,		//close DB or table error
-	    DBTableEmpty,	//table is empty
-	    DBRowNoPresent,	//no present of requested row
-	    DBReadOnly		//read only db
-	};
 
 	//Public methods
 	TSYS( int argi, char ** argb, char **env );
@@ -105,7 +90,7 @@ class TSYS : public TCntrNode
 
 	int	stopSignal( )	{ return mStopSignal; }
 
-	//> Programs options
+	// Program options
 	string	id( )		{ return mId.c_str(); }
 	string	name( )		{ return mName; }
 	void setName( const string &vl )	{ mName = vl; modif(); }
@@ -129,17 +114,19 @@ class TSYS : public TCntrNode
 	AutoHD<TSecurity>	security( )	{ return at("Security"); }
 
 	string	workDir( );
-	string	icoDir( )	{ return mIcoDir; }
 	string	modDir( )	{ return mModDir; }
+	string	icoDir( )	{ return mIcoDir; }
+	string	docDir( )	{ return mDocDir; }
 	void	setWorkDir( const string &wdir, bool init = false );
-	void	setIcoDir( const string &idir, bool init = false );
 	void	setModDir( const string &mdir, bool init = false );
+	void	setIcoDir( const string &idir, bool init = false );
+	void	setDocDir( const string &idir, bool init = false );
 
-	//> Config-file functions
+	// Config-file functions
 	string	cfgFile( )	{ return mConfFile; }
 	XMLNode	&cfgRoot( )	{ return rootN; }
 	XMLNode	*cfgNode( const string &path, bool create = false );
-	void	modifCfg( )	{ rootModifCnt++; }
+	void	modifCfg( bool chkPossibleWR = false );
 
 	string	workDB( )	{ return mWorkDB; }
 	string	selDB( )	{ return mSelDB; }
@@ -155,12 +142,11 @@ class TSYS : public TCntrNode
 
 	static void sighandler( int signal );
 
-	//> Short time dimensions
+	// Short time dimensions
 	bool	multCPU( )	{ return mMultCPU; }
 	uint64_t sysClk( )	{ return mSysclc; }
 	void	clkCalc( );
-	uint64_t shrtCnt( )
-	{
+	uint64_t shrtCnt( ) {
 #if defined (__i386__) || defined (__x86_64__)
 	    unsigned int cntl, cnth;
 	    asm volatile("rdtsc; movl %%eax,%0; movl %%edx,%1;":"=r"(cntl),"=r"(cnth)::"%eax","%edx");
@@ -174,33 +160,32 @@ class TSYS : public TCntrNode
 	time_t	sysTm( ) volatile	{ return mSysTm; }	//> System time fast access, from updated cell
 	static int64_t curTime( );	//> Current system time (usec)
 
-	//> Tasks control
+	// Tasks control
 	void taskCreate( const string &path, int priority, void *(*start_routine)(void *), void *arg, int wtm = 5, pthread_attr_t *pAttr = NULL, bool *startSt = NULL );
 	void taskDestroy( const string &path, bool *endrunCntr = NULL, int wtm = 5, bool noSignal = false );
 	double taskUtilizTm( const string &path );
 	static bool taskEndRun( );	// Check for the task endrun by signal SIGUSR1
 
-	//> Sleep task for period grid <per> on ns or to cron time.
+	// Sleep task for period grid <per> on ns or to cron time.
 	static int sysSleep( float tm );			//> System sleep in seconds up to nanoseconds (1e-9)
 	static void taskSleep( int64_t per, time_t cron = 0, int64_t *lag = NULL );
 	static time_t cron( const string &vl, time_t base = 0 );
 
-	//> Wait event with timeout support
+	// Wait event with timeout support
 	static bool eventWait( bool &m_mess_r_stat, bool exempl, const string &loc, time_t time = 0 );
 
-	//> System counters
+	// System counters
 	bool	cntrEmpty( );
 	double	cntrGet( const string &id );
 	void	cntrSet( const string &id, double vl );
 	void	cntrIter( const string &id, double vl );
 
-	//> Convert value to string
+	// Convert value to string
 	static string int2str( int val, IntView view = Dec );
 	static string uint2str( unsigned val, IntView view = Dec );
 	static string ll2str( int64_t val, IntView view = Dec );
 	static string real2str( double val, int prec = 15, char tp = 'g' );
-	static double realRound( double val, int dig = 0, bool toint = false )
-	{
+	static double realRound( double val, int dig = 0, bool toint = false ) {
 	    double rez = floor(val*pow(10,dig)+0.5)/pow(10,dig);
 	    if(toint) return floor(rez+0.5);
 	    return rez;
@@ -209,11 +194,11 @@ class TSYS : public TCntrNode
 	static string time2str( double utm );
 	static string cpct2str( double cnt );
 
-	//> Adress convertors
+	// Adress convertors
 	static string addr2str( void *addr );
 	static void *str2addr( const string &str );
 
-	//> Path and string parse
+	// Path and string parse
 	static string strNoSpace( const string &val );
 	static string strSepParse( const string &str, int level, char sep, int *off = NULL );
 	static string strParse( const string &str, int level, const string &sep, int *off = NULL, bool mergeSepSymb = false );
@@ -224,50 +209,45 @@ class TSYS : public TCntrNode
 	static string strEncode( const string &in, Code tp, const string &symb = " \t\n");
 	static string strDecode( const string &in, Code tp = Custom );
 	static string strMess( const char *fmt, ... );
+	static string strMess( unsigned len, const char *fmt, ... );
 	static string strLabEnum( const string &base );
 
 	static string strCompr( const string &in, int lev = -1 );
 	static string strUncompr( const string &in );
 
-	//> Unaligned read from memory for some ARM and other
-	static inline uint16_t getUnalign16( const void *p )
-	{
+	// Unaligned read from memory for some ARM and other
+	static inline uint16_t getUnalign16( const void *p ) {
 	    struct su16 { uint16_t x; } __attribute__((packed));
 	    const struct su16 *ptr = (const struct su16 *)p;
 	    return ptr->x;
 	}
-	static inline uint32_t getUnalign32( const void *p )
-	{
+	static inline uint32_t getUnalign32( const void *p ) {
 	    struct su32 { uint32_t x; } __attribute__((packed));
 	    const struct su32 *ptr = (const struct su32 *)p;
 	    return ptr->x;
 	}
-	static inline uint64_t getUnalign64( const void *p )
-	{
+	static inline uint64_t getUnalign64( const void *p ) {
 	    struct su64 { uint64_t x; } __attribute__((packed));
 	    const struct su64 *ptr = (const struct su64 *)p;
 	    return ptr->x;
 	}
-	static inline int getUnalignInt( const void *p )
-	{
+	static inline int getUnalignInt( const void *p ) {
 	    struct suInt { int x; } __attribute__((packed));
 	    const struct suInt *ptr = (const struct suInt *)p;
 	    return ptr->x;
 	}
-	static inline float getUnalignFloat( const void *p )
-	{
+	static inline float getUnalignFloat( const void *p ) {
 	    struct sFloat64 { float x; } __attribute__((packed));
 	    const struct sFloat64 *ptr = (const struct sFloat64 *)p;
 	    return ptr->x;
 	}
-	static inline double getUnalignDbl( const void *p )
-	{
+	static inline double getUnalignDbl( const void *p ) {
 	    struct sDbl { double x; } __attribute__((packed));
 	    const struct sDbl *ptr = (const struct sDbl *)p;
 	    return ptr->x;
 	}
 
-	//> Endian convert
+	// Endian convert
 	static uint16_t i16_LE( uint16_t in );
 	static uint32_t i32_LE( uint32_t in );
 	static uint64_t i64_LE( uint64_t in );
@@ -283,10 +263,10 @@ class TSYS : public TCntrNode
 	static double doubleBE( double in );
 	static double doubleBErev( double in );
 
-	//> Reentrant commandline processing
+	// Reentrant commandline processing
 	string getCmdOpt( int &curPos, string *argVal = NULL );
 
-	//>> System control interface functions
+	//  System control interface functions
 	static void ctrListFS( XMLNode *nd, const string &fsBase, const string &fileExt = "" );	//Inline file system browsing
 
 	//Public attributes
@@ -304,7 +284,7 @@ class TSYS : public TCntrNode
 
     private:
 	//Data
-	enum MdfSYSFlds	{ MDF_WorkDir = 0x01, MDF_IcoDir = 0x02, MDF_ModDir = 0x04, MDF_LANG = 0x08 };
+	enum MdfSYSFlds	{ MDF_WorkDir = 0x01, MDF_IcoDir = 0x02, MDF_ModDir = 0x04, MDF_LANG = 0x08, MDF_DocDir = 0x10 };
 
 	class STask
 	{
@@ -352,8 +332,9 @@ class TSYS : public TCntrNode
 	 	mConfFile,	// Config-file name
 		mId,		// Station id
 		mName,		// Station name
+		mModDir,	// Modules directory
 		mIcoDir,	// Icons directory
-		mModDir;	// Modules directory
+		mDocDir;	// Icons directory
 
 	string	mWorkDB, mSelDB;// Work and selected DB
 	bool	mSaveAtExit;	// Save at exit

@@ -1,8 +1,7 @@
 
 //OpenSCADA system module DAQ.OPC_UA file: mod_prt.cpp
 /***************************************************************************
- *   Copyright (C) 2009-2014 by Roman Savochenko                           *
- *   rom_as@oscada.org, rom_as@fromru.com                                  *
+ *   Copyright (C) 2009-2014 by Roman Savochenko, <rom_as@oscada.org>      *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -278,11 +277,7 @@ TCntrNode &OPCEndPoint::operator=( TCntrNode &node )
 
 void OPCEndPoint::postDisable( int flag )
 {
-    try
-    {
-	if(flag) SYS->db().at().dataDel(fullDB(), owner().nodePath()+tbl(), *this, true);
-    }
-    catch(TError err) { mess_err(err.cat.c_str(), "%s", err.mess.c_str()); }
+    if(flag) SYS->db().at().dataDel(fullDB(), owner().nodePath()+tbl(), *this, true);
 }
 
 TProt &OPCEndPoint::owner( )	{ return *(TProt*)nodePrev(); }
@@ -319,7 +314,7 @@ void *OPCEndPoint::Task( void *iep )
 
 void OPCEndPoint::load_( )
 {
-    if(!SYS->chkSelDB(DB())) return;
+    if(!SYS->chkSelDB(DB())) throw TError();
     cfgViewAll(true);
     SYS->db().at().dataGet(fullDB(), owner().nodePath()+tbl(), *this);
 

@@ -1,8 +1,7 @@
 
 //OpenSCADA system file: ttransports.h
 /***************************************************************************
- *   Copyright (C) 2003-2014 by Roman Savochenko                           *
- *   rom_as@oscada.org, rom_as@fromru.com                                  *
+ *   Copyright (C) 2003-2014 by Roman Savochenko, <rom_as@oscada.org>      *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -151,7 +150,7 @@ class TTransportOut : public TCntrNode, public TConfig
 
 	void setDB( const string &vl )			{ mDB = vl; modifG(); }
 
-	virtual void start( )			{ };
+	virtual void start( int time = 0 )	{ };
 	virtual void stop( )			{ };
 
 	virtual int messIO( const char *obuf, int len_ob, char *ibuf = NULL, int len_ib = 0, int time = 0, bool noRes = false )

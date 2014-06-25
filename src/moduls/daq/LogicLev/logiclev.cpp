@@ -1,8 +1,7 @@
 
 //OpenSCADA system module DAQ.LogicLev file: logiclev.cpp
 /***************************************************************************
- *   Copyright (C) 2006-2014 by Roman Savochenko                           *
- *   rom_as@fromru.com                                                     *
+ *   Copyright (C) 2006-2014 by Roman Savochenko, <rom_as@oscada.org>      *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -116,7 +115,7 @@ void TTpContr::postEnable( int flag )
     int t_prm = tpParmAdd("std", "PRM_BD", _("Logical"), true);
     tpPrmAt(t_prm).fldAdd(new TFld("PRM",_("Parameter template"),TFld::String,TCfg::NoVal,"100",""));
     //>>> Logical level parameter IO BD structure
-    el_prm_io.fldAdd(new TFld("PRM_ID",_("Parameter ID"),TFld::String,TCfg::Key,OBJ_ID_SZ));
+    el_prm_io.fldAdd(new TFld("PRM_ID",_("Parameter ID"),TFld::String,TCfg::Key,i2s(atoi(OBJ_ID_SZ)*6).c_str()));
     el_prm_io.fldAdd(new TFld("ID",_("ID"),TFld::String,TCfg::Key,OBJ_ID_SZ));
     el_prm_io.fldAdd(new TFld("VALUE",_("Value"),TFld::String,TCfg::TransltText,"200"));
 
@@ -182,9 +181,9 @@ TParamContr *TMdContr::ParamAttach( const string &name, int type )
 
 void TMdContr::load_( )
 {
-    if(!SYS->chkSelDB(DB())) return;
+    if(!SYS->chkSelDB(DB())) throw TError();
 
-    TController::load_( );
+    TController::load_();
 
     //> Check for get old period method value
     if(mPerOld) { cfg("SCHEDULE").setS(TSYS::real2str(mPerOld/1e3)); mPerOld = 0; }
@@ -349,17 +348,12 @@ void TMdPrm::postDisable( int flag )
 {
     TParamContr::postDisable(flag);
 
-    try
-    {
-	if(flag)
-	{
-	    string io_bd = owner().DB()+"."+type().DB(&owner())+"_io";
-	    TConfig cfg(&mod->prmIOE());
-	    cfg.cfg("PRM_ID").setS(id(), true);
-	    SYS->db().at().dataDel(io_bd, owner().owner().nodePath()+type().DB(&owner())+"_io", cfg);
-	}
+    if(flag) {
+	string io_bd = owner().DB()+"."+type().DB(&owner())+"_io";
+	TConfig cfg(&mod->prmIOE());
+	cfg.cfg("PRM_ID").setS(ownerPath(true), true);
+	SYS->db().at().dataDel(io_bd, owner().owner().nodePath()+type().DB(&owner())+"_io", cfg);
     }
-    catch(TError err) { mess_warning(err.cat.c_str(),"%s",err.mess.c_str()); }
 }
 
 void TMdPrm::setType( const string &tpId )
@@ -522,13 +516,13 @@ void TMdPrm::loadIO( bool force )
 	if(owner().startStat() && !force) { modif(true); return; }	//Load/reload IO context only allow for stoped controlers for prevent throws
 
 	TConfig cfg(&mod->prmIOE());
-	cfg.cfg("PRM_ID").setS(id());
+	cfg.cfg("PRM_ID").setS(ownerPath(true));
 	string io_bd = owner().DB()+"."+type().DB(&owner())+"_io";
 
 	for(int i_io = 0; i_io < tmpl->val.ioSize(); i_io++)
 	{
 	    cfg.cfg("ID").setS(tmpl->val.func()->io(i_io)->id());
-	    if(!SYS->db().at().dataGet(io_bd,owner().owner().nodePath()+type().DB(&owner())+"_io",cfg))
+	    if(!SYS->db().at().dataGet(io_bd,owner().owner().nodePath()+type().DB(&owner())+"_io",cfg,false,true))
 		continue;
 	    if(tmpl->val.func()->io(i_io)->flg()&TPrmTempl::CfgLink)
 		lnk(lnkId(i_io)).prm_attr = cfg.cfg("VALUE").getS();
@@ -551,7 +545,7 @@ void TMdPrm::saveIO()
     if(isStd() && tmpl->val.func())
     {
 	TConfig cfg(&mod->prmIOE());
-	cfg.cfg("PRM_ID").setS(id());
+	cfg.cfg("PRM_ID").setS(ownerPath(true));
 	string io_bd = owner().DB()+"."+type().DB(&owner())+"_io";
 
 	for(int i_io = 0; i_io < tmpl->val.func()->ioSize(); i_io++)

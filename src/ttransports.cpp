@@ -1,8 +1,7 @@
 
 //OpenSCADA system file: ttransports.cpp
 /***************************************************************************
- *   Copyright (C) 2003-2014 by Roman Savochenko                           *
- *   rom_as@oscada.org, rom_as@fromru.com                                  *
+ *   Copyright (C) 2003-2014 by Roman Savochenko, <rom_as@oscada.org>      *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -215,11 +214,10 @@ void TTransportS::load_( )
 
 void TTransportS::save_( )
 {
-    //> Save external transports
+    //Save external transports
     ResAlloc res(extHostRes, false);
     TConfig c_el(&el_ext);
-    for(unsigned i_h = 0; i_h < extHostLs.size(); i_h++)
-    {
+    for(unsigned i_h = 0; i_h < extHostLs.size(); i_h++) {
 	c_el.cfg("OP_USER").setS(extHostLs[i_h].user_open);
 	c_el.cfg("ID").setS(extHostLs[i_h].id);
 	c_el.cfg("NAME").setS(extHostLs[i_h].name);
@@ -229,12 +227,12 @@ void TTransportS::save_( )
 	c_el.cfg("PASS").setS(extHostLs[i_h].pass);
 	SYS->db().at().dataSet(extHostsDB(),nodePath()+"ExtTansp",c_el);
     }
-    //> Clear external transports
+    //Clear external transports
     c_el.cfgViewAll(false);
     for(int fld_cnt = 0; SYS->db().at().dataSeek(extHostsDB(),nodePath()+"ExtTansp",fld_cnt++,c_el,true); )
 	if(!extHostGet(c_el.cfg("OP_USER").getS(),c_el.cfg("ID").getS()).id.size())
 	{
-	    SYS->db().at().dataDel(extHostsDB(),nodePath()+"ExtTansp",c_el,true,true);
+	    SYS->db().at().dataDel(extHostsDB(),nodePath()+"ExtTansp",c_el,true,true,true);
 	    fld_cnt--;
 	}
 }
@@ -441,18 +439,17 @@ int TTransportS::cntrIfCmd( XMLNode &node, const string &senderPref, const strin
     if(station.empty()) station = SYS->id();
     else node.setAttr("path",path.substr(path_off));
 
-    if(station == SYS->id())
-    {
+    if(station == SYS->id()) {
 	node.setAttr("user",(user.empty()?"root":user));
 	SYS->cntrCmd(&node);
 	node.setAttr("path",path);
 	return atoi(node.attr("rez").c_str());
     }
 
-    //> Connect to transport
+    //Connect to transport
     TTransportS::ExtHost host = extHostGet((user.empty()?"*":user),station);
     AutoHD<TTransportOut> tr = extHost(host,senderPref);
-    if(!tr.at().startStat()) tr.at().start();
+    if(!tr.at().startStat()) tr.at().start(s2i(node.attr("conTm")));
 
     node.setAttr("rqDir","0")->setAttr("rqUser",host.user)->setAttr("rqPass",host.pass);
     tr.at().messProtIO(node,"SelfSystem");
@@ -481,13 +478,11 @@ void TTransportS::cntrCmdProc( XMLNode *opt )
 		"sel_id",TSYS::strMess("%d;%d;%d",ExtHost::User,ExtHost::System,ExtHost::UserSystem).c_str(),
 		"sel_list",_("User;System;User and System"));
 	}
-	ctrMkNode("fld",opt,-1,"/help/g_help",_("Options help"),R_R___,"root",STR_ID,3,"tp","str","cols","90","rows","10");
 	return;
     }
     //> Process command to page
     string a_path = opt->attr("path");
-    if(a_path == "/help/g_help" && ctrChkNode(opt,"get",R_R___,"root",STR_ID))	opt->setText(optDescr());
-    else if(a_path == "/sub/transps" && ctrChkNode(opt))
+    if(a_path == "/sub/transps" && ctrChkNode(opt))
     {
 	vector<string>  list;
 	modList(list);
@@ -646,11 +641,7 @@ void TTransportIn::preEnable(int flag)
 
 void TTransportIn::postDisable(int flag)
 {
-    try
-    {
-        if(flag) SYS->db().at().dataDel(fullDB(),SYS->transport().at().nodePath()+tbl(),*this,true);
-    }
-    catch(TError err) { mess_err(err.cat.c_str(),"%s",err.mess.c_str()); }
+    if(flag) SYS->db().at().dataDel(fullDB(),SYS->transport().at().nodePath()+tbl(),*this,true);
 }
 
 TCntrNode &TTransportIn::operator=( TCntrNode &node )
@@ -683,7 +674,7 @@ string TTransportIn::getStatus( )	{ return startStat() ? _("Started. ") : _("Sto
 
 void TTransportIn::load_( )
 {
-    if(!SYS->chkSelDB(DB())) return;
+    if(!SYS->chkSelDB(DB())) throw TError();
     SYS->db().at().dataGet(fullDB(), SYS->transport().at().nodePath()+tbl(), *this);
 }
 
@@ -886,11 +877,7 @@ string TTransportOut::tbl( )		{ return owner().owner().subId()+"_out"; }
 
 void TTransportOut::postDisable( int flag )
 {
-    try
-    {
-	if(flag) SYS->db().at().dataDel(fullDB(),SYS->transport().at().nodePath()+tbl(),*this,true);
-    }
-    catch(TError err) { mess_err(err.cat.c_str(),"%s",err.mess.c_str()); }
+    if(flag) SYS->db().at().dataDel(fullDB(),SYS->transport().at().nodePath()+tbl(),*this,true);
 }
 
 bool TTransportOut::cfgChange( TCfg &cfg )
@@ -907,7 +894,7 @@ string TTransportOut::getStatus( )
 
 void TTransportOut::load_( )
 {
-    if(!SYS->chkSelDB(DB())) return;
+    if(!SYS->chkSelDB(DB())) throw TError();
     SYS->db().at().dataGet(fullDB(), SYS->transport().at().nodePath()+tbl(), *this);
 }
 
@@ -938,12 +925,12 @@ TVariant TTransportOut::objFuncCall( const string &iid, vector<TVariant> &prms, 
     {
 	string rez;
 	char buf[STR_BUF_LEN];
-	try
-	{
+	try {
 	    if(!startStat()) start();
 	    int resp_len = messIO(prms[0].getS().data(), prms[0].getS().size(), buf, sizeof(buf), (prms.size()>=2) ? (int)(1e3*prms[1].getR()) : 0);
 	    rez.assign(buf,resp_len);
-	}catch(TError) { return ""; }
+	}
+	catch(TError) { return ""; }
 
 	return rez;
     }

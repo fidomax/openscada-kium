@@ -1,8 +1,7 @@
 
 //OpenSCADA system module Transport.Serial file: mod_serial.h
 /***************************************************************************
- *   Copyright (C) 2009-2010 by Roman Savochenko                           *
- *   rom_as@oscada.org, rom_as@fromru.com                                  *
+ *   Copyright (C) 2009-2014 by Roman Savochenko, <rom_as@oscada.org>      *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -157,7 +156,7 @@ class TTrOut: public TTransportOut
 	void	setMdmExit( const string &vl )		{ mMdmExit = vl; modif(); }
 	void	setMdmHangUpResp( const string &vl )	{ mMdmHangUpResp = vl; modif(); }
 
-	void start( );
+	void start( int time = 0 );
 	void stop( );
 
 	void check( );

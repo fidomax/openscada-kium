@@ -1,8 +1,7 @@
 
 //OpenSCADA system module UI.Vision file: vis_run.cpp
 /***************************************************************************
- *   Copyright (C) 2007-2014 by Roman Savochenko                           *
- *   rom_as@diyaorg.dp.ua                                                  *
+ *   Copyright (C) 2007-2014 by Roman Savochenko, <rom_as@oscada.org>      *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -63,17 +62,17 @@ VisRun::VisRun( const string &iprj_it, const string &open_user, const string &us
 {
     QImage ico_t;
 
-    setAttribute(Qt::WA_DeleteOnClose,true);
-    mod->regWin( this );
+    setAttribute(Qt::WA_DeleteOnClose, true);
+    mod->regWin(this);
 
     setWindowTitle(_("Vision runtime"));
     setWindowIcon(mod->icon());
 
-    setProperty("QTStarterToolDis",true);
+    setProperty("QTStarterToolDis", true);
 
-    //> Create actions
-    //>> Generic actions
-    //>>> Print
+    //Create actions
+    // Generic actions
+    //  Print
     if(!ico_t.load(TUIS::icoGet("print",NULL,true).c_str())) ico_t.load(":/images/print.png");
     QMenu *menuPrint = new QMenu(_("&Print"), this);
     menuPrint->setIcon(QPixmap::fromImage(ico_t));
@@ -100,7 +99,7 @@ VisRun::VisRun( const string &iprj_it, const string &open_user, const string &us
     actPrintDoc->setStatusTip(_("Press for printing of the selected document."));
     connect(actPrintDoc, SIGNAL(triggered()), this, SLOT(printDoc()));
     menuPrint->addAction(actPrintDoc);
-    //>>> Export
+    //  Export
     if(!ico_t.load(TUIS::icoGet("export",NULL,true).c_str())) ico_t.load(":/images/export.png");
     QMenu *menuExport = new QMenu(_("&Export"), this);
     menuExport->setIcon(QPixmap::fromImage(ico_t));
@@ -126,7 +125,7 @@ VisRun::VisRun( const string &iprj_it, const string &open_user, const string &us
     actExpDoc->setStatusTip(_("Press for exporting of the selected document."));
     connect(actExpDoc, SIGNAL(triggered()), this, SLOT(exportDoc()));
     menuExport->addAction(actExpDoc);
-    //>>> Close
+    //  Close
     if(!ico_t.load(TUIS::icoGet("close",NULL,true).c_str())) ico_t.load(":/images/close.png");
     QAction *actClose = new QAction(QPixmap::fromImage(ico_t),_("&Close"),this);
     actClose->setShortcut(Qt::CTRL+Qt::Key_W);
@@ -134,7 +133,7 @@ VisRun::VisRun( const string &iprj_it, const string &open_user, const string &us
     actClose->setWhatsThis(_("The button for closing Vision runtime window"));
     actClose->setStatusTip(_("Press to close of the current Vision runtime window."));
     connect(actClose, SIGNAL(triggered()), this, SLOT(close()));
-    //>>> Quit
+    //  Quit
     if(!ico_t.load(TUIS::icoGet("exit",NULL,true).c_str())) ico_t.load(":/images/exit.png");
     QAction *actQuit = new QAction(QPixmap::fromImage(ico_t),_("&Quit"),this);
     actQuit->setShortcut(Qt::CTRL+Qt::Key_Q);
@@ -142,8 +141,8 @@ VisRun::VisRun( const string &iprj_it, const string &open_user, const string &us
     actQuit->setWhatsThis(_("The button for full quit from OpenSCADA"));
     actQuit->setStatusTip(_("Press for full quit from OpenSCADA system."));
     connect(actQuit, SIGNAL(triggered()), this, SLOT(quitSt()));
-    //>> View actions
-    //>>> Fullscreen
+    // View actions
+    //  Fullscreen
     actFullScr = new QAction(_("Full screen"),this);
     actFullScr->setCheckable(true);
     actFullScr->setToolTip(_("Full screen toggle"));
@@ -151,38 +150,52 @@ VisRun::VisRun( const string &iprj_it, const string &open_user, const string &us
     actFullScr->setStatusTip(_("Press for toggle full screen."));
     connect(actFullScr, SIGNAL(toggled(bool)), this, SLOT(fullScreen(bool)));
 
-    //>> Help actions
-    //>>> About "System info"
+    // Help actions
+    //  About "System info"
     if(!ico_t.load(TUIS::icoGet("help",NULL,true).c_str())) ico_t.load(":/images/help.png");
     QAction *actAbout = new QAction(QPixmap::fromImage(ico_t),_("&About"),this);
-    actAbout->setShortcut(Qt::Key_F1);
     actAbout->setToolTip(_("Program and OpenSCADA information"));
     actAbout->setWhatsThis(_("The button for display the program and OpenSCADA information"));
     actAbout->setStatusTip(_("Press for display the program and OpenSCADA information."));
     connect(actAbout, SIGNAL(triggered()), this, SLOT(about()));
-    //>>> About Qt
+    //  About Qt
     QAction *actQtAbout = new QAction(_("About &Qt"),this);
     actQtAbout->setToolTip(_("Qt information"));
     actQtAbout->setWhatsThis(_("The button for getting the using QT information"));
     actQtAbout->setStatusTip(_("Press to get the using QT information."));
     connect(actQtAbout, SIGNAL(triggered()), this, SLOT(aboutQt()));
-    //>>> What is
-    //if(!ico_t.load(TUIS::icoGet("contexthelp",NULL,true).c_str())) ico_t.load(":/images/contexthelp.png");
-    //QAction *actWhatIs = new QAction(QPixmap::fromImage(ico_t),_("What's &This"),this);
-    //actWhatIs->setToolTip(_("The button for requestion about GUI elements"));
-    //actWhatIs->setWhatsThis(_("Get request about user interface elements"));
-    //actWhatIs->setStatusTip(_("Press for requesting about user interface elements."));
-    //connect(actWhatIs, SIGNAL(triggered()), this, SLOT(enterWhatsThis()));
+    //  Vision manual
+    if(!ico_t.load(TUIS::icoGet("manual",NULL,true).c_str())) ico_t.load(":/images/manual.png");
+    QAction *actManual = new QAction(QPixmap::fromImage(ico_t),QString(_("%1 manual")).arg(mod->modId().c_str()),this);
+    actManual->setProperty("doc", "Modules/UI.Vision|Vision");
+    actManual->setShortcut(Qt::Key_F1);			//Move and use for the project manual
+    actManual->setWhatsThis(QString(_("The button for getting the using %1 manual")).arg(mod->modId().c_str()));
+    actManual->setStatusTip(QString(_("Press to get the using %1 manual.")).arg(mod->modId().c_str()));
+    connect(actManual, SIGNAL(triggered()), this, SLOT(enterManual()));
+    //  OpenSCADA manual index
+    QAction *actManualSYS = new QAction(QPixmap::fromImage(ico_t),QString(_("%1 manual")).arg(PACKAGE_STRING),this);
+    actManualSYS->setProperty("doc", "index|/");
+    actManualSYS->setWhatsThis(QString(_("The button for getting the using %1 manual")).arg(PACKAGE_STRING));
+    actManualSYS->setStatusTip(QString(_("Press to get the using %1 manual.")).arg(PACKAGE_STRING));
+    connect(actManualSYS, SIGNAL(triggered()), this, SLOT(enterManual()));
+    //  What is
+    if(!ico_t.load(TUIS::icoGet("contexthelp",NULL,true).c_str())) ico_t.load(":/images/contexthelp.png");
+    QAction *actWhatIs = new QAction(QPixmap::fromImage(ico_t),_("What's &This"),this);
+    actWhatIs->setShortcut(Qt::SHIFT+Qt::Key_F1);
+    actWhatIs->setToolTip(_("The button for question about GUI elements"));
+    actWhatIs->setWhatsThis(_("Get respond about user interface elements"));
+    actWhatIs->setStatusTip(_("Press to respond about user interface elements."));
+    connect(actWhatIs, SIGNAL(triggered()), this, SLOT(enterWhatsThis()));
 
-    //>> Alarms actions
-    //>>> Alarm level display button and full alarms quittance
+    // Alarms actions
+    //  Alarm level display button and full alarms quittance
     if(!ico_t.load(TUIS::icoGet("alarmLev",NULL,true).c_str())) ico_t.load(":/images/alarmLev.png");
     actAlrmLev = new QAction( QPixmap::fromImage(ico_t), _("Alarm level"), this );
     actAlrmLev->setObjectName("alarmLev");
     actAlrmLev->setToolTip(_("Alarm level"));
     actAlrmLev->setWhatsThis(_("The button for all alarms quittance"));
     actAlrmLev->setStatusTip(_("Press for all alarms quittance."));
-    //>>> Alarm by Light
+    //  Alarm by Light
     if(!ico_t.load(TUIS::icoGet("alarmLight",NULL,true).c_str())) ico_t.load(":/images/alarmLight.png");
     actAlrmLight = new QAction( QPixmap::fromImage(ico_t), _("Blink alarm"), this );
     actAlrmLight->setObjectName("alarmLight");
@@ -190,7 +203,7 @@ VisRun::VisRun( const string &iprj_it, const string &open_user, const string &us
     actAlrmLight->setWhatsThis(_("The button for all blink alarms quittance"));
     actAlrmLight->setStatusTip(_("Press for all blink alarms quittance."));
     actAlrmLight->setVisible(false);
-    //>>> Alarm by mono sound (PC speaker)
+    //  Alarm by mono sound (PC speaker)
     if(!ico_t.load(TUIS::icoGet("alarmAlarm",NULL,true).c_str())) ico_t.load(":/images/alarmAlarm.png");
     actAlrmAlarm = new QAction( QPixmap::fromImage(ico_t), _("Speaker alarm"), this );
     actAlrmAlarm->setObjectName("alarmAlarm");
@@ -198,7 +211,7 @@ VisRun::VisRun( const string &iprj_it, const string &open_user, const string &us
     actAlrmAlarm->setWhatsThis(_("The button for all PC speaker alarms quittance"));
     actAlrmAlarm->setStatusTip(_("Press for all PC speaker alarms quittance."));
     actAlrmAlarm->setVisible(false);
-    //>>> Alarm by sound or synthesis of speech
+    //  Alarm by sound or synthesis of speech
     if(!ico_t.load(TUIS::icoGet("alarmSound",NULL,true).c_str())) ico_t.load(":/images/alarmSound.png");
     actAlrmSound = new QAction( QPixmap::fromImage(ico_t), _("Sound/speech alarm"), this );
     actAlrmSound->setObjectName("alarmSound");
@@ -207,7 +220,7 @@ VisRun::VisRun( const string &iprj_it, const string &open_user, const string &us
     actAlrmSound->setStatusTip(_("Press for all sound or speech alarms quittance."));
     actAlrmSound->setVisible(false);
 
-    //> Create menu
+    //Create menu
     mn_file = menuBar()->addMenu(_("&File"));
     mn_file->addAction(menuPrint->menuAction());
     mn_file->addAction(menuExport->menuAction());
@@ -224,11 +237,13 @@ VisRun::VisRun( const string &iprj_it, const string &open_user, const string &us
     mn_help = menuBar()->addMenu(_("&Help"));
     mn_help->addAction(actAbout);
     mn_help->addAction(actQtAbout);
+    mn_help->addAction(actManual);
+    mn_help->addAction(actManualSYS);
     mn_help->addSeparator();
-    //mn_help->addAction(actWhatIs);
+    mn_help->addAction(actWhatIs);
 
-    //> Init tool bars
-    //>> Alarms tools bar
+    //Init tool bars
+    // Alarms tools bar
     toolBarStatus = new QToolBar(_("Alarms (status)"),this);
     connect( toolBarStatus, SIGNAL(actionTriggered(QAction*)), this, SLOT(alarmAct(QAction*)) );
     toolBarStatus->setIconSize(QSize(16,16));
@@ -240,7 +255,7 @@ VisRun::VisRun( const string &iprj_it, const string &open_user, const string &us
     toolBarStatus->addAction(actAlrmAlarm);
     toolBarStatus->addAction(actAlrmSound);
 
-    //> Init status bar
+    //Init status bar
     mWTime = new QLabel( this );
     mWTime->setVisible(false);
     mWTime->setAlignment(Qt::AlignCenter);
@@ -266,19 +281,19 @@ VisRun::VisRun( const string &iprj_it, const string &open_user, const string &us
     statusBar()->insertPermanentWidget(0,toolBarStatus);
     statusBar()->setVisible(mod->runPrjsSt());
 
-    //> Init scroller
+    //Init scroller
     QScrollArea *scrl = new QScrollArea;
     scrl->setFocusPolicy(Qt::NoFocus);
     scrl->setAlignment(Qt::AlignCenter);
     setCentralWidget(scrl);
 
-    //> Create timers
-    //>> End run timer
+    //Create timers
+    // End run timer
     endRunTimer   = new QTimer( this );
     endRunTimer->setSingleShot(false);
     connect(endRunTimer, SIGNAL(timeout()), this, SLOT(endRunChk()));
     endRunTimer->start(STD_WAIT_DELAY);
-    //>> Update timer
+    // Update timer
     updateTimer = new QTimer( this );
     updateTimer->setSingleShot(false);
     connect(updateTimer, SIGNAL(timeout()), this, SLOT(updatePage()));
@@ -289,7 +304,7 @@ VisRun::VisRun( const string &iprj_it, const string &open_user, const string &us
 
     resize(600, 400);
 
-    //> Init session
+    //Init session
     initSess(prj_it, crSessForce);
 
     //mWStat->setText(host.st_nm.c_str());
@@ -987,21 +1002,19 @@ void VisRun::styleChanged( )
     fullUpdatePgs();
 }
 
-void VisRun::aboutQt()
-{
-    QMessageBox::aboutQt( this, mod->modInfo("Name").c_str() );
-}
+void VisRun::aboutQt( )	{ QMessageBox::aboutQt(this, mod->modInfo("Name").c_str()); }
 
-void VisRun::fullScreen( bool vl )
-{
-    if(vl) setWindowState(Qt::WindowFullScreen);
-    else setWindowState(Qt::WindowNoState);
-}
+void VisRun::fullScreen( bool vl )	{ setWindowState(vl?Qt::WindowFullScreen:Qt::WindowNoState); }
 
-/*void VisRun::enterWhatsThis()
+void VisRun::enterWhatsThis( )	{ QWhatsThis::enterWhatsThisMode(); }
+
+void VisRun::enterManual( )
 {
-    QWhatsThis::enterWhatsThisMode();
-}*/
+    string findDoc = TUIS::docGet(sender()->property("doc").toString().toStdString(), NULL, TUIS::GetExecCommand);
+    if(findDoc.size())	system(findDoc.c_str());
+    else QMessageBox::information(this, _("Manual"),
+	QString(_("No the manual '%1' found offline or online!")).arg(sender()->property("doc").toString()));
+}
 
 void VisRun::alarmAct( QAction *alrm )
 {

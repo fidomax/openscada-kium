@@ -1,8 +1,7 @@
 
 //OpenSCADA system file: tcontroller.cpp
 /***************************************************************************
- *   Copyright (C) 2003-2014 by Roman Savochenko                           *
- *   rom_as@oscada.org, rom_as@fromru.com                                  *
+ *   Copyright (C) 2003-2014 by Roman Savochenko, <rom_as@oscada.org>      *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -89,25 +88,19 @@ void TController::preDisable(int flag)
     if(enableStat())	disable( );
 }
 
-void TController::postDisable(int flag)
+void TController::postDisable( int flag )
 {
-    try
-    {
-	if( flag )
-	{
-	    //Delete DB record
-	    SYS->db().at().dataDel(fullDB(),owner().nodePath()+"DAQ",*this,true);
+    if(flag) {
+	//Delete DB record
+	SYS->db().at().dataDel(fullDB(),owner().nodePath()+"DAQ",*this,true);
 
-	    //Delete parameter's tables
-	    for(unsigned i_tp = 0; i_tp < owner().tpPrmSize(); i_tp++)
-	    {
-		string tbl = DB()+"."+owner().tpPrmAt(i_tp).DB(this);
-		SYS->db().at().open(tbl);
-		SYS->db().at().close(tbl,true);
-	    }
+	//Delete parameter's tables
+	for(unsigned i_tp = 0; i_tp < owner().tpPrmSize(); i_tp++) {
+	    string tbl = DB()+"."+owner().tpPrmAt(i_tp).DB(this);
+	    SYS->db().at().open(tbl);
+	    SYS->db().at().close(tbl,true);
 	}
     }
-    catch(TError err) { mess_err(err.cat.c_str(),"%s",err.mess.c_str()); }
 }
 
 TTipDAQ &TController::owner( )	{ return *(TTipDAQ*)nodePrev(); }
@@ -155,7 +148,7 @@ string TController::getStatus( )
 
 void TController::load_( )
 {
-    if(!SYS->chkSelDB(DB())) return;
+    if(!SYS->chkSelDB(DB())) throw TError();
 
     mess_info(nodePath().c_str(),_("Load controller's configurations!"));
 
@@ -209,8 +202,7 @@ void TController::stop( )
 
 void TController::enable( )
 {
-    if(!en_st)
-    {
+    if(!en_st) {
 	mess_info(nodePath().c_str(),_("Enable controller!"));
 
 	//Enable for children
@@ -226,8 +218,7 @@ void TController::enable( )
     for(unsigned i_prm = 0; i_prm < prm_list.size(); i_prm++)
 	if(at(prm_list[i_prm]).at().toEnable())
 	    try{ at(prm_list[i_prm]).at().enable(); }
-	    catch(TError err)
-	    {
+	    catch(TError err) {
 		mess_warning(err.cat.c_str(),"%s",err.mess.c_str());
 		mess_warning(nodePath().c_str(),_("Enable parameter '%s' error."),prm_list[i_prm].c_str());
 		enErr = true;
@@ -555,7 +546,13 @@ void TController::cntrCmdProc( XMLNode *opt )
 	{
 	    list(c_list);
 	    for(unsigned i_a = 0; i_a < c_list.size(); i_a++)
-		opt->childAdd("el")->setAttr("id",c_list[i_a])->setText(at(c_list[i_a]).at().name());
+	    {
+		XMLNode *cN = opt->childAdd("el")->setAttr("id",c_list[i_a])->setText(at(c_list[i_a]).at().name());
+		if(!s2i(opt->attr("recurs"))) continue;
+		cN->setName(opt->name())->setAttr("path",TSYS::strEncode(opt->attr("path"),TSYS::PathEl))->setAttr("recurs","1");
+		at(c_list[i_a]).at().cntrCmd(cN);
+		cN->setName("el")->setAttr("path","")->setAttr("rez","")->setAttr("recurs","")->setText("");
+	    }
 	}
 	if(ctrChkNode(opt,"add",RWRWR_,"root",SDAQ_ID,SEC_WR))
 	{

@@ -1,3 +1,125 @@
+2014-06-20 Roman
+- DB.FireBird: Using integer type expand to INT64. Managed types expand to:
+    blr_varying, blr_varying2, blr_text, blr_text2, blr_blob, blr_short, blr_long, blr_int64, blr_float, blr_double and blr_d_float.
+- DB.MySQL: Using integer type expand to "bigint".
+- DB.PostgreSQL: Using integer type expand to "bigint". Managed types expand to:
+    text. character varyin, character(%d), character varying(%d), smallint, integer, bigint, real, double precision, timestamp with time zone.
+
+
+2014-06-19 Roman
+- SYS: Remove using "relative" into openscada.spec by the miss into some Linux distributions, like CentOS.
+    "/help/*" conrol interface's pages removed everywhere.
+
+
+2014-06-17 Roman
+- SYS: Build sequence changed to Included modules, Core, Shared object modules for allow next Shared object modules
+    link to core library, mostly for build adapting to MS Windows DLL.
+
+
+2014-06-14 Roman
+- DB.LibsDB.vcaBase: To widget Main.anShow "No data" name display is added for EVAL.
+- DOC: {en,ru}/Modules/DB.* document files renamed to {en,ru}/Modules/BD.* for sync to the subsystem name
+    and allow access from the configurators.
+- SYS: Link to the system manual (AboutOpenSCADA) is added, for call from configurators. The tab "Help" is removed.
+- DAQ: Link to the subsystem document is added, for call from configurators.
+- Module/*: Link to the module document is added, for call from configurators. Tab "Help" renamed to "Module".
+- Transport.*: To output transport's function "start()" argument time is added, which no zero value controls connection timeout.
+- Transport.Sockets: Default timeouts of output transport set return to "5:1".
+- Protocol.SelfSystem: Argument "conTm" to output protocol's part is added.
+- TUIS: Function docGet() expanded by options GetContent (0), GetFilePath (1) and GetExecCommand (2).
+- DAQ.DAQGate: Adapted for quick start at no remote host achives.
+- Protocol.HTTP: Output protocol expanded by option "onlyHeader" for fast online documents check.
+- UI.{QTStarter,QTCfg,Vision}: The documents call made unified and online documents check/open implement finish.
+- UI.QTStarter: Logo to page is added. ToolTips and WhatsThis is added.
+- UI.QTCfg: Selected pages manual call is added, for now: root, DAQ, modules.
+    Use ToolTip for short (up to 150) helps and WhatsThis for other.
+    Set mouse cursor to Qt::WaitCursor at any requests to OpenSCADA control interface.
+- UI.VCAEngine: geomZ for widgets allows to negative.
+- UI.Vision: geomZ manage changed to changing only for single widget and rip from real work position.
+    Mostly for prevent group widget's geomZ change and collisions to no changed widgets position.
+    Need for observing to possible new problems into geomZ!
+
+
+2014-06-09 Roman
+- DB.LibsDB.OscadaLibs: Pass input direct processing to analog inputs templates is added.
+- !!:SYS: Created doc access mechanism from GUI.
+    OpenSCADA's and related project's documents place to "share/openscada/docs" and to the project "docs".
+    EMails rom_as@fromru.com, rom_as@diyaorg.dp.ua and rom_as@oscada.org.ua everywhere replaced by rom_as@oscada.org.
+- UI: TUIS::docGet() function is added for documents place allocate.
+- UI.QTStarter: Help menu items "&About", "About &Qt", "QtStarter manual", "OpenSCADA manual", "What's &This".
+- UI.{QTCfg,Vision}: Help menu items "{Module} manual" and "OpenSCADA manual".
+
+
+2014-06-05 Roman
+- !!!:SYS:*.db: All SQLite DB files moved to SQL text format (*.sql) for best version control into subversion.
+- FIX:DAQ.MMS: EVAL set for boolean is fixed.
+- UI.Vision: Check and warning about no apply changes into item's configure dialogs is added.
+    Some code clean up.
+
+
+2014-06-04 Roman
+- DAQ.DAQGate: Reusing mirrored parameters with empty the remoted parameter's address (old version cache) is added.
+- FIX:DAQ.MMS: Attributes ID preparing some expanded. Hide selection variables field at enabled state.
+    Readed and writed varibles error clean up for allow next requests.
+
+
+2014-06-03 Roman
+- !!!!:SYS: Access to storage problems notify is added.
+    Complex tests for problems notify for storages: SQLite, MySQL, PostgreSQL, FireBird, DBF, Cfg.
+	The tests results: http://wiki.oscada.org/Works/Tests/DB.
+    To functions TCntrNode::load() and TCntrNode::save() argument "string *errs = NULL" is added for place
+	all loading and saving errors into the objects.
+    To global node's services "<load path="obj"/>" and "<save path="obj"/>" added errors obtain and notifications.
+    Zero initial error object "TError( ) : cod(0)" is added.
+    Enum TSYS::Errors (mostly DB Errors) is removed as deprecated.
+    TSYS::modifCfg() expanded for WR access check.
+    Function TSYS::strMess() variant is added for length control and wrap by set "...".
+    OpenSCADA core library version set to 3.1.0.
+- !!!!:FIX:DB: Expanded functions TBDS::dataGet(), TBDS::dataSet() and TBDS::dataDel() by argument "noEx = false"
+	and exceptions generate at access to storage errors.
+    Prevent exceptions at the DB object disable, mostly after connection wrong for the network DB.
+- !:DB.DBF: Periodic (10 seconds) sync changes from memory to file is added. Inline DB folder selection for DB object is added.
+    RO access and errors is added. Some code clean up.
+- !:FIX:DB.FireBird: Connection timeout disabled by not real used and wrong into the DB.
+    Internal API data clean up is added at wrong connection.
+    fieldSet() and fieldDel() mostly rewrote for typical.
+- !:DB.MySQL: Adapted for work into RO mode. CR_CONNECTION_ERROR process at connection lost is added.
+     fieldDel() mostly rewrote for RO process.
+- !:FIX:DB:PostgreSQL: Transaction processing rewrote for typical.
+    Connection lost processing move to after the request.
+    Adapted for work into RO mode.
+    fieldDel() mostly rewrote for RO process.
+- !:DB.SQLite: Adapted for work into RO mode. Adapted for work into RO mode.
+
+
+2014-05-29 Roman
+- TValue: Value type info fix for selectable.
+- UI.QTCfg: Check and warning about no apply changes at the page change is added.
+
+
+2014-05-24 Roman
+- !!:Protocol.SelfSystem: The protocol implement improved for check and wait the header entirety.
+    SES_OPEN limited by 10 for one source and user. Sessions moved to std::map for some access acceleration.
+
+
+2014-05-23 Roman
+- DB.LibsDB.OscadaLibs: Alarm level for no connection into base.{anUnif,anUnifSt,manInUnif} return from -1 to -5.
+- DB.ModelsDB.AGLKS.vca: To the root page added current alarms table by primitive "Protocol".
+- DB.ModelsDB.AGLKS.St: To controller's object of parameter ModBus.testTCP.test added included parameter "test1"
+	with complex data acquisition examples.
+    The controllers ModBus.testTCP, OPC_UA.test and DAQGate.test set started at OpenSCADA start.
+    To DAQGate.test added hierarchic controller ModBus.testTCP.test for testing.
+- DAQ: Control interface's request for parameters list expanded by argument "recurs" for all hierarchic parameters list obtain.
+    Root object TDAQS expanded by control interface's request "/serv/PrmAttr" for remote browsing allow the DAQ parameters tree.
+- !!!!:DAQ.DAQGate: Significant expanding for hierarchic source DAQ parameters proccess.
+    Remote parameters tree inline browsing is added.
+- FIX:DAQ.LogicLev: IO values storing is fixed for included parameters, for collision into eponymous ID prevent.
+- DAQ.ModBus: Including parameters self to self is enabled, for standard type.
+    Resources allocators enRes and dataRes moved to pthread_mutex_t direct.
+- DAQ.SNMP: Inline browsing by MIB made simplified.
+- Protocol.SelfSystem: Code significant clean up.
+
+
 2014-05-21 Roman
 - SYS.XMLNode: Function childIns() and childDel() position argument's type set to signed (integer) for allow
     insert and delete by count from end (negative value).

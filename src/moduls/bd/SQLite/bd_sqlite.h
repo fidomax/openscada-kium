@@ -1,8 +1,7 @@
 
 //OpenSCADA system module BD.SQLite file: bd_sqlite.h
 /***************************************************************************
- *   Copyright (C) 2003-2013 by Roman Savochenko                           *
- *   rom_as@fromru.com                                                     *
+ *   Copyright (C) 2003-2014 by Roman Savochenko, <rom_as@oscada.org>      *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -48,7 +47,7 @@ class MTable : public TTable
 	MTable( string name, MBD *bd, bool create );
 	~MTable(  );
 
-	//> Field's operations
+	// Field's operations
 	void fieldStruct( TConfig &cfg );
 	bool fieldSeek( int row, TConfig &cfg );
 	void fieldGet( TConfig &cfg );
@@ -107,7 +106,6 @@ class MBD : public TBD
 	pthread_mutex_t	connRes;
 	int	trans_reqs;
 };
-
 
 //*************************************************
 //* BDSQLite::BDMod				  *

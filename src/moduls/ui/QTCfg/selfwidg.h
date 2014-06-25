@@ -1,8 +1,7 @@
 
 //OpenSCADA system module UI.QTCfg file: selfwidg.h
 /***************************************************************************
- *   Copyright (C) 2004-2008 by Roman Savochenko                           *
- *   rom_as@fromru.com                                                     *
+ *   Copyright (C) 2004-2014 by Roman Savochenko, <rom_as@oscada.org>      *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -132,8 +131,8 @@ class TextEdit : public QWidget
 	bool hasFocus( ) const;
 	bool isChanged( );
 
-	void setText(const QString &);
-	void setSnthHgl(XMLNode nd);
+	void setText( const QString& );
+	void setSnthHgl( XMLNode nd );
 
 	QTextEdit *edit( )	{ return ed_fld; }
 
@@ -141,7 +140,7 @@ class TextEdit : public QWidget
 	//Signals
 	void apply( );
 	void cancel( );
-	void textChanged(const QString&);
+	void textChanged( const QString& );
 
     protected:
 	bool event( QEvent *e );
@@ -231,7 +230,7 @@ class InputDlg : public QDialog
 	QGridLayout	*ed_lay;
 
     protected:
-        void showEvent( QShowEvent * event );
+	void showEvent( QShowEvent * event );
 
     protected:
 	//Attributes

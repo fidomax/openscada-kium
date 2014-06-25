@@ -1,8 +1,7 @@
 
 //OpenSCADA system module UI.Vision file: vis_run_widgs.cpp
 /***************************************************************************
- *   Copyright (C) 2007-2014 by Roman Savochenko                           *
- *   rom_as@diyaorg.dp.ua                                                  *
+ *   Copyright (C) 2007-2014 by Roman Savochenko, <rom_as@oscada.org>      *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -218,8 +217,7 @@ bool RunWdgView::attrSet( const string &attr, const string &val, int uiPrmPos )
 	case A_EN: setProperty("isVisible", atoi(val.c_str()) && (permView() || dynamic_cast<RunPageView*>(this)));	return true;
 	case A_ACTIVE: setProperty("active",(bool)atoi(val.c_str()));	return true;
 	case A_GEOM_Z:
-	    if(!allAttrLoad() && !dynamic_cast<RunPageView*>(this))
-	    {
+	    if(!allAttrLoad() && !dynamic_cast<RunPageView*>(this)) {
 		RunWdgView *wdg = qobject_cast<RunWdgView*>(parentWidget());
 		if(wdg) { wdg->orderUpdate(); wdg->QWidget::update(); }
 	    }

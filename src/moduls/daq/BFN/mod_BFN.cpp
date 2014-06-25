@@ -1,8 +1,7 @@
 
 //OpenSCADA system module DAQ.BFN file: mod_BFN.cpp
 /***************************************************************************
- *   Copyright (C) 2010 by Roman Savochenko                                *
- *   rom_as@oscada.org, rom_as@fromru.com                                  *
+ *   Copyright (C) 2010-2014 by Roman Savochenko, <rom_as@oscada.org>      *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -161,7 +160,7 @@ void TTpContr::load_( )
 
 void TTpContr::save_( )
 {
-    //> Save Code symbols
+    //Save Code symbols
     string wtbl = MOD_ID"_SymbCode";
     string wdb  = symbDB();
     TConfig c_el(&symbCode_el);
@@ -172,14 +171,15 @@ void TTpContr::save_( )
 	c_el.cfg("TEXT").setS(is->second);
 	SYS->db().at().dataSet(wdb+"."+wtbl, nodePath()+wtbl, c_el);
     }
-    //>> Clear no present codes
+    // Clear no present codes
     for(int fld_cnt = 0; SYS->db().at().dataSeek(wdb+"."+wtbl,nodePath()+wtbl,fld_cnt,c_el); fld_cnt++)
     {
 	if(mSymbCode.find(c_el.cfg("ID").getI()) != mSymbCode.end()) continue;
-	SYS->db().at().dataDel(wdb+"."+wtbl,nodePath()+wtbl,c_el,true);
+	SYS->db().at().dataDel(wdb+"."+wtbl, nodePath()+wtbl, c_el, true, false, true);
 	fld_cnt--;
     }
-    //> Save Alarm symbols
+
+    //Save Alarm symbols
     wtbl = MOD_ID"_SymbAlarm";
     c_el.setElem(&symbAlrm_el);
     for(map<unsigned,AlrmSymb>::iterator is = mSymbAlrm.begin(); is != mSymbAlrm.end(); is++)
@@ -189,11 +189,11 @@ void TTpContr::save_( )
 	c_el.cfg("TEXT").setS(is->second.text);
 	SYS->db().at().dataSet(wdb+"."+wtbl, nodePath()+wtbl, c_el);
     }
-    //>> Clear no present codes
+    // Clear no present codes
     for(int fld_cnt = 0; SYS->db().at().dataSeek(wdb+"."+wtbl,nodePath()+wtbl,fld_cnt,c_el); fld_cnt++)
     {
 	if(mSymbAlrm.find(c_el.cfg("ID").getI()) != mSymbAlrm.end()) continue;
-	SYS->db().at().dataDel(wdb+"."+wtbl,nodePath()+wtbl,c_el,true);
+	SYS->db().at().dataDel(wdb+"."+wtbl, nodePath()+wtbl, c_el, true, false, true);
 	fld_cnt--;
     }
 }

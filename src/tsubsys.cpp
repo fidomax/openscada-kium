@@ -1,8 +1,7 @@
 
 //OpenSCADA system file: tsubsys.cpp
 /***************************************************************************
- *   Copyright (C) 2003-2010 by Roman Savochenko                           *
- *   rom_as@oscada.org, rom_as@fromru.com                                  *
+ *   Copyright (C) 2003-2014 by Roman Savochenko, <rom_as@oscada.org>      *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -151,7 +150,6 @@ void TSubSYS::cntrCmdProc( XMLNode *opt )
 	    if(ctrMkNode("area",opt,-1,"/mod",_("Modules"),R_R_R_,"root","root"))
 		ctrMkNode("list",opt,-1,"/mod/br",_("Modules"),R_R_R_,"root","root",3,"tp","br","idm","1","br_pref","mod_");
 	}
-	ctrMkNode("area",opt,-1,"/help",_("Help"));
 	return;
     }
     //Process command to page

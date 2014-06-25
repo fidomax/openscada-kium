@@ -1,8 +1,7 @@
 
 //OpenSCADA system file: tprotocols.cpp
 /***************************************************************************
- *   Copyright (C) 2003-2010 by Roman Savochenko                           *
- *   rom_as@oscada.org, rom_as@fromru.com                                  *
+ *   Copyright (C) 2003-2014 by Roman Savochenko, <rom_as@oscada.org>      *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -60,15 +59,12 @@ void TProtocolS::cntrCmdProc( XMLNode *opt )
     if(opt->name() == "info")
     {
 	TSubSYS::cntrCmdProc(opt);
-	ctrMkNode("fld",opt,-1,"/help/g_help",_("Options help"),R_R___,"root",SPRT_ID,3,"tp","str","cols","90","rows","10");
 	return;
     }
     //> Process command to page
     string a_path = opt->attr("path");
-    if(a_path == "/help/g_help" && ctrChkNode(opt,"get",R_R___,"root",SPRT_ID))	opt->setText(optDescr());
-    else TSubSYS::cntrCmdProc(opt);
+    TSubSYS::cntrCmdProc(opt);
 }
-
 
 //************************************************
 //* TProtocol                                    *

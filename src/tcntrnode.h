@@ -1,8 +1,7 @@
 
 //OpenSCADA system file: tcntrnode.h
 /***************************************************************************
- *   Copyright (C) 2003-2014 by Roman Savochenko                           *
- *   rom_as@oscada.org, rom_as@fromru.com                                  *
+ *   Copyright (C) 2003-2014 by Roman Savochenko, <rom_as@oscada.org>      *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -169,8 +168,8 @@ class TCntrNode
 	void modifG( );					//Set group modify
 	void modifClr( bool save = false );		//Clear modify
 	void modifGClr( );				//Modify group clear
-	void load( bool force = false );		//Load node, if modified
-	void save( unsigned lev = 0 );			//Save node, if modified
+	void load( bool force = false, string *errs = NULL );	//Load node, if modified
+	void save( unsigned lev = 0, string *errs = NULL );	//Save node, if modified
 
 	// Connections counter
 	virtual void AHDConnect( );

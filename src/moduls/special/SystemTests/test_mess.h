@@ -1,8 +1,7 @@
 
 //OpenSCADA system module Special.SystemTests file: test_mess.h
 /***************************************************************************
- *   Copyright (C) 2005-2010 by Roman Savochenko                           *
- *   rom_as@oscada.org, rom_as@fromru.com                                  *
+ *   Copyright (C) 2005-2014 by Roman Savochenko, <rom_as@oscada.org>      *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -54,12 +53,12 @@ class TestMess : public TFunction
 		string n_arhtor = val->getS(1);
 		vector<TMess::SRec> buf_rec;
 		SYS->archive().at().messGet(time(NULL)-2*val->getI(3),time(NULL),buf_rec,val->getS(2),TMess::Debug,n_arhtor);
-		mod->mess(id(),_("New messages present %d."),buf_rec.size() );
+		mod->mess(id(),_("New messages present %d."),buf_rec.size());
 		for(unsigned i_rec = 0; i_rec < buf_rec.size(); i_rec++)
 		{
 		    ctime_r(&buf_rec[i_rec].time, c_tm);
 		    mod->mess(id(),"'%s' : '%s' : '%s'",TSYS::strParse(c_tm,0,"\n").c_str(),
-			buf_rec[i_rec].categ.c_str(),buf_rec[i_rec].mess.c_str() );
+			buf_rec[i_rec].categ.c_str(),buf_rec[i_rec].mess.c_str());
 		}
 		mod->mess(id(),_("Test: Passed"));
 		val->setS(0,_("Passed"));
