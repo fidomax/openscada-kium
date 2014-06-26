@@ -609,7 +609,6 @@ void *TSocketIn::ClTask( void *s_inf )
 
 void TSocketIn::messPut( int sock, string &request, string &answer, string sender, AutoHD<TProtocolIn> &prot_in )
 {
-mess_info("messPut"," sender");
     AutoHD<TProtocol> proto;
     string n_pr;
     try {
@@ -619,7 +618,6 @@ mess_info("messPut"," sender");
 	    if(!proto.at().openStat(n_pr)) proto.at().open(n_pr, this, sender+"\n"+i2s(sock));
 	    prot_in = proto.at().at(n_pr);
 	}
-mess_info("messPut"," to protocol %s",prot_in.at().nodePath().c_str());
 	if(prot_in.at().mess(request,answer)) return;
 	if(proto.freeStat()) proto = AutoHD<TProtocol>(&prot_in.at().owner());
 	n_pr = prot_in.at().name();
