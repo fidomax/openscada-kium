@@ -145,7 +145,7 @@ class TMSOPrm : public TParamContr
 	//Methods
 	void postEnable( int flag );
 	void vlGet( TVal &val );
-	void vlSet( TVal &val, const TVariant &pvl );
+	void vlSet( TVal &valo, const TVariant &vl, const TVariant &pvl   );
 	void vlArchMake( TVal &val );
 
         //Attributes
@@ -184,7 +184,7 @@ class TMSOContr: public TController
 	bool HandleData(unsigned int node, unsigned int channel, unsigned int type, unsigned int param, unsigned int flag, const string &ireqst);
 	bool MSOReq(unsigned int channel, unsigned int type, unsigned int param, const string &pdu);
 	bool MSOSet(unsigned int channel, unsigned int type, unsigned int param, const string &pdu);
-
+	bool MSOSetV(unsigned int channel, unsigned int type, unsigned int param, const string &pdu);
     protected:
 	//Methods
 	void disable_( );

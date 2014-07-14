@@ -170,7 +170,7 @@ bool TTpContr::DataIn(const string &ireqst, const uint32_t node )
     unsigned int param = (node)&0x7;
     unsigned int flag = (node>>26)&0x7;
  //   AT91C_CAN_MIDE | priority_N << 26 | identifier_TC << 18 | MSO_Addres << 10 | ChannelNumber << 3
-    mess_info("DataIn"," sender<%u> mso<%u> channel<%u> type<%u> param<%u> flag<%u>",node,mso,channel,type,param,flag);
+    if (mess_lev() == TMess::Debug) mess_debug("DataIn"," sender<%u> mso<%u> channel<%u> type<%u> param<%u> flag<%u>",node,mso,channel,type,param,flag);
     vector<string> lst;
     SYS->daq().at().at("MSO").at().list(lst);
     for(int i_l=0; i_l < lst.size(); i_l++){
@@ -534,7 +534,7 @@ void TMSOContr::setValC( char val, int addr, ResString &err )
 
 bool TMSOContr::MSOReq( unsigned int channel, unsigned int type, unsigned int param, const string &pdu)
 {
-//	mess_info("MSOReq","MSOReq");
+	mess_info("MSOReq","MSOReq");
    AutoHD<TTransportOut> tr = SYS->transport().at().at(TSYS::strSepParse(mAddr,0,'.')).at().outAt(TSYS::strSepParse(mAddr,1,'.'));
     if( !tr.at().startStat() ) tr.at().start();
     struct can_frame frame;
@@ -547,6 +547,7 @@ bool TMSOContr::MSOReq( unsigned int channel, unsigned int type, unsigned int pa
 
        //strcpy( frame.data, "foo" );
     frame.can_dlc = 0;//strlen( frame.data );
+    if (mess_lev() == TMess::Debug) mess_debug(nodePath().c_str(),"MSOReq id<%08X> dlc<%u>",frame.can_id,frame.can_dlc);
     tr.at().messIO((const char *)&frame, sizeof(frame));
 //    mess_info("---------MSOReq","---------MSOReq");
 
@@ -555,7 +556,7 @@ bool TMSOContr::MSOReq( unsigned int channel, unsigned int type, unsigned int pa
 
 bool TMSOContr::MSOSet( unsigned int channel, unsigned int type, unsigned int param, const string &pdu)
 {
-//	mess_info("MSOSet","MSOSet");
+	mess_info("MSOSet","MSOSet");
    AutoHD<TTransportOut> tr = SYS->transport().at().at(TSYS::strSepParse(mAddr,0,'.')).at().outAt(TSYS::strSepParse(mAddr,1,'.'));
     if( !tr.at().startStat() ) tr.at().start();
     struct can_frame frame;
@@ -573,6 +574,34 @@ bool TMSOContr::MSOSet( unsigned int channel, unsigned int type, unsigned int pa
          frame.data[i] = pdu.data()[i];
 //         mess_info("MSOSet","MSOSet %02X",frame.data[i]);
         }
+    if (mess_lev() == TMess::Debug) mess_debug(nodePath().c_str(),"MSOSet id<%08X> dlc<%u>",frame.can_id,frame.can_dlc);
+    tr.at().messIO((const char *)&frame, sizeof(frame));
+//    mess_info("---------MSOSet","---------MSOSet");
+
+    return true;
+}
+
+bool TMSOContr::MSOSetV( unsigned int channel, unsigned int type, unsigned int param, const string &pdu)
+{
+	mess_info("MSOSetV","MSOSetV");
+   AutoHD<TTransportOut> tr = SYS->transport().at().at(TSYS::strSepParse(mAddr,0,'.')).at().outAt(TSYS::strSepParse(mAddr,1,'.'));
+    if( !tr.at().startStat() ) tr.at().start();
+    struct can_frame frame;
+    frame.can_id =  priority_V << PosPriority | type << PosType | mNode << PosAdress | channel << PosChannel | param |CAN_EFF_FLAG;
+    //0x3|CAN_EFF_FLAG;
+    /*  for (i=0; i<8;i++)
+      {
+       frame.data[i] =i;
+      }*/
+
+       //strcpy( frame.data, "foo" );
+    frame.can_dlc = 8;//strlen( frame.data );
+    for (int i=0; i<8;i++)
+        {
+         frame.data[i] = pdu.data()[i];
+//         mess_info("MSOSet","MSOSet %02X",frame.data[i]);
+        }
+    if (mess_lev() == TMess::Debug) mess_debug(nodePath().c_str(),"MSOSet id<%08X> dlc<%u>",frame.can_id,frame.can_dlc);
     tr.at().messIO((const char *)&frame, sizeof(frame));
 //    mess_info("---------MSOSet","---------MSOSet");
 
@@ -812,7 +841,7 @@ void TMSOPrm::vlGet( TVal &val )
     }
 }
 
-void TMSOPrm::vlSet( TVal &valo, const TVariant &pvl )
+void TMSOPrm::vlSet( TVal &valo, const TVariant &vl, const TVariant &pvl  )
 {
     if( !enableStat() || !owner().startStat() )	valo.setI( EVAL_INT, 0, true );
     string rez;

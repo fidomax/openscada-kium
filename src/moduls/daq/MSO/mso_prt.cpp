@@ -432,7 +432,7 @@ bool TProtIn::mess( const string &ireqst, string &answer/*, const string &sender
     string pdu;
     string reqst = ireqst;
     bool isBuf = false;
-    mess_info( nodePath().c_str(), _("MSO received <%d>bytes !"), reqst.size() );
+    if (mess_lev() == TMess::Debug) mess_debug( nodePath().c_str(), _("MSO received <%d>bytes !"), reqst.size() );
 
     AutoHD<TTpContr> t = SYS->daq().at().at("MSO");
     t.at().DataIn(reqst,node);

@@ -197,7 +197,7 @@ uint16_t MezTT::setVal(TVal &val)
 	uint16_t channel = strtol((TSYS::strParse(val.fld().reserve(), 0, ":", &off)).c_str(),NULL,0); // канал
 	uint16_t param = strtol((TSYS::strParse(val.fld().reserve(), 0, ":", &off)).c_str(),NULL,0); // параметр
 
-//	mess_info(mPrm->nodePath().c_str(),_("setVal type %d channel %d param %d"),type,channel,param);
+	mess_info(mPrm->nodePath().c_str(),_("setVal type %d channel %d param %d"),type,channel,param);
 	string pdu;
 /*	pdu = (char)0x00;
 	pdu += (char)0x00;
@@ -247,6 +247,14 @@ uint16_t MezTT::setVal(TVal &val)
 					pdu += f[3];
 					mPrm->owner().MSOSet(channel-1, type, param, pdu);
 					break;
+			}
+			break;
+		case 16:
+			switch (param) {
+				case 0:case 5:case 6:case 7:
+					mPrm->owner().MSOSetV(channel - 1, type, param, pdu);
+					break;
+
 			}
 			break;
 	}
