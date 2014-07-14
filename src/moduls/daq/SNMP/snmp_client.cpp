@@ -151,17 +151,16 @@ TMdContr::~TMdContr( )
 string TMdContr::getStatus( )
 {
     string rez = TController::getStatus();
-    if(startStat() && !redntUse())
-    {
+    if(startStat() && !redntUse()) {
 	if(!acqErr.getVal().empty())	rez = acqErr.getVal();
-	else
-	{
+	else {
 	    if(callSt)	rez += TSYS::strMess(_("Call now. "));
 	    if(period())rez += TSYS::strMess(_("Call by period: %s. "),tm2s(1e-3*period()).c_str());
 	    else rez += TSYS::strMess(_("Call next by cron '%s'. "),tm2s(TSYS::cron(cron()),"%d-%m-%Y %R").c_str());
 	    rez += TSYS::strMess(_("Spent time: %s."),tm2s(tmGath).c_str());
 	}
     }
+
     return rez;
 }
 
@@ -178,14 +177,12 @@ struct snmp_session *TMdContr::getSess( )
     session.peername = (char *)wAddr.c_str();
     session.retries = mRetr;
     session.timeout = mTm*1000000;
-    if(session.version != SNMP_VERSION_3)
-    {
+    if(session.version != SNMP_VERSION_3) {
 	wComm = cfg("COMM").getS();
 	session.community = (u_char*)wComm.c_str();
 	session.community_len = wComm.size();
     }
-    else
-    {
+    else {
 	wComm = cfg("COMM").getS();
 	session.securityName = (char*)wComm.c_str();
 	session.securityNameLen = strlen(session.securityName);
@@ -194,15 +191,12 @@ struct snmp_session *TMdContr::getSess( )
 	if(secLev() == "authNoPriv")	session.securityLevel = SNMP_SEC_LEVEL_AUTHNOPRIV;
 	else if(secLev() == "authPriv")	session.securityLevel = SNMP_SEC_LEVEL_AUTHPRIV;
 
-	if(session.securityLevel != SNMP_SEC_LEVEL_NOAUTH)
-	{
-	    if(secAuthProto() == "SHA")
-	    {
+	if(session.securityLevel != SNMP_SEC_LEVEL_NOAUTH) {
+	    if(secAuthProto() == "SHA") {
 		session.securityAuthProto = usmHMACSHA1AuthProtocol;
 		session.securityAuthProtoLen = sizeof(usmHMACSHA1AuthProtocol)/sizeof(oid);
 	    }
-	    else
-	    {
+	    else {
 		session.securityAuthProto = usmHMACMD5AuthProtocol;
 		session.securityAuthProtoLen = sizeof(usmHMACMD5AuthProtocol)/sizeof(oid);
 	    }
@@ -214,11 +208,9 @@ struct snmp_session *TMdContr::getSess( )
 		throw TError(nodePath().c_str(),_("Error generating Ku from authentication pass phrase."));
 	}
 
-	if(session.securityLevel == SNMP_SEC_LEVEL_AUTHPRIV)
-	{
+	if(session.securityLevel == SNMP_SEC_LEVEL_AUTHPRIV) {
 #ifdef USM_PRIV_PROTO_AES_LEN
-	    if(secPrivProto() == "AES")
-	    {
+	    if(secPrivProto() == "AES") {
 		session.securityPrivProto = usmAESPrivProtocol;
 		session.securityPrivProtoLen = sizeof(usmAESPrivProtocol)/sizeof(oid);
 	    }
@@ -321,8 +313,7 @@ void *TMdContr::Task( void *icntr )
     cntr.endrunReq = false;
     cntr.prcSt = true;
 
-    while(!cntr.endrunReq)
-    {
+    while(!cntr.endrunReq) {
 	cntr.callSt = true;
 	int64_t t_cnt = TSYS::curTime();
 
@@ -353,6 +344,7 @@ string TMdContr::oid2str( oid *ioid, size_t isz, const string &sep )
     string rez;
     for(unsigned i_el = 0; i_el < isz; i_el++)
 	rez += sep+i2s(ioid[i_el]);
+
     return rez;
 }
 
@@ -368,8 +360,7 @@ void TMdContr::str2oid( const string &str, oid *ioid, size_t &isz, const string 
 void TMdContr::cntrCmdProc( XMLNode *opt )
 {
     //Get page info
-    if(opt->name() == "info")
-    {
+    if(opt->name() == "info") {
 	TController::cntrCmdProc(opt);
 	ctrMkNode("fld",opt,-1,"/cntr/cfg/SCHEDULE",cfg("SCHEDULE").fld().descr(),startStat()?R_R_R_:RWRWR_,"root",SDAQ_ID,4,
 	    "tp","str","dest","sel_ed","sel_list",TMess::labSecCRONsel(),"help",TMess::labSecCRON());
@@ -382,17 +373,14 @@ void TMdContr::cntrCmdProc( XMLNode *opt )
 	    "help",_("Community group or user."));
 	ctrMkNode("fld",opt,-1,"/cntr/cfg/PATTR_LIM",cfg("PATTR_LIM").fld().descr(),startStat()?R_R_R_:RWRWR_,"root",SDAQ_ID);
 	ctrRemoveNode(opt,"/cntr/cfg/V3");
-	if(ver() == "3")
-	{
+	if(ver() == "3") {
 	    ctrMkNode("fld",opt,-1,"/cntr/cfg/SecLev",_("Security level"),startStat()?R_R_R_:RWRWR_,"root",SDAQ_ID,5,"tp","str","idm","1","dest","select",
 		"sel_id","noAurhNoPriv;authNoPriv;authPriv","sel_list",_("No auth/No privacy;Auth/No privacy;Auth/Privacy"));
-	    if(secLev() != "noAurhNoPriv")
-	    {
+	    if(secLev() != "noAurhNoPriv") {
 		ctrMkNode("fld",opt,-1,"/cntr/cfg/AuthProto",_("Auth"),startStat()?R_R_R_:RWRWR_,"root",SDAQ_ID,3,"tp","str","dest","select","sel_list","MD5;SHA");
 		ctrMkNode("fld",opt,-1,"/cntr/cfg/AuthPass","",startStat()?R_R_R_:RWRWR_,"root",SDAQ_ID,1,"tp","str");
 	    }
-	    if(secLev() == "authPriv")
-	    {
+	    if(secLev() == "authPriv") {
 #ifdef USM_PRIV_PROTO_AES_LEN
 		const char *prtLs = "DES;AES";
 #else
@@ -407,28 +395,23 @@ void TMdContr::cntrCmdProc( XMLNode *opt )
 
     //Process command to page
     string a_path = opt->attr("path");
-    if(a_path == "/cntr/cfg/SecLev")
-    {
+    if(a_path == "/cntr/cfg/SecLev") {
 	if(ctrChkNode(opt,"get",RWRWR_,"root",SDAQ_ID,SEC_RD))	opt->setText(secLev());
 	if(ctrChkNode(opt,"set",RWRWR_,"root",SDAQ_ID,SEC_WR))	setSecLev(opt->text());
     }
-    else if(a_path == "/cntr/cfg/AuthProto")
-    {
+    else if(a_path == "/cntr/cfg/AuthProto") {
 	if(ctrChkNode(opt,"get",RWRWR_,"root",SDAQ_ID,SEC_RD))	opt->setText(secAuthProto());
 	if(ctrChkNode(opt,"set",RWRWR_,"root",SDAQ_ID,SEC_WR))	setSecAuthProto(opt->text());
     }
-    else if(a_path == "/cntr/cfg/AuthPass")
-    {
+    else if(a_path == "/cntr/cfg/AuthPass") {
 	if(ctrChkNode(opt,"get",RWRWR_,"root",SDAQ_ID,SEC_RD))	opt->setText(string(secAuthPass().size(),'*'));
 	if(ctrChkNode(opt,"set",RWRWR_,"root",SDAQ_ID,SEC_WR))	setSecAuthPass(opt->text());
     }
-    else if(a_path == "/cntr/cfg/PrivProto")
-    {
+    else if(a_path == "/cntr/cfg/PrivProto") {
 	if(ctrChkNode(opt,"get",RWRWR_,"root",SDAQ_ID,SEC_RD))	opt->setText(secPrivProto());
 	if(ctrChkNode(opt,"set",RWRWR_,"root",SDAQ_ID,SEC_WR))	setSecPrivProto(opt->text());
     }
-    else if(a_path == "/cntr/cfg/PrivPass")
-    {
+    else if(a_path == "/cntr/cfg/PrivPass") {
 	if(ctrChkNode(opt,"get",RWRWR_,"root",SDAQ_ID,SEC_RD))	opt->setText(string(secPrivPass().size(),'*'));
 	if(ctrChkNode(opt,"set",RWRWR_,"root",SDAQ_ID,SEC_WR))	setSecPrivPass(opt->text());
     }
@@ -467,14 +450,11 @@ void TMdPrm::enable( )
 
     //Init attributes call
     // Start SNMP-net session
-    if(owner().enableStat() || !owner().prmEnErr)
-    {
+    if(owner().enableStat() || !owner().prmEnErr) {
 	void *ss =  snmp_sess_open(owner().getSess());
-	if(ss)
-	{
+	if(ss) {
 	    try { upVal(ss,true); }
-	    catch(TError err)
-	    {
+	    catch(TError err) {
 		owner().prmEnErr = true;
 		mess_err(nodePath().c_str(),"%s",err.mess.c_str());
 	    }
@@ -510,23 +490,19 @@ void TMdPrm::upVal( void *ss, bool onlyInit )
 
     vector<string> als;
 
-    for(unsigned ioid = 0; ioid < lsOID().size(); ioid++)
-    {
+    for(unsigned ioid = 0; ioid < lsOID().size(); ioid++) {
 	oid_root_len = oid_next_len = lsOID()[ioid].size()/sizeof(oid);
 	memmove(oid_root,lsOID()[ioid].data(),oid_root_len*sizeof(oid));
 	memmove(oid_next,oid_root,oid_root_len*sizeof(oid));
 
 	bool isScalar = oid_root_len && (oid_root[oid_root_len-1] == 0);
 	bool running = true;
-	while(running && (el_cnt++) < owner().pAttrLimit())
-	{
+	while(running && (el_cnt++) < owner().pAttrLimit()) {
 	    struct snmp_pdu *pdu = snmp_pdu_create(isScalar ? SNMP_MSG_GET : SNMP_MSG_GETNEXT);
 	    snmp_add_null_var(pdu, oid_next, oid_next_len);
 	    int status = snmp_sess_synch_response(ss, pdu, &response);
-	    //printf("TEST 01: status=%d; type=%d;\n", status, response->variables->type);
 	    if(status == STAT_SUCCESS && response && response->errstat == SNMP_ERR_NOERROR)
-		for(var = response->variables; var; var = var->next_variable)
-		{
+		for(var = response->variables; var; var = var->next_variable) {
 		    if((var->name_length < oid_root_len) || (memcmp(oid_root,var->name,oid_root_len*sizeof(oid)) != 0))
 		    {
 			running = false;
@@ -535,8 +511,7 @@ void TMdPrm::upVal( void *ss, bool onlyInit )
 		    // Get or create element
 		    soid = owner().oid2str(var->name,var->name_length);
 		    als.push_back(soid);
-		    if(!elem().fldPresent(soid))
-		    {
+		    if(!elem().fldPresent(soid)) {
 			TFld::Type tp = (TFld::Type)-1;
 			unsigned flg = TVal::DirWrite;
 			string selIds, selLabs;
@@ -545,13 +520,10 @@ void TMdPrm::upVal( void *ss, bool onlyInit )
 
 			struct tree *subtree = get_tree_head();
 			if(subtree) subtree = get_tree(var->name, var->name_length, subtree);
-			if(subtree)
-			{
+			if(subtree) {
 			    if(!(subtree->access == MIB_ACCESS_READWRITE || subtree->access == MIB_ACCESS_WRITEONLY))
 				flg |= TFld::NoWrite;
-			    //printf("TEST 00: '%s': access=%d; status=%d; type=%d\n", tbuf, subtree->access, subtree->status, subtree->type);
-			    if(subtree->enums)
-			    {
+			    if(subtree->enums) {
 				flg |= TFld::Selected;
 				for(struct enum_list *enums = subtree->enums; enums; enums = enums->next)
 				{
@@ -585,11 +557,11 @@ void TMdPrm::upVal( void *ss, bool onlyInit )
 			    case SNMP_NOSUCHINSTANCE:	running = false;	break;
 			}
 			if(tp >= 0)
-			    elem().fldAdd(new TFld(soid.c_str(),tbuf,tp,flg,"","",selIds.c_str(),selLabs.c_str(),i2s(var->type).c_str()));
+			    elem().fldAdd(new TFld(soid.c_str(),tbuf,tp,flg,"","",
+				selIds.c_str(),selLabs.c_str(),(i2s(var->type)+"\n"+(subtree->hint?subtree->hint:"")).c_str()));
 		    }
 		    // Set value
-		    if(!onlyInit)
-		    {
+		    if(!onlyInit) {
 			AutoHD<TVal> attr = vlAt(soid);
 			
 			switch(var->type)
@@ -601,9 +573,17 @@ void TMdPrm::upVal( void *ss, bool onlyInit )
 			    case ASN_TIMETICKS:
 			    case ASN_UINTEGER: attr.at().setR(*(unsigned long*)var->val.integer, 0, true);	break;
 			    case ASN_OCTET_STR:
-			    case ASN_OPAQUE: attr.at().setS(string((char*)var->val.string,var->val_len), 0, true);	break;
-			    case ASN_IPADDRESS:
-			    {
+			    case ASN_OPAQUE: {
+				string hint = TSYS::strLine(attr.at().fld().reserve(),1);
+				size_t fndPos;
+				if((fndPos=hint.find("x")) != string::npos)
+				    hint = TSYS::strDecode(string((char*)var->val.string,var->val_len), TSYS::Bin,
+					((fndPos+1)<hint.size())?hint.substr(fndPos+1,1):"");
+				else hint = string((char*)var->val.string,var->val_len);
+				attr.at().setS(hint, 0, true);
+				break;
+			    }
+			    case ASN_IPADDRESS: {
 				u_char *ip = (u_char*)var->val.string;
 				attr.at().setS(TSYS::strMess("%d.%d.%d.%d",ip[0],ip[1],ip[2],ip[3]), 0, true);
 				break;
@@ -640,8 +620,7 @@ void TMdPrm::upVal( void *ss, bool onlyInit )
 			}
 		    }
 		    if(isScalar) { running = false; break; }
-		    if(running)
-		    {
+		    if(running) {
 			memmove((char*)oid_next, (char*)var->name, var->name_length*sizeof(oid));
 			oid_next_len = var->name_length;
 		    }
@@ -694,8 +673,7 @@ void TMdPrm::cntrCmdProc( XMLNode *opt )
     if(a_path.substr(0,6) == "/serv/")	{ TParamContr::cntrCmdProc(opt); return; }
 
     //Get page info
-    if(opt->name() == "info")
-    {
+    if(opt->name() == "info") {
 	TParamContr::cntrCmdProc(opt);
 	ctrMkNode2("fld",opt,-1,"/prm/cfg/OID_LS",cfg("OID_LS").fld().descr(),enableStat()?R_R_R_:RWRWR_,"root",SDAQ_ID,"SnthHgl","1","rows","8",
 	    "help",_("SNMP OID list, include directories for get all subitems. OID can write in the methods:\n"
@@ -711,13 +689,10 @@ void TMdPrm::cntrCmdProc( XMLNode *opt )
     //Process command to page
     if(a_path == "/prm/cfg/OID_LS" && ctrChkNode(opt,"SnthHgl",RWRWR_,"root",SDAQ_ID,SEC_RD))
 	opt->childAdd("rule")->setAttr("expr","^#[^\n]*")->setAttr("color","gray")->setAttr("font_italic","1");
-    else if(a_path == "/prm/cfg/MIB")
-    {
+    else if(a_path == "/prm/cfg/MIB") {
 	if(ctrChkNode(opt,"get",RWRW__,"root",SDAQ_ID,SEC_RD)) opt->setText(TBDS::genDBGet(nodePath()+"selOID","",opt->attr("user")));
-	if(ctrChkNode(opt,"set",RWRW__,"root",SDAQ_ID,SEC_WR))
-	{
-	    if(opt->text() == _("<<Append current>>"))
-	    {
+	if(ctrChkNode(opt,"set",RWRW__,"root",SDAQ_ID,SEC_WR)) {
+	    if(opt->text() == _("<<Append current>>")) {
 		oid oidn[MAX_OID_LEN];
 		size_t oidn_len = MAX_OID_LEN;
 		string baseIt = TBDS::genDBGet(nodePath()+"selOID","",opt->attr("user"));
@@ -758,8 +733,7 @@ void TMdPrm::vlSet( TVal &vo, const TVariant &vl, const TVariant &pvl )
     if(!enableStat() || !owner().startStat()) { vo.setS(EVAL_STR, 0, true); return; }
 
     //Send to active reserve station
-    if(owner().redntUse())
-    {
+    if(owner().redntUse()) {
 	if(vl == pvl) return;
 	XMLNode req("set");
 	req.setAttr("path",nodePath(0,true)+"/%2fserv%2fattr")->childAdd("el")->setAttr("id",vo.name())->setText(vl.getS());
@@ -798,8 +772,7 @@ void TMdPrm::vlSet( TVal &vo, const TVariant &vl, const TVariant &pvl )
 	case ASN_OPAQUE_DOUBLE:	break;
 	default:		break;
     }
-    if(vtp)
-    {
+    if(vtp) {
 	if(!(ss=snmp_sess_open(&owner().session))) return;
 
 	snmp_add_var(pdu, oidn, oidn_len, vtp, vl.getS().c_str());

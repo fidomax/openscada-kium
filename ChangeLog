@@ -1,3 +1,78 @@
+2014-07-12 Roman
+- SYS: Primitive of functions strEncode() and strDecode() set unified.
+    User API functions strEncode() and strDecode() is added.
+- DB.SQLite: Binary string write to DB support is added by "#'XXXXXX'" form.
+- FIX:DAQ.JavaLikeCalc: "Error constant after constant" error fix by append position.
+- DAQ.SNMP: Some hints is used for ASN_OCTET_STR represent.
+- UI.QTCfg: Added and used function getPrintVal() for check and encode straight binaries.
+- UI.Vision: Included widgets order updating function expand for prevent system widget's reorder and allow after sort by ID for equal Z.
+
+
+2014-07-10 Roman
+- UI.Vision: For included to container's pages set attribute Qt::WA_WindowPropagation for allow true transparent by palette propagation.
+
+
+2014-07-09 Roman
+- DB.LibsDB.OscadaLibs.db: Heat counter VKT-7 implement significant expanded.
+- !!:UI.{VCAEngine,Vision}: Changes into visual items put down to the parent function is added.
+- UI.VCAEngine: The VCA project's session info some expanded.
+- FIX:UI.Vision: Background's role (Window) for included pages (scroll area) set to the included pages container.
+    Mostly for Slider hide.
+- Protocol.ModBus: Requests counters clean up at ModBus Node enable is added.
+
+
+2014-07-05 Roman
+- Protocol.ModBus: Functions 0x2 (CI) and 0x4 (RI) implement is rewrited and clean up.
+
+
+2014-07-05 fido_max
+- Protocol.ModBus: Functions 0x2 (CI) and 0x4 (RI) support is added.
+
+
+2014-07-05 Roman
+- Archive: TArchive, TMArchivator and TMArchivator moved to use TConfig::cntrCmdMake().
+- FIX:Transport: TTransportOut, TTransportIn fix for sets values check and process.
+- !!:SYS: TConfig::cfgChange() expanded by previous configuration value argument "pc".
+    Library version set to 3:2:0.
+- UI.QTCfg: Selected group nodes commands "load" and "save" support is added.
+
+
+2014-07-02 Roman
+- !!!!:Archives: Selection priority to the value archivator object is added for provide order control and disable at all
+	into sources selection mode "All". Used for function getVal(), getVals() and archive service "/serv/val".
+    Archive.DBArch: Disconnecting archivers to DB detect is added and instead uses next priority archiver.
+    Archive.{DBArch,FSArch}: Default priority set to 1 for DBArch and 1000 for FSArch.
+    Set archiver period expanded for allow set zero value and disable the values buffer processing for only direct write there.
+    Adapted for writing unaligned to the period values and buffers.
+    FIX: Lost archive's connection to archiver after the archiver restart is fixed.
+- DB: Decreased wait for free tables timeout to 1 second on the DB stop, for lost connection to network DB cases fast.
+- DB.LibsDB.vcaBase.db: New extended DAQ parameter's pasport widget (cntrPaspExt) expanded for alarm and warning borders at trend display
+    and placed to all projects.
+- DB.ModelsDB.AGLKS.St.db: Some clean up.
+- FIX:Archive.DBArch: Reread meta data for value archives is force set after wrong that read at start with unaccessible network DB.
+- DAQ.MMS: Decreased start time on inaccessible data source at flag "isReload" set
+
+
+2014-06-27 Roman
+- DB.LibsDB.{OscadaLibs,vcaBase}.db: Expanded to group properties processing by the parameters templates DevLib.UPS, base.SNMP
+    and the representing widget Main.objProps. The new widget uses view "Table" of primitive "FormEl" which unavailable for UI.WebVision now!
+- !!:DB.LibsDB.vcaBase.db: New extended DAQ parameter's pasport widget is created for allow: the attributes modify, trends and data table build.
+    The new widget uses view "Table" of primitive "FormEl" which unavailable for UI.WebVision now!
+- Transport: Meassured request's result after termination by an exception is added to "Sent" tab of output transport.
+- DAQ.OPC_UA: Input packages' size and header control is expanded for broken packages process and early drop.
+
+
+2014-06-25 Roman
+- DAQ.OPC_UA: Broken input packages hang is fixed.
+
+
+2014-06-24 Roman
+- DAQ.MMS: Fast start at unallowed PLC is made.
+- Special.FLibSYS: Connection to archives by vArch is made optimal.
+- UI.{QTCfg,Vision}: For wait cursor uses QApplication::setOverrideCursor(Qt::WaitCursor);
+- FIX:UI.Vision: Widgets order update fix after manual "geomZ" set into development mode.
+
+
 2014-06-20 Roman
 - DB.FireBird: Using integer type expand to INT64. Managed types expand to:
     blr_varying, blr_varying2, blr_text, blr_text2, blr_blob, blr_short, blr_long, blr_int64, blr_float, blr_double and blr_d_float.

@@ -93,7 +93,7 @@ class TMArchivator : public TCntrNode, public TConfig
 	void postEnable( int flag );
 	void preDisable( int flag );
 	void postDisable( int flag );		//Delete all DB if flag 1
-	bool cfgChange( TCfg &cfg )	{ modif(); return true; }
+	bool cfgChange( TCfg &co, const TVariant &pc )	{ modif(); return true; }
 
 	void load_( );
 	void save_( );
@@ -153,7 +153,7 @@ class TTipArchivator: public TModule
 
     protected:
 	//Protected methods
-	void cntrCmdProc( XMLNode *opt );	//Control interface command process
+	void cntrCmdProc( XMLNode *opt );		//Control interface command process
 
 	virtual TMArchivator *AMess( const string &id, const string &db )
 	{ throw TError(nodePath().c_str(),_("Message archive no support!")); }

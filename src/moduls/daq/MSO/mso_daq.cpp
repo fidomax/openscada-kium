@@ -271,16 +271,10 @@ void TMSOContr::stop_( )
     numRx = numTx = 0;
 }
 
-bool TMSOContr::cfgChange( TCfg &icfg )
+bool TMSOContr::cfgChange( TCfg &co, const TVariant &pc )
 {
-    TController::cfgChange(icfg);
+	TController::cfgChange(co, pc);
 
-/*    if( icfg.fld().name() == "PROT" )
-    {
-	cfg("REQ_TRY").setView(icfg.getS()!="TCP");
-	if( startStat() ) stop();
-    }
-    else if( icfg.fld().name() == "FRAG_MERGE" && enableStat( ) ) disable( );*/
 
     return true;
 }

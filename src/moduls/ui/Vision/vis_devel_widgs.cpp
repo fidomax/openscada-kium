@@ -709,8 +709,8 @@ bool InspAttr::event( QEvent *event )
 void InspAttr::contextMenuEvent( QContextMenuEvent *event )
 {
     string nattr, nwdg;
-    QAction *actClr, *actCopy, *actEdit;
-    actClr = actCopy = actEdit = NULL;
+    QAction *actClr, *actChDown, *actCopy, *actEdit;
+    actClr = actChDown = actCopy = actEdit = NULL;
     ModInspAttr::Item *it = NULL;
 
     //Attribute
@@ -721,8 +721,7 @@ void InspAttr::contextMenuEvent( QContextMenuEvent *event )
 	//Attribute widget
 	ModInspAttr::Item *cit = it;
 	while(cit)
-	    if(cit->type() == ModInspAttr::Item::Wdg)
-	    {
+	    if(cit->type() == ModInspAttr::Item::Wdg) {
 		nwdg = cit->id();
 		break;
 	    }
@@ -732,32 +731,32 @@ void InspAttr::contextMenuEvent( QContextMenuEvent *event )
     QMenu popup;
 
     //Add actions
-    if(it)
-    {
-	//> Copy action
+    if(it) {
+	// Copy action
 	QImage ico_t;
 	if(!ico_t.load(TUIS::icoGet("editcopy",NULL,true).c_str())) ico_t.load(":/images/editcopy.png");
 	actCopy = new QAction(QPixmap::fromImage(ico_t),_("Copy"),this);
 	popup.addAction(actCopy);
-	if(it->flag()&ModInspAttr::Item::FullText)
-	{
+	if(it->flag()&ModInspAttr::Item::FullText) {
 	    if(!ico_t.load(TUIS::icoGet("edit",NULL,true).c_str())) ico_t.load(":/images/edit.png");
 	    actEdit = new QAction(QPixmap::fromImage(ico_t),_("Edit"),this);
 	    popup.addAction(actEdit);
 	}
 
 	//> Changes clear action
-	if(it->modify())
-	{
+	if(it->modify()) {
 	    if(!ico_t.load(TUIS::icoGet("reload",NULL,true).c_str())) ico_t.load(":/images/reload.png");
 	    actClr = new QAction(QPixmap::fromImage(ico_t),_("Clear changes"),this);
 	    actClr->setStatusTip(_("Press to clear attribute's changes."));
 	    popup.addAction(actClr);
+	    if(!ico_t.load(TUIS::icoGet("down",NULL,true).c_str())) ico_t.load(":/images/down.png");
+	    actChDown = new QAction(QPixmap::fromImage(ico_t),_("Changes put down to the parent"),this);
+	    actChDown->setStatusTip(_("Press to put down attribute's changes to the parent."));
+	    popup.addAction(actChDown);
 	}
     }
 
-    if(!popup.isEmpty())
-    {
+    if(!popup.isEmpty()) {
 	QAction *rez = popup.exec(QCursor::pos());
 	if(actCopy && rez == actCopy) QApplication::clipboard()->setText(it->data().toString());
 	else if(actEdit && rez == actEdit) {
@@ -795,7 +794,10 @@ void InspAttr::contextMenuEvent( QContextMenuEvent *event )
 	    modelData.mainWin()->visualItClear(nwdg+"/a_"+nattr);
 	    modelData.setWdg(modelData.curWdg());
 	}
-
+	else if(actChDown && rez == actChDown) {
+	    modelData.mainWin()->visualItDownParent(nwdg+"/a_"+nattr);
+	    modelData.setWdg(modelData.curWdg());
+	}
 	popup.clear();
     }
 }
@@ -1675,6 +1677,7 @@ void WdgTree::ctrTreePopup( )
     popup.addAction(owner()->actVisItAdd);
     popup.addAction(owner()->actVisItDel);
     popup.addAction(owner()->actVisItClear);
+    popup.addAction(owner()->actVisItChDown);
     popup.addAction(owner()->actVisItProp);
     popup.addAction(owner()->actVisItEdit);
     popup.addSeparator();
@@ -1922,6 +1925,7 @@ void ProjTree::ctrTreePopup( )
     popup.addAction(owner()->actVisItAdd);
     popup.addAction(owner()->actVisItDel);
     popup.addAction(owner()->actVisItClear);
+    popup.addAction(owner()->actVisItChDown);
     popup.addAction(owner()->actVisItProp);
     popup.addAction(owner()->actVisItEdit);
     popup.addSeparator();
@@ -2317,8 +2321,7 @@ void DevelWdgView::wdgViewTool( QAction *act )
     DevelWdgView *cwdg = NULL, *ewdg = NULL;
     if(edit())    return;
     QStringList sact = act->objectName().split('_');
-    if(sact.at(0) == "align")
-    {
+    if(sact.at(0) == "align") {
 	//Get selected rect
 	QRectF selRect;
 	int sel_cnt = 0;
@@ -2333,8 +2336,7 @@ void DevelWdgView::wdgViewTool( QAction *act )
 
 	//Update selected widgets position
 	for(int i_c = 0; i_c < children().size(); i_c++)
-	    if((cwdg=qobject_cast<DevelWdgView*>(children().at(i_c))) && cwdg->select())
-	    {
+	    if((cwdg=qobject_cast<DevelWdgView*>(children().at(i_c))) && cwdg->select()) {
 		QPointF toPnt = cwdg->posF();
 		if(sact.at(1) == "left")	toPnt = QPointF(selRect.x(),cwdg->posF().y());
 		else if(sact.at(1) == "right")	toPnt = QPointF(selRect.x()+selRect.width()-cwdg->sizeF().width(),cwdg->posF().y());
@@ -2346,8 +2348,7 @@ void DevelWdgView::wdgViewTool( QAction *act )
 	    }
 	//saveGeom("");
     }
-    else if(sact.at(0) == "level")
-    {
+    else if(sact.at(0) == "level") {
 	bool is_rise = (sact.at(1) == "rise");
 	bool is_up   = (sact.at(1) == "up");
 	bool is_lower= (sact.at(1) == "lower");
@@ -2356,12 +2357,10 @@ void DevelWdgView::wdgViewTool( QAction *act )
 	string sel_w;
 
 	if(is_rise || is_up)
-	    for(int w_off = 0; (sel_w=TSYS::strSepParse(sel_ws,0,';',&w_off)).size(); )
-	    {
+	    for(int w_off = 0; (sel_w=TSYS::strSepParse(sel_ws,0,';',&w_off)).size(); ) {
 		bool is_move = false;
 		cwdg = ewdg = NULL;
-		for(int i_c = 0; i_c < children().size(); i_c++)
-		{
+		for(int i_c = 0; i_c < children().size(); i_c++) {
 		    if(!qobject_cast<DevelWdgView*>(children().at(i_c)))   continue;
 		    ewdg = qobject_cast<DevelWdgView*>(children().at(i_c));
 		    if(ewdg->id() == sel_w.c_str()) cwdg = ewdg;
@@ -2382,14 +2381,12 @@ void DevelWdgView::wdgViewTool( QAction *act )
 		}
 	    }
 
-	if(is_lower || is_down)
-	{
+	if(is_lower || is_down) {
 	    for(int w_off = 0; (sel_w=TSYS::strSepParse(sel_ws,0,';',&w_off)).size(); )
 	    {
 		bool is_move = false;
 		cwdg = ewdg = NULL;
-		for(int i_c = children().size()-1; i_c >= 0; i_c--)
-		{
+		for(int i_c = children().size()-1; i_c >= 0; i_c--) {
 		    if(!qobject_cast<DevelWdgView*>(children().at(i_c)))   continue;
 		    ewdg = qobject_cast<DevelWdgView*>(children().at(i_c));
 		    if(ewdg->id() == sel_w.c_str())   cwdg = ewdg;
@@ -2401,8 +2398,7 @@ void DevelWdgView::wdgViewTool( QAction *act )
 			is_move = true;
 		    }
 		}
-		if(is_down && cwdg && ewdg && cwdg != ewdg)
-		{
+		if(is_down && cwdg && ewdg && cwdg != ewdg) {
 		    cwdg->stackUnder(ewdg);
 		    cwdg->setZ(ewdg->z()-1);
 		    saveGeom(cwdg->id());
@@ -2421,8 +2417,7 @@ void DevelWdgView::wdgPopup( )
 
     //Cancel new widget inserting
     QAction *act = mainWin()->actGrpWdgAdd->checkedAction();
-    if(act && act->isChecked())
-    {
+    if(act && act->isChecked()) {
 	act->setChecked(false);
 	setCursor(Qt::ArrowCursor);
 	return;
@@ -2447,8 +2442,8 @@ void DevelWdgView::wdgPopup( )
 	{
 	    popup.addAction(mainWin()->actVisItDel);
 	    popup.addAction(mainWin()->actVisItClear);
-	    if( sel_cnt == 1 )
-	    {
+	    popup.addAction(mainWin()->actVisItChDown);
+	    if(sel_cnt == 1) {
 		popup.addAction(mainWin()->actVisItProp);
 		popup.addAction(mainWin()->actVisItEdit);
 	    }
@@ -2739,7 +2734,12 @@ bool DevelWdgView::attrSet( const string &attr, const string &val, int uiPrmPos 
 	case A_GEOM_Y: chGeomCtx.setAttr("_y", val);		break;
 	case A_GEOM_W: chGeomCtx.setAttr("_w", val);		break;
 	case A_GEOM_H: chGeomCtx.setAttr("_h", val);		break;
-	case A_GEOM_Z: chGeomCtx.setAttr("_z", val);		break;
+	case A_GEOM_Z: chGeomCtx.setAttr("_z", val);
+	    if(wLevel() > 0 && !allAttrLoad()) {
+		levelWidget(wLevel()-1)->orderUpdate();
+		QWidget::update();
+	    }
+	    break;
 	case A_GEOM_X_SC: chGeomCtx.setAttr("_xSc", val);	break;
 	case A_GEOM_Y_SC: chGeomCtx.setAttr("_ySc", val);	break;
 	default: geomUp = false;				break;

@@ -1,8 +1,7 @@
 
 //OpenSCADA system module Transport.Sockets file: socket.h
 /***************************************************************************
- *   Copyright (C) 2003-2014 by Roman Savochenko                           *
- *   rom_as@oscada.org, rom_as@fromru.com                                  *
+ *   Copyright (C) 2003-2014 by Roman Savochenko, <rom_as@oscada.org>      *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -173,7 +172,6 @@ class TSocketOut: public TTransportOut
 	string timings( )		{ return mTimings; }
 	int tmCon( )			{ return mTmCon; }
 
-	void setAddr( const string &addr );
 	void setTimings( const string &vl );
 	void setTmCon( int vl )		{ mTmCon = vmax(1,vmin(60000,vl)); }
 

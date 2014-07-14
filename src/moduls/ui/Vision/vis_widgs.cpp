@@ -1095,9 +1095,8 @@ WdgView *WdgView::newWdgItem( const string &iwid )
 
 bool WdgView::attrSet( const string &attr, const string &val, int uiPrmPos )
 {
-    //> Send value to model
-    if(!attr.empty())
-    {
+    //Send value to model
+    if(!attr.empty()) {
 	XMLNode req("set");
 	req.setAttr("path",id()+"/%2fserv%2fattr");
 	req.childAdd("el")->setAttr("id",attr)->setText(val);
@@ -1127,7 +1126,7 @@ bool WdgView::attrSet( const string &attr, const string &val, int uiPrmPos )
 	    break;
 	case A_GEOM_W: mWSize = QSizeF(xScale(true)*atof(val.c_str()),sizeF().height()); up = true;	break;
 	case A_GEOM_H: mWSize = QSizeF(sizeF().width(),yScale(true)*atof(val.c_str())); up = true;	break;
-	case A_GEOM_Z: if(wLevel() > 0) z_coord = atoi(val.c_str());					break;
+	case A_GEOM_Z: if(wLevel() > 0) z_coord = atoi(val.c_str());	break;
 	case A_GEOM_X_SC:
 	    mWSize = QSizeF((atof(val.c_str())/x_scale)*sizeF().width(),sizeF().height());
 	    x_scale = atof(val.c_str());
@@ -1141,13 +1140,12 @@ bool WdgView::attrSet( const string &attr, const string &val, int uiPrmPos )
 	case A_TIP_TOOL: setToolTip(val.c_str());	break;
 	case A_TIP_STATUS: setStatusTip(val.c_str());	break;
     }
-    if(up && !allAttrLoad())
-    {
+    if(up && !allAttrLoad()) {
 	if(wLevel() > 0) moveF(posF());
 	resizeF(sizeF());
 	for(int i_c = 0; upChlds && i_c < children().size(); i_c++)
 	    if(qobject_cast<WdgView*>(children().at(i_c)))
-	        ((WdgView*)children().at(i_c))->load("");
+		((WdgView*)children().at(i_c))->load("");
     }
 
     if(shape)	return shape->attrSet(this,uiPrmPos,val);
@@ -1189,12 +1187,10 @@ void WdgView::load( const string& item, bool isLoad, bool isInit, XMLNode *aBr )
 
     isReload = shape;
 
-    //> Load from data model
-    if(isLoad)
-    {
+    //Load from data model
+    if(isLoad) {
         bool reqBrCr = false;
-	if(!aBr)
-	{
+	if(!aBr) {
 	    aBr = new XMLNode("get");
 	    aBr->setAttr("path",id()+"/%2fserv%2fattrBr");
 	    cntrIfCmd(*aBr);
@@ -1210,11 +1206,10 @@ void WdgView::load( const string& item, bool isLoad, bool isInit, XMLNode *aBr )
 		    attrSet("",aBr->childGet(i_el)->text(),atoi(aBr->childGet(i_el)->attr("p").c_str()));
 	setAllAttrLoad(false);
 
-	//>> Delete child widgets
+	// Delete child widgets
 	string b_nm = aBr->attr("lnkPath");
 	if(b_nm.empty()) b_nm = id();
-	for(int i_c = 0, i_l = 0; i_c < children().size(); i_c++)
-	{
+	for(int i_c = 0, i_l = 0; i_c < children().size(); i_c++) {
 	    if(!qobject_cast<WdgView*>(children().at(i_c))) continue;
 	    for(i_l = 0; i_l < (int)aBr->childSize(); i_l++)
 		if(aBr->childGet(i_l)->name() == "w" &&
@@ -1223,7 +1218,7 @@ void WdgView::load( const string& item, bool isLoad, bool isInit, XMLNode *aBr )
 	    if(i_l >= (int)aBr->childSize()) children().at(i_c)->deleteLater();
 	}
 
-	//>> Create new child widget
+	// Create new child widget
 	for(int i_l = 0, i_c = 0; i_l < (int)aBr->childSize(); i_l++)
 	{
 	    if(aBr->childGet(i_l)->name() != "w") continue;
@@ -1240,7 +1235,7 @@ void WdgView::load( const string& item, bool isLoad, bool isInit, XMLNode *aBr )
 	    nwdg->load((item==id())?"":item,true,(wLevel()>0)?isInit:false,aBr->childGet(i_l));
 	}
 
-	//>> Children widgets order update
+	// Children widgets order update
 	orderUpdate();
 
 	if(reqBrCr) delete aBr;
@@ -1287,16 +1282,42 @@ void WdgView::orderUpdate( )
 
     vector< pair<int,QObject*> > arr;
     arr.reserve(children().size());
-    for(int i_c = 0; i_c < ols.size(); i_c++) {
-	WdgView *cw = qobject_cast<WdgView*>(ols[i_c]);
-	if(cw) arr.push_back(pair<int,QObject*>(cw->z(),cw));
-	else arr.push_back(pair<int,QObject*>(100000,ols[i_c]));
+    int needForSort = 0;
+    int sysLev = 1000001;
+    for(int iC = 0; iC < ols.size(); iC++) {
+	WdgView *cw = qobject_cast<WdgView*>(ols[iC]);
+	if(cw) needForSort++;
+	arr.push_back(pair<int,QObject*>((cw?cw->z():sysLev),ols[iC]));
     }
-    make_heap(arr.begin(),arr.end());
-    sort_heap(arr.begin(),arr.end());
-    if(ols.size() == (int)arr.size())
-	for(int i_c = 0; i_c < ols.size(); i_c++)
-	    if(i_c < (int)arr.size()) ols[i_c] = arr[i_c].second;
+    if(!needForSort) return;
+
+    /*make_heap(arr.begin(),arr.end());
+    sort_heap(arr.begin(),arr.end());*/
+    sort(arr.begin(),arr.end());
+    if(ols.size() && ols.size() == (int)arr.size()) {
+	bool endIt = false;
+	vector< pair<string,QObject*> > arrAftSrt;
+	for(int iC = 0, iZ = 0, zPrev = arr[iZ].first; iC < ols.size(); ) {
+	    ols[iC] = arr[iC].second;
+	    ++iC;
+
+	    // After sort
+	    if((endIt=(iC>=ols.size())) || arr[iC].first != zPrev) {
+		if((iC-iZ) >= 2 && zPrev != sysLev) {	//Resort
+		    arrAftSrt.clear();
+		    for(int iC1 = iZ; iC1 < iC; ++iC1)
+			arrAftSrt.push_back(pair<string,QObject*>(((WdgView*)ols[iC1])->id(), ols[iC1]));
+		    sort(arrAftSrt.begin(), arrAftSrt.end());
+		    for(int iC1 = iZ, iA = 0; iC1 < iC; ++iC1, ++iA)
+			ols[iC1] = arrAftSrt[iA].second;
+		}
+		if(!endIt) {
+		    iZ = iC;
+		    zPrev = arr[iC].first;
+		}
+	    }
+	}
+    }
 }
 
 bool WdgView::event( QEvent *event )

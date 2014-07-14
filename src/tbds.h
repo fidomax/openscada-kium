@@ -128,7 +128,7 @@ class TBD : public TCntrNode, public TConfig
 	void list( vector<string> &list )	{ chldList(mTbl,list); }
 	bool openStat( const string &table )	{ return chldPresent(mTbl,table); }
 	void open( const string &table, bool create );
-	void close( const string &table, bool del = false )	{ chldDel(mTbl,table,-1,del); }
+	void close( const string &table, bool del = false, long tm = -1 )	{ chldDel(mTbl,table,tm,del); }
 	AutoHD<TTable> at( const string &name )	{ return chldAt(mTbl,name); }
 
 	//> SQL request interface
@@ -146,7 +146,7 @@ class TBD : public TCntrNode, public TConfig
 
 	void preDisable( int flag );
 	void postDisable( int flag );
-	bool cfgChange( TCfg &cfg )     { modif(); return true; }
+	bool cfgChange( TCfg &co, const TVariant &pc )	{ modif(); return true; }
 
 	void load_( );
 	void save_( );
