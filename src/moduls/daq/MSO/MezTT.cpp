@@ -146,19 +146,19 @@ uint16_t MezTT::HandleEvent(unsigned int channel,unsigned int type,unsigned int 
 		case 15:
 				switch (param){
 					case 1:
-						mPrm->vlAt(TSYS::strMess("warn_min_%d",channel % 4 + 1).c_str()).at().setI(TSYS::getUnalignFloat(ireqst.data()),0,true);
+						mPrm->vlAt(TSYS::strMess("warn_min_%d",channel % 4 + 1).c_str()).at().setR(TSYS::getUnalignFloat(ireqst.data()),0,true);
 						break;
 					case 2:
-						mPrm->vlAt(TSYS::strMess("warn_max_%d",channel % 4 + 1).c_str()).at().setI(TSYS::getUnalignFloat(ireqst.data()),0,true);
+						mPrm->vlAt(TSYS::strMess("warn_max_%d",channel % 4 + 1).c_str()).at().setR(TSYS::getUnalignFloat(ireqst.data()),0,true);
 						break;
 					case 3:
-						mPrm->vlAt(TSYS::strMess("alarm_min_%d",channel % 4 + 1).c_str()).at().setI(TSYS::getUnalignFloat(ireqst.data()),0,true);
+						mPrm->vlAt(TSYS::strMess("alarm_min_%d",channel % 4 + 1).c_str()).at().setR(TSYS::getUnalignFloat(ireqst.data()),0,true);
 						break;
 					case 4:
-						mPrm->vlAt(TSYS::strMess("alarm_max_%d",channel % 4 + 1).c_str()).at().setI(TSYS::getUnalignFloat(ireqst.data()),0,true);
+						mPrm->vlAt(TSYS::strMess("alarm_max_%d",channel % 4 + 1).c_str()).at().setR(TSYS::getUnalignFloat(ireqst.data()),0,true);
 						break;
 					case 5:
-						mPrm->vlAt(TSYS::strMess("sens_%d",channel % 4 + 1).c_str()).at().setI(TSYS::getUnalignFloat(ireqst.data()),0,true);
+						mPrm->vlAt(TSYS::strMess("sens_%d",channel % 4 + 1).c_str()).at().setR(TSYS::getUnalignFloat(ireqst.data()),0,true);
 						break;
 				}
 				break;
@@ -171,16 +171,16 @@ uint16_t MezTT::HandleEvent(unsigned int channel,unsigned int type,unsigned int 
 					mPrm->vlAt(TSYS::strMess("period_%d",channel % 4 + 1).c_str()).at().setI(TSYS::getUnalign32(ireqst.data()),0,true);
 					break;
 				case 3:
-					mPrm->vlAt(TSYS::strMess("sensor_min_%d",channel % 4 + 1).c_str()).at().setI(TSYS::getUnalignFloat(ireqst.data()),0,true);
+					mPrm->vlAt(TSYS::strMess("sensor_min_%d",channel % 4 + 1).c_str()).at().setR(TSYS::getUnalignFloat(ireqst.data()),0,true);
 					break;
 				case 4:
-					mPrm->vlAt(TSYS::strMess("sensor_max_%d",channel % 4 + 1).c_str()).at().setI(TSYS::getUnalignFloat(ireqst.data()),0,true);
+					mPrm->vlAt(TSYS::strMess("sensor_max_%d",channel % 4 + 1).c_str()).at().setR(TSYS::getUnalignFloat(ireqst.data()),0,true);
 					break;
 				case 5:
-					mPrm->vlAt(TSYS::strMess("PV_min_%d",channel % 4 + 1).c_str()).at().setI(TSYS::getUnalignFloat(ireqst.data()),0,true);
+					mPrm->vlAt(TSYS::strMess("PV_min_%d",channel % 4 + 1).c_str()).at().setR(TSYS::getUnalignFloat(ireqst.data()),0,true);
 					break;
 				case 6:
-					mPrm->vlAt(TSYS::strMess("PV_max_%d",channel % 4 + 1).c_str()).at().setI(TSYS::getUnalignFloat(ireqst.data()),0,true);
+					mPrm->vlAt(TSYS::strMess("PV_max_%d",channel % 4 + 1).c_str()).at().setR(TSYS::getUnalignFloat(ireqst.data()),0,true);
 					break;
 			}
 			break;

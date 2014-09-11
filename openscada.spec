@@ -23,7 +23,7 @@ BuildRequires: glibc-devel gcc-c++ libpcre-devel libgd2-devel sqlite3
 BuildRequires: libMySQL-devel libsqlite3-devel firebird-devel postgresql-devel
 BuildRequires: libsensors3-devel libnet-snmp-devel libportaudio2-devel libcomedi-devel libqt4-devel libfftw3-devel
 %else
-%define _initdir /etc/init.d
+%define _initdir /etc/rc.d/init.d
 %define _desktopdir %_datadir/applications
 %define _iconsdir /usr/share/icons
 %define _pkgconfigdir %_libdir/pkgconfig
@@ -231,7 +231,11 @@ autoreconf -ivf
 %makeinstall
 rm -f %buildroot/%_libdir/openscada/*.la
 install -m 755 -d %buildroot/%_datadir/openscada/{DATA,icons,docs,LibsDB,AGLKS,Boiler}
+%if %_vendor == "alt"
 install -m 755 -pD data/oscada_ALT.init %buildroot/%_initdir/oscadad
+%else
+install -m 755 -pD data/oscada_RH.init %buildroot/%_initdir/oscadad
+%endif
 
 ln -s openscada_start %buildroot/%_bindir/openscada_AGLKS
 ln -s openscada_start %buildroot/%_bindir/openscada_Boiler

@@ -243,8 +243,7 @@ void TSocketIn::start( )
 	    else if(htons(atol(port.c_str())) > 0) name_in.sin_port = htons(atol(port.c_str()));
 	    else name_in.sin_port = 10001;
 
-	    if(bind(sock_fd,(sockaddr*)&name_in,sizeof(name_in)) == -1)
-	    {
+	    if(bind(sock_fd,(sockaddr*)&name_in,sizeof(name_in)) == -1) {
 		shutdown(sock_fd, SHUT_RDWR);
 		close(sock_fd);
 		throw TError(nodePath().c_str(), _("TCP socket doesn't bind to '%s'!"), addr().c_str());
@@ -258,8 +257,7 @@ void TSocketIn::start( )
 	    else if(htons(atol(port.c_str())) > 0) name_in.sin_port = htons(atol(port.c_str()));
 	    else name_in.sin_port = 10001;
 
-	    if(bind(sock_fd,(sockaddr*)&name_in,sizeof(name_in)) == -1)
-	    {
+	    if(bind(sock_fd,(sockaddr*)&name_in,sizeof(name_in)) == -1) {
 		shutdown(sock_fd, SHUT_RDWR);
 		close(sock_fd);
 		throw TError(nodePath().c_str(), _("UDP socket doesn't bind to '%s'!"), addr().c_str());
@@ -340,8 +338,7 @@ int TSocketIn::writeTo( const string &sender, const string &data )
 
     switch(type)
     {
-	case SOCK_TCP: case SOCK_UNIX:
-	{
+	case SOCK_TCP: case SOCK_UNIX: {
 	    int sId = atoi(TSYS::strLine(sender,1).c_str());
 	    if(sId < 0) return -1;
 	    if(mess_lev() == TMess::Debug) mess_debug(nodePath().c_str(),_("Socket write message '%d'."), data.size());
@@ -498,7 +495,7 @@ void *TSocketIn::Task( void *sock_in )
     ResAlloc res(sock->sock_res,false);
     //Find already registry
     for(unsigned i_id = 0; i_id < sock->cl_id.size(); i_id++)
-        pthread_kill(sock->cl_id[i_id].cl_id, SIGALRM);
+	pthread_kill(sock->cl_id[i_id].cl_id, SIGALRM);
     res.release();
     TSYS::eventWait(sock->cl_free, true, string(MOD_ID)+": "+sock->id()+_(" client task is stopping...."));
 
@@ -542,6 +539,7 @@ void *TSocketIn::ClTask( void *s_inf )
 	req.assign(buf, r_len);
 
 	s.s->messPut(s.cSock, req, answ, s.sender, prot_in);
+
 	if(answ.size()) {
 	    if(mess_lev() == TMess::Debug)
 		mess_debug(s.s->nodePath().c_str(), _("Socket replied message '%d' to '%s'."), answ.size(), s.sender.c_str());
@@ -741,8 +739,7 @@ void TSocketOut::load_( )
 {
     TTransportOut::load_();
 
-    try
-    {
+    try {
 	XMLNode prmNd;
 	string  vl;
 	prmNd.load(cfg("A_PRMS").getS());
@@ -827,8 +824,7 @@ void TSocketOut::start( int itmCon )
 	int flags = fcntl(sock_fd, F_GETFL, 0);
 	fcntl(sock_fd, F_SETFL, flags|O_NONBLOCK);
 	int res = connect(sock_fd, (sockaddr*)&name_in, sizeof(name_in));
-	if(res == -1 && errno == EINPROGRESS)
-	{
+	if(res == -1 && errno == EINPROGRESS) {
 	    struct timeval tv;
 	    socklen_t slen = sizeof(res);
 	    fd_set fdset;
@@ -837,15 +833,13 @@ void TSocketOut::start( int itmCon )
 	    if((res=select(sock_fd+1, NULL, &fdset, NULL, &tv)) > 0 && !getsockopt(sock_fd,SOL_SOCKET,SO_ERROR,&res,&slen) && !res) res = 0;
 	    else res = -1;
 	}
-	if(res)
-	{
+	if(res) {
 	    close(sock_fd);
 	    sock_fd = -1;
 	    throw TError(nodePath().c_str(),_("Connect to Internet socket error: %s!"),strerror(errno));
 	}
     }
-    else if(type == SOCK_UNIX)
-    {
+    else if(type == SOCK_UNIX) {
 	string path = TSYS::strSepParse(addr(), 1, ':');
 	if(!path.size()) path = "/tmp/oscada";
 	memset(&name_un, 0, sizeof(name_un));
@@ -912,8 +906,7 @@ void TSocketOut::stop( )
     trIn = trOut = 0;
 
     //Close connection
-    if(sock_fd >= 0)
-    {
+    if(sock_fd >= 0) {
 	shutdown(sock_fd, SHUT_RDWR);
 	close(sock_fd);
     }
@@ -943,8 +936,7 @@ repeate:
     if(reqTry++ >= 2) { mLstReqTm = TSYS::curTime(); throw TError(nodePath().c_str(),_("Request error: %s"),err.c_str()); }
     //Write request
     writeReq = false;
-    if(obuf != NULL && len_ob > 0)
-    {
+    if(obuf != NULL && len_ob > 0) {
 	if(!time) time = mTmCon;
 
 	// Input buffer clear
@@ -953,13 +945,11 @@ repeate:
 	// Write request
 	if(mTmRep && (TSYS::curTime()-mLstReqTm) < (1000*mTmRep))
 	    TSYS::sysSleep(1e-6*((1e3*mTmRep)-(TSYS::curTime()-mLstReqTm)));
-	for(int wOff = 0; wOff != len_ob; wOff += kz)
-	{
+
+	for(int wOff = 0; wOff != len_ob; wOff += kz) {
 	    kz = write(sock_fd, obuf+wOff, len_ob-wOff);
-	    if(kz <= 0)
-	    {
-		if(errno == EAGAIN)
-		{
+	    if(kz <= 0) {
+		if(errno == EAGAIN) {
 		    tv.tv_sec  = (time/2)/1000; tv.tv_usec = 1000*((time/2)%1000);
 		    FD_ZERO(&rw_fd); FD_SET(sock_fd, &rw_fd);
 		    kz = select(sock_fd+1, NULL, &rw_fd, NULL, &tv);
@@ -982,18 +972,15 @@ repeate:
 
     //Read reply
     int i_b = 0;
-    if(ibuf != NULL && len_ib > 0)
-    {
+    if(ibuf != NULL && len_ib > 0) {
 	tv.tv_sec  = time/1000; tv.tv_usec = 1000*(time%1000);
 	FD_ZERO(&rw_fd); FD_SET(sock_fd, &rw_fd);
 	kz = select(sock_fd+1, &rw_fd, NULL, NULL, &tv);
 	if(kz == 0)	{ res.release(); if(writeReq) stop(); mLstReqTm = TSYS::curTime(); throw TError(nodePath().c_str(),_("Timeouted!")); }
 	else if(kz < 0)	{ res.release(); stop(); mLstReqTm = TSYS::curTime(); throw TError(nodePath().c_str(),_("Socket error!")); }
-	else if(FD_ISSET(sock_fd, &rw_fd))
-	{
+	else if(FD_ISSET(sock_fd, &rw_fd)) {
 	    i_b = read(sock_fd, ibuf, len_ib);
-	    if(i_b <= 0 && obuf)
-	    {
+	    if(i_b <= 0 && obuf) {
 		err = strerror(errno);
 		res.release();
 		stop(); start();
@@ -1014,8 +1001,7 @@ repeate:
 void TSocketOut::cntrCmdProc( XMLNode *opt )
 {
     //Get page info
-    if(opt->name() == "info")
-    {
+    if(opt->name() == "info") {
 	TTransportOut::cntrCmdProc(opt);
 	ctrRemoveNode(opt,"/prm/cfg/A_PRMS");
 	ctrMkNode("fld",opt,-1,"/prm/cfg/ADDR",EVAL_STR,RWRWR_,"root",STR_ID,1,"help",
@@ -1042,8 +1028,7 @@ void TSocketOut::cntrCmdProc( XMLNode *opt )
 
     //Process command to page
     string a_path = opt->attr("path");
-    if(a_path == "/prm/cfg/TMS")
-    {
+    if(a_path == "/prm/cfg/TMS") {
 	if(ctrChkNode(opt,"get",RWRWR_,"root",STR_ID,SEC_RD))	opt->setText(timings());
 	if(ctrChkNode(opt,"set",RWRWR_,"root",STR_ID,SEC_WR))	setTimings(opt->text());
     }

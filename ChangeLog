@@ -1,3 +1,139 @@
+2014-09-06 Roman
+- SYS: Into main spec-file for default init used RH-init file.
+    debian/control expand for dependent from "sqlite3" and the depends made unified.
+    TVArchive,TTransportIn: Check for cfg-change real value for prevent some problems.
+    TElem: Expand for create TFld from example-pattern of present TFld but different ID. TElem::fldClear() for fields clean up is added.
+    Messages resource moved from ResAlloc to MtxAlloc.
+    !!!!: Request keys mode support, by WHERE of SQL, is added:
+	TCfg::reqKey(), TCfg::setReqKey(), TConfig::reqKeys() used for mark Request keys mode. TCfg::isKey() append for common key
+	    whether generic or request (by mark TConfig::reqKeys()).
+	Flags KeyUpdtBase and KeyUpdtSet to functions TCfg::setS() and TCfg::getS(), mark TCfg::keyUpdt() is added for key update mode set
+	    and particular values of the keys set (KeyUpdtBase - base update value; KeyUpdtSet - set update value), for set requests.
+    !!!!: Data messages' translations register, built messages index and manage API is added.
+	<cfg>,SQLite,FireBird,MySQL,PostgreSQL: Register and requests for messages from config ("cfg:...") and DB.* ("incl:...") is added.
+	    Generic translations manager is created.
+- !!!!:DB: Method TTable::fullDBName() is added. For key detect used isKey(). For table content set uses TCfg::KeyUpdt mode.
+    SQLite,DBF,FireBird,MySQL,PostgreSQL: Expand to Request keys, TConfig::reqKeys() and TCfg::reqKey(), mode.
+	Expand to TCfg::KeyUpdt mode using into fieldSet() and fieldFix()
+    MySQL,PostgreSQL,FireBird: Uses for zero length default TEXT type.
+    FIX:FireBird: dataSeek() fix for no SELECT fields set. Fix using default type for integer from INT64 to BIGINT.
+- DAQ.JavaLikeCalc: Prevent controller object reload into start (execution) mode.
+- DAQ.OPC_UA.lib: Fix strLine() declaration from static to extern.
+- UI.Vision: Allowed sessions and projects list for proper remote station, the user and password is added to field "Run projects list"
+    of common dialog by the module.
+- Special.SystemTests.DB: Expanded by test "Check for update fields, by request key".
+
+
+2014-08-25 Roman
+- FIX:DB: TBDS::dataDel() fix for remove records from config file after DB try, mostly for same DB records remove fix.
+- UI.VCAEngine: Automatic sessions creation update at the module enable is added.
+- !:UI.Vision: Session set for automatic starting is added into parameter "Run projects list",
+    mostly for connect to already started or background sessions.
+- UI.WebVision: Clean up the source code.
+
+
+2014-08-24 Roman
+- UI.VCAEngine: "Diagnostics" tab messages pattern expand for internal VCA path allow.
+- FIX:UI.Vision: Next fix actual cursor set and the parameters value into the cursor position for significant time difference
+    for arrears the cursor position to one period.
+
+
+2014-08-19 Roman
+- FIX:Security: Password size expand to more 8 symbols by switch to crypt MD5. Backward compatibility saved for stored passwords.
+    Detected by Vasilij Grigoriev.
+- FIX:DAQ.JavaLikeCalc: toString() function for numbers fix for int64_t process.
+- FIX:Special.FLibSYS.IO: Load function for integer and real types fix to groups by multiple buffers (10000 bytes).
+- UI.{VCAEngine,Vision}: "Diagnostics" tab appended to project's page for sessions of the project errors and other debug simplify.
+- FIX:UI.Vision: Caps of trend's lines of primitive "Diagram" view "Trends" some fix for Qt4 and Qt5.
+    LineEdit widget some fix for apply real button size obtain and prevent the window size float.
+
+
+2014-08-15 Roman
+- SYS: data/oscada_gentoo.init appended for Gentoo by "IrmIngeneer".
+    Force using "snprintf" instead "sprintf" into encoding functions.
+    !!:FIX:Task and the record force created for errors like the timeout start. Some crashes prevent.
+- !!:FIX:DAQ: Flag "prcStRd" early set into redundant task is added for prevent wrong the task starting at the connection to remote station miss
+    and crash at stop. But possible the will create problem with first sync!
+- DB.LibsDB.vcaBase.db: "Main.cntrPaspExt" some fixed and expanded for trend's scale modify.
+- !!:UI.{VCAEngine,Vision}: Cells edition to view "Table" of primitive "FormEl" support is added.
+- !:FIX:UI.Vision: Set focus proxy from the edited widget container to the widget into development mode for allow the single focus source and
+	included widgets selection lost at some cases.
+    Fix actual cursor set and the parameters value into the cursor position for significant time difference between the session server host and
+	the session visualiser host.
+
+
+2014-08-12 Roman
+- SYS: Using "LibGD" into OpenSCADA core disabled by default and instead used "SVG" mostly.
+    To user space object base "TVarObj" expanded functions propGet() and "propSet()" is added for hierarchical access by path.
+- UI.VCAEngine: Access to DAQ properties of Object's type by path into links like "/DAQ/{Cntr}/{Prm}/{Attr}#/{oAttr1}/{oAttr2}" is added.
+
+
+2014-08-04 Roman
+- UI.Vision: Restore connection time control is added for remote connection to visualisation server hang prevent and display update.
+
+
+2014-08-01 Roman
+- FIX:Special.FLibSYS: strDec4Bin() function fix and expand by separator argument into default value " ", for compatibility restore.
+- FIX:UI.{QTCfg,Vision}: Global wait cursor restore fix at the window close.
+- !!!:UI.VCAEngine: Access to project's session time table unified by append the session attributes access functions sessAttr(), sessAttrSet().
+    The functions used to: primitive "Document", session's Style, edited resources by user's API functions "mime()" and "mimeSet()",
+	"fromSess" and "toSess" user's API functions "attr()" and "attrSet()".
+    Service "/serv/attrSess/" is added for access to session's attributes.
+- !!!:UI.Vision: Run time window's position control and save is added by option "winPosCntrSave" enable and using new service "/serv/attrSess/".
+    Screen number expanded for not only assign to different physical display and for independent position control and save.
+
+
+2014-07-31 Roman
+- !:DAQ.DAQGate: Remote source's messages acquisition disabling is added, for request time control.
+    FIX: Processed parameters list clean up moved from stop to disable stage.
+    Pass empty parameter into separated atributes request mode is added, for traffic and overall request time decrease.
+    Some requests profiled: Into common priority request's and respond's reaction is 3-8ms, into RealTime priority (10) it is 50-100us.
+- UI.{QTCfg,Vision}: Wait cursor set moved to already set and restore only after timeout 50 ms, for blink prevent and some DE load by that.
+- UI.Vision: The project manual call, also from status panel, is added by offline document name "{ProjName}.{pdf|html|odt}.
+
+
+2014-07-25 Roman
+- FIX:UI.Vision: Force set Cap policy to Qt::FlatCap for primitive Diagram's paint, mostly for workaround visible defects here on Qt5.
+    Ticks lost for Slider view and related views deffects of primitive FormEl at press to the elements' container widget
+	by prevent that's QEvent::MouseButtonPress and QEvent::MouseButtonRelease events global process.
+
+
+2014-07-22 Roman
+- SYS: messid location place to *.po files disable, mostly for prevent SVN merge problems, again.
+- DB.MySQL: "bigint" type using everywhere for integers fix.
+- TFunction, TValue, UI.VCAEngine.Attr: Set TEValObj() to object type attribute by EVAL scalar set is added.
+
+
+2014-07-20 Roman
+- FIX:Archive: Place to archive fix next for int64_t.
+- !!:FIX:UI.VCAEngine: Change parent trace for project and widget's library fix.
+
+
+2014-07-18 Roman
+- !!:DB.LibsDB.vcaBase.db: New templated frame "Main.grpGraph10" based on "Main.grpGraph" is added for 10 trends placing.
+    New colors are added to "Main.grpGraph" for selection "darkcyan", "lightyellow".
+    "Main.graphSelPrm" adapted for included self to self parameters selection and event "usr_set" for storage to the session allow.
+    "Main.ElViewGraph" adapted for allow save to the session table of selected parameters and its restore at new the session start.
+    "Main.cntrPaspExt" expanded for notification borders "aMax", "aMin", "wMax", "wMin" only valid display.
+	Trands number limited by colors to 10.
+- DB.Model.AGLKS.vca.db: Extended pasport "Main.cntrPaspExt" placed to model's project "AGLKS".
+- SYS: User API function TCntrNodeObj::nodeAt() some simplified and made optimal.
+- !!:UI.VCAEngine: Attributes' modify set after new the create into enabled session is added for guaranty the value read by the session visualiser.
+    User API session area functions attr() and attrSet() expanded by argument "bool fromSess" and "bool toSess" respectively for set
+    the attributes to the session table.
+    FIX:Widget's attributes expand to int64_t next fix.
+    FIX:Change parent trace for project and widget's library fix.
+- FIX:UI.Vision: Unproper events process at config set to element LineEdit, mostly for this view "Combo", are prevented by signals block.
+
+
+2014-07-14 Roman
+!!:SYS: Prevent Back-linking mechanism working into modules by its direct link with OpenSCADA core.
+    Mostly for further DLL build and symbols missing early, at build stage, detect.
+    "make install" stage errors at that fixed into libtool 2.4!
+- SYS: Removed unneeded now Makefile.am files from "src/moduls" and "src/moduls/{SUB}" folders.
+- FIX:Archive: "Start archive" back renamed to "To start".
+
+
 2014-07-12 Roman
 - SYS: Primitive of functions strEncode() and strDecode() set unified.
     User API functions strEncode() and strDecode() is added.

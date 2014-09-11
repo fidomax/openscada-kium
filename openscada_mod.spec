@@ -5,7 +5,7 @@ Summary(uk_UA.UTF8): Відкрита SCADA система.
 Summary(de_DE.UTF8): Open SCADA-System.
 Name: openscada
 Version: 0.9
-Release: r2125
+Release: r2150
 Source: openscada-%version.tar.lzma
 Source1: openscada-res-%version.tar.lzma
 License: GPLv2
@@ -22,7 +22,7 @@ BuildRequires: glibc-devel gcc-c++ libpcre-devel libgd2-devel sqlite3
 BuildRequires: libMySQL-devel libsqlite3-devel firebird-devel postgresql-devel
 BuildRequires: libsensors3-devel libnet-snmp-devel libportaudio2-devel libcomedi-devel libqt4-devel libfftw3-devel
 %else
-%define _initdir /etc/init.d
+%define _initdir /etc/rc.d/init.d
 %define _desktopdir %_datadir/applications
 %define _iconsdir /usr/share/icons
 BuildRoot: %_tmppath/%name-%version-root
