@@ -415,13 +415,15 @@ MTable::MTable( string name, MBD *iown, bool create ) : TTable(name)
 	    "AND c.relname = '" + TSYS::strEncode(name,TSYS::SQL) + "'";
     owner().sqlReq(req, &tbl);
     if(create && tbl.size() == 2 && tbl[1][0] == "0") {
-	req = "CREATE TABLE \"" + TSYS::strEncode(name,TSYS::SQL)+ "\"(\"name\" character(20) NOT NULL DEFAULT '' PRIMARY KEY)";
+	req = "CREATE TABLE \"" + TSYS::strEncode(name,TSYS::SQL)+ "\"(\"<<empty>>\" character(20) NOT NULL DEFAULT '' PRIMARY KEY)";
 	owner().sqlReq(req);
     }
     getStructDB(name, tblStrct);
 }
 
 MTable::~MTable( )	{ }
+
+bool MTable::isEmpty( )	{ return tblStrct.empty() || tblStrct[1][0] == "<<empty>>"; }
 
 void MTable::postDisable( int flag )
 {
@@ -522,7 +524,7 @@ bool MTable::fieldSeek( int row, TConfig &cfg )
     for(unsigned i_fld = 1; i_fld < tblStrct.size(); i_fld++) {
 	sid = tblStrct[i_fld][0];
 	TCfg *u_cfg = cfg.at(sid, true);
-	if(!cfg.noTransl() && !u_cfg && sid.compare(0,3,Mess->lang2Code()+"#") == 0) {
+	if(!u_cfg && sid.compare(0,3,Mess->lang2Code()+"#") == 0) {
 	    u_cfg = cfg.at(sid.substr(3), true);
 	    if(u_cfg && !(u_cfg->fld().flg()&TCfg::TransltText)) continue;
 	    trPresent = true;
@@ -549,7 +551,7 @@ bool MTable::fieldSeek( int row, TConfig &cfg )
 	TCfg *u_cfg = cfg.at(sid,true);
 	if(u_cfg) {
 	    setVal(*u_cfg,tbl[1][i_fld]);
-	    if(u_cfg->fld().flg()&TCfg::TransltText && !u_cfg->noTransl()) Mess->translReg(u_cfg->getS(), "incl:"+fullDBName(), sid);
+	    if(u_cfg->fld().flg()&TCfg::TransltText && !u_cfg->noTransl()) Mess->translReg(u_cfg->getS(), "db:"+fullDBName()+"#"+sid);
 	}
 	else if(trPresent && sid.compare(0,3,Mess->lang2Code()+"#") == 0 && tbl[1][i_fld].size()) {
 	    u_cfg = cfg.at(sid.substr(3),true);
@@ -574,7 +576,7 @@ void MTable::fieldGet( TConfig &cfg )
     for(unsigned i_fld = 1; i_fld < tblStrct.size(); i_fld++) {
 	sid = tblStrct[i_fld][0];
 	TCfg *u_cfg = cfg.at(sid, true);
-	if(!cfg.noTransl() && !u_cfg && sid.compare(0,3,Mess->lang2Code()+"#") == 0) {
+	if(!u_cfg && sid.compare(0,3,Mess->lang2Code()+"#") == 0) {
 	    u_cfg = cfg.at(sid.substr(3), true);
 	    if(u_cfg && !(u_cfg->fld().flg()&TCfg::TransltText)) continue;
 	    trPresent = true;
@@ -604,7 +606,7 @@ void MTable::fieldGet( TConfig &cfg )
 	TCfg *u_cfg = cfg.at(sid, true);
 	if(u_cfg) {
 	    setVal(*u_cfg, tbl[1][i_fld]);
-	    if(u_cfg->fld().flg()&TCfg::TransltText && !u_cfg->noTransl()) Mess->translReg(u_cfg->getS(), "incl:"+fullDBName(), sid);
+	    if(u_cfg->fld().flg()&TCfg::TransltText && !u_cfg->noTransl()) Mess->translReg(u_cfg->getS(), "db:"+fullDBName()+"#"+sid);
 	}
 	else if(trPresent && sid.compare(0,3,Mess->lang2Code()+"#") == 0 && tbl[1][i_fld].size()) {
 	    u_cfg = cfg.at(sid.substr(3), true);
@@ -620,7 +622,7 @@ void MTable::fieldSet( TConfig &cfg )
     if(tblStrct.empty()) throw TError(nodePath().c_str(), _("Table is empty!"));
     mLstUse = SYS->sysTm();
     string sid, sval;
-    bool isVarTextTransl = (!Mess->lang2CodeBase().empty() && !cfg.noTransl() && Mess->lang2Code() != Mess->lang2CodeBase());
+    bool isVarTextTransl = (!Mess->lang2CodeBase().empty() && Mess->lang2Code() != Mess->lang2CodeBase());
     //Get config fields list
     vector<string> cf_el;
     cfg.cfgList(cf_el);
@@ -628,7 +630,7 @@ void MTable::fieldSet( TConfig &cfg )
     //Check for translation present
     bool trPresent = isVarTextTransl, trDblDef = false;
     for(unsigned i_fld = 1; i_fld < tblStrct.size(); i_fld++) {
-	if((trPresent || cfg.noTransl()) && (!isVarTextTransl || trDblDef)) break;
+	if(trPresent && (!isVarTextTransl || trDblDef)) break;
 	sid = tblStrct[i_fld][0];
 	if(sid.size() > 3) {
 	    if(!trPresent && sid.compare(0,3,Mess->lang2Code()+"#") == 0) trPresent = true;
@@ -746,18 +748,19 @@ void MTable::fieldFix( TConfig &cfg )
     bool next = false, next_key = false;
     if(tblStrct.empty()) throw TError(nodePath().c_str(), _("Table is empty!"));
 
-    bool reqMode = cfg.reqKeys(),	//Request mode: only for append no present fields
-	 isVarTextTransl = (!Mess->lang2CodeBase().empty() && !cfg.noTransl() && Mess->lang2Code() != Mess->lang2CodeBase());
+    bool appMode = cfg.reqKeys() || (cfg.incomplTblStruct() && !isEmpty()),	//Only for append no present fields
+	 isVarTextTransl = (!Mess->lang2CodeBase().empty() && Mess->lang2Code() != Mess->lang2CodeBase());
+
     //Get config fields list
     vector<string> cf_el;
     cfg.cfgList(cf_el);
 
     //Prepare request for fix structure
     string req = "ALTER TABLE \"" + TSYS::strEncode(name(),TSYS::SQL) + "\" ";
-    if(!reqMode) req += "DROP CONSTRAINT \"" + TSYS::strEncode(name(),TSYS::SQL) + "_pkey\", ";
+    if(!appMode) req += "DROP CONSTRAINT \"" + TSYS::strEncode(name(),TSYS::SQL) + "_pkey\", ";
 
     //DROP fields
-    for(unsigned i_fld = 1, i_cf; i_fld < tblStrct.size() && !reqMode; i_fld++) {
+    for(unsigned i_fld = 1, i_cf; i_fld < tblStrct.size() && !appMode; i_fld++) {
 	for(i_cf = 0; i_cf < cf_el.size(); i_cf++)
 	    if(cf_el[i_cf] == tblStrct[i_fld][0] ||
 		    (cfg.cfg(cf_el[i_cf]).fld().flg()&TCfg::TransltText && tblStrct[i_fld][0].size() > 3 &&
@@ -799,7 +802,7 @@ void MTable::fieldFix( TConfig &cfg )
     for(unsigned i_cf = 0, i_fld; i_cf < cf_el.size(); i_cf++) {
 	TCfg &u_cfg = cfg.cfg(cf_el[i_cf]);
 	// Check primary key
-	if(u_cfg.fld().flg()&TCfg::Key && !reqMode) {
+	if(u_cfg.fld().flg()&TCfg::Key && !appMode) {
 	    pr_keys += (next_key?",\"":"\"") + TSYS::strEncode(u_cfg.name(),TSYS::SQL) + "\"";
 	    next_key = true;
 	}

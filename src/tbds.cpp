@@ -184,8 +184,7 @@ bool TBDS::dataSeek( const string &ibdn, const string &path, int lev, TConfig &c
 			// Check for field's tag, for store big values
 			if(vl.empty() && (fnd=el->childGet(cf_el[i_el],0,true))) vl = fnd->text(true);
 			// Check for translation
-			if(!cfg.noTransl() && u_cfg.fld().flg()&TCfg::TransltText &&
-			    (Mess->lang2CodeBase().empty() || Mess->lang2Code() != Mess->lang2CodeBase()))
+			if(u_cfg.fld().flg()&TCfg::TransltText && (Mess->lang2CodeBase().empty() || Mess->lang2Code() != Mess->lang2CodeBase()))
 			{
 			    vl_tr = el->attr(cf_el[i_el]+"_"+Mess->lang2Code());
 			    // Check for field's tag, for store big values
@@ -215,7 +214,7 @@ bool TBDS::dataSeek( const string &ibdn, const string &path, int lev, TConfig &c
 bool TBDS::dataGet( const string &ibdn, const string &path, TConfig &cfg, bool forceCfg, bool noEx )
 {
     bool db_true = false;
-    string  bdn = realDBName(ibdn);
+    string bdn = realDBName(ibdn);
     TError dbErr;
 
     //Load from DB
@@ -256,8 +255,8 @@ bool TBDS::dataGet( const string &ibdn, const string &path, TConfig &cfg, bool f
 		    //  Check for field's tag, for store big values
 		    if(vl.empty() && (fnd=el->childGet(cf_el[i_el],0,true))) vl = fnd->text(true);
 		    //  Check for translation
-		    if(!cfg.noTransl() && u_cfg.fld().flg()&TCfg::TransltText) {
-			Mess->translReg(vl, "cfg:"+path, cf_el[i_el]);
+		    if(u_cfg.fld().flg()&TCfg::TransltText) {
+			Mess->translReg(vl, "cfg:"+path+"#"+cf_el[i_el]);
 			if(Mess->lang2CodeBase().empty() || Mess->lang2Code() != Mess->lang2CodeBase()) {
 			    vl_tr = el->attr(cf_el[i_el]+"_"+Mess->lang2Code());
 			    //  Check for field's tag, for store big values
@@ -437,9 +436,9 @@ void TBDS::genDBSet( const string &path, const string &val, const string &user, 
 	AutoHD<TTable> tbl = dbs.at().open(dbs.at().fullDBSYS(), true);
 	if(!tbl.freeStat()) {
 	    TConfig db_el(&dbs.at());
-	    db_el.setNoTransl(!(rFlg&TBDS::UseTranslate));
 	    db_el.cfg("user").setS(user);
 	    db_el.cfg("id").setS(dbs.at().mSYSStPref ? SYS->id()+"/"+path : path);
+	    db_el.cfg("val").setNoTransl(!(rFlg&TBDS::UseTranslate));
 	    db_el.cfg("val").setS(val);
 
 	    try {
@@ -473,9 +472,9 @@ string TBDS::genDBGet( const string &path, const string &oval, const string &use
 	AutoHD<TTable> tbl = dbs.at().open(SYS->db().at().fullDBSYS());
 	if(!tbl.freeStat()) {
 	    TConfig db_el(&dbs.at());
-	    db_el.setNoTransl(!(rFlg&TBDS::UseTranslate));
 	    db_el.cfg("user").setS(user);
 	    db_el.cfg("id").setS(dbs.at().mSYSStPref ? SYS->id()+"/"+path : path);
+	    db_el.cfg("val").setNoTransl(!(rFlg&TBDS::UseTranslate));
 	    try {
 		tbl.at().fieldGet(db_el);
 		rez = db_el.cfg("val").getS();
@@ -678,6 +677,8 @@ void TBD::postDisable( int flag )
 
 TTipBD &TBD::owner( )	{ return *(TTipBD*)nodePrev(); }
 
+string TBD::fullDBName( )	{ return owner().modId()+"."+id(); }
+
 string TBD::name( )
 {
     string rez = cfg("NAME").getS();
@@ -689,6 +690,8 @@ void TBD::enable( )
     if(enableStat()) return;
 
     mEn = true;
+
+    Mess->translReg("", "uapi:"+fullDBName());
 }
 
 void TBD::disable( )
@@ -887,7 +890,7 @@ TCntrNode &TTable::operator=( TCntrNode &node )
     return *this;
 }
 
-string TTable::fullDBName( )	{ return owner().owner().modId()+"."+owner().id()+"."+name(); }
+string TTable::fullDBName( )	{ return owner().fullDBName()+"."+name(); }
 
 TBD &TTable::owner( )	{ return *(TBD*)nodePrev(); }
 
@@ -1049,6 +1052,7 @@ void TTable::cntrCmdProc( XMLNode *opt )
 	    req.cfgViewAll(false);
 	    req.cfg(col).setS(opt->text(), TCfg::ForceUse);
 	    fieldSet(req);
+	    opt->setAttr("noReload","1");	//Pass for reload
 	}
     }
     else TCntrNode::cntrCmdProc(opt);
