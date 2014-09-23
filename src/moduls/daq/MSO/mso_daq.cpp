@@ -39,6 +39,8 @@
 #include "MezTT.h"
 #include "MezTC.h"
 #include "MezTU.h"
+#include "MezTI.h"
+#include "MezTR.h"
 
 #include "mso_daq.h"
 
@@ -75,6 +77,8 @@ void TTpContr::postEnable( int flag )
     fldAdd( new TFld("PRM_BD_TT",_("TT Parameteres table"),TFld::String,TFld::NoFlag,"30","") );
     fldAdd( new TFld("PRM_BD_TC",_("TC Parameteres table"),TFld::String,TFld::NoFlag,"30","") );
     fldAdd( new TFld("PRM_BD_TU",_("TU Parameteres table"),TFld::String,TFld::NoFlag,"30","") );
+    fldAdd( new TFld("PRM_BD_TI",_("TI Parameteres table"),TFld::String,TFld::NoFlag,"30","") );
+    fldAdd( new TFld("PRM_BD_TR",_("TI Parameteres table"),TFld::String,TFld::NoFlag,"30","") );
     fldAdd( new TFld("SCHEDULE",_("Acquisition schedule"),TFld::String,TFld::NoFlag,"100","1") );
     fldAdd( new TFld("PRIOR",_("Gather task priority"),TFld::Integer,TFld::NoFlag,"2","0","-1;99") );
 //    fldAdd( new TFld("PROT",_("MSO protocol"),TFld::String,TFld::Selected,"5","TCP","TCP;RTU;ASCII",_("TCP/IP;RTU;ASCII")) );
@@ -92,7 +96,13 @@ void TTpContr::postEnable( int flag )
     t_prm = tpParmAdd("tp_TC","PRM_BD_TC",_("TC"));
     tpPrmAt(t_prm).fldAdd( new TFld("DEV_ID",_("Device address"),TFld::Integer,TCfg::NoVal,"2","0","0;15") );
 
-    t_prm = tpParmAdd("tp_TU","PRM_BD_TC",_("TU"));
+    t_prm = tpParmAdd("tp_TU","PRM_BD_TU",_("TU"));
+    tpPrmAt(t_prm).fldAdd( new TFld("DEV_ID",_("Device address"),TFld::Integer,TCfg::NoVal,"2","0","0;15") );
+
+    t_prm = tpParmAdd("tp_TI","PRM_BD_TI",_("TI"));
+    tpPrmAt(t_prm).fldAdd( new TFld("DEV_ID",_("Device address"),TFld::Integer,TCfg::NoVal,"2","0","0;15") );
+
+    t_prm = tpParmAdd("tp_TR","PRM_BD_TR",_("TR"));
     tpPrmAt(t_prm).fldAdd( new TFld("DEV_ID",_("Device address"),TFld::Integer,TCfg::NoVal,"2","0","0;15") );
 }
 
@@ -125,6 +135,8 @@ TMSOContr::TMSOContr( string name_c, const string &daq_db, TElem *cfgelem ) :
     cfg("PRM_BD_TT").setS("MSOPrm_TT_"+name_c);
     cfg("PRM_BD_TC").setS("MSOPrm_TC_"+name_c);
     cfg("PRM_BD_TU").setS("MSOPrm_TU_"+name_c);
+    cfg("PRM_BD_TI").setS("MSOPrm_TI_"+name_c);
+    cfg("PRM_BD_TR").setS("MSOPrm_TR_"+name_c);
 }
 
 TMSOContr::~TMSOContr()
@@ -234,13 +246,6 @@ bool TMSOContr::HandleData(unsigned int node, unsigned int channel, unsigned int
 
 void TMSOContr::disable_( )
 {
-    //> Clear acquisition data block
-    acqTT.clear();
-    acqTC.clear();
-/*    acqBlks.clear();
-    acqBlksIn.clear();
-    acqBlksCoil.clear();
-    acqBlksCoilIn.clear();*/
 }
 
 void TMSOContr::start_( )
@@ -277,149 +282,6 @@ bool TMSOContr::cfgChange( TCfg &co, const TVariant &pc )
 
 
     return true;
-}
-
-void TMSOContr::regVal( int addr, const string &dt )
-{
-    if( addr < 0 )	return;
-
-    ResAlloc res( req_res, true );
-    if( dt == "TT")
-    {
-        mess_info(nodePath().c_str(),_("RegValTT %d."),addr);
-        acqTT.insert(acqTT.begin(),STTRec(addr));
-        mess_info(nodePath().c_str(),_("RegValTT size %d."),acqTT.size());
-    }
-    if( dt == "TC")
-    {
-        mess_info(nodePath().c_str(),_("RegValTC %d."),addr);
-        acqTC.insert(acqTC.begin(),STCRec(addr));
-        mess_info(nodePath().c_str(),_("RegValTC size %d."),acqTC.size());
-    }
-
-    //> Register to acquisition block
-    /*if( dt == "R" || dt == "RI" )
-    {
-	vector< SDataRec > &workCnt = (dt == "RI") ? acqBlksIn : acqBlks;
-	int i_b;
-	for( i_b = 0; i_b < workCnt.size(); i_b++ )
-	{
-	    if( (reg*2) < workCnt[i_b].off )
-	    {
-		if( (mMerge || (reg*2+2) >= workCnt[i_b].off) && (workCnt[i_b].val.size()+workCnt[i_b].off-(reg*2)) < MaxLenReq )
-		{
-		    workCnt[i_b].val.insert(0,workCnt[i_b].off-reg*2,0);
-		    workCnt[i_b].off = reg*2;
-		}
-		else workCnt.insert(workCnt.begin()+i_b,SDataRec(reg*2,2));
-	    }
-	    else if( (reg*2+2) > (workCnt[i_b].off+workCnt[i_b].val.size()) )
-	    {
-		if( (mMerge || reg*2 <= (workCnt[i_b].off+workCnt[i_b].val.size())) && (reg*2+2-workCnt[i_b].off) < MaxLenReq )
-		{
-		    workCnt[i_b].val.append((reg*2+2)-(workCnt[i_b].off+workCnt[i_b].val.size()),0);
-		    //>> Check for allow mergin to next block
-		    if( !mMerge && i_b+1 < workCnt.size() && (workCnt[i_b].off+workCnt[i_b].val.size()) >= workCnt[i_b+1].off )
-		    {
-			workCnt[i_b].val.append(workCnt[i_b+1].val,workCnt[i_b].off+workCnt[i_b].val.size()-workCnt[i_b+1].off,string::npos);
-			workCnt.erase(workCnt.begin()+i_b+1);
-		    }
-		}
-		else continue;
-	    }
-	    break;
-	}
-	if( i_b >= workCnt.size() )
-	    workCnt.insert(workCnt.begin()+i_b,SDataRec(reg*2,2));
-    }
-    //> Coils
-    else if( dt == "C" || dt == "CI" )
-    {
-	vector< SDataRec > &workCnt = (dt == "CI") ? acqBlksCoilIn : acqBlksCoil;
-	int i_b;
-	for( i_b = 0; i_b < workCnt.size(); i_b++ )
-	{
-	    if( reg < workCnt[i_b].off )
-	    {
-		if( (mMerge || (reg+1) >= workCnt[i_b].off) && (workCnt[i_b].val.size()+workCnt[i_b].off-reg) < MaxLenReq*8 )
-		{
-		    workCnt[i_b].val.insert(0,workCnt[i_b].off-reg,0);
-		    workCnt[i_b].off = reg;
-		}
-		else workCnt.insert(workCnt.begin()+i_b,SDataRec(reg,1));
-	    }
-	    else if( (reg+1) > (workCnt[i_b].off+workCnt[i_b].val.size()) )
-	    {
-		if( (mMerge || reg <= (workCnt[i_b].off+workCnt[i_b].val.size())) && (reg+1-workCnt[i_b].off) < MaxLenReq*8 )
-		{
-		    workCnt[i_b].val.append((reg+1)-(workCnt[i_b].off+workCnt[i_b].val.size()),0);
-		    //>> Check for allow mergin to next block
-		    if( !mMerge && i_b+1 < workCnt.size() && (workCnt[i_b].off+workCnt[i_b].val.size()) >= workCnt[i_b+1].off )
-		    {
-			workCnt[i_b].val.append(workCnt[i_b+1].val,workCnt[i_b].off+workCnt[i_b].val.size()-workCnt[i_b+1].off,string::npos);
-			workCnt.erase(workCnt.begin()+i_b+1);
-		    }
-		}
-		else continue;
-	    }
-	    break;
-	}
-	if( i_b >= workCnt.size() )
-	    workCnt.insert(workCnt.begin()+i_b,SDataRec(reg,1));
-    }*/
-}
-float TMSOContr::getValTT( int addr, ResString &err )
-{
-    float rez = EVAL_REAL;
-    ResAlloc res( req_res, false );
-    for( int i_b = 0; i_b < acqTT.size(); i_b++ )
-    {
-        if (acqTT[i_b].addr==addr)
-        {
-            err.setVal( acqTT[i_b].err.getVal() );
- //           mess_info("getValTT","%u",i_b);
-            if( err.getVal().empty() ) {
-		        rez = (acqTT[i_b].val);
-            }
-        }
-    }
-
-/*    for( int i_b = 0; i_b < acqTT.size(); i_b++ )
-	if( (addr*2) >= workCnt[i_b].off && (addr*2+2) <= (workCnt[i_b].off+workCnt[i_b].val.size()) )
-	{
-	    err.setVal( workCnt[i_b].err.getVal() );
-	    if( err.getVal().empty() )
-		rez = (unsigned short)(workCnt[i_b].val[addr*2-workCnt[i_b].off]<<8)|(unsigned char)workCnt[i_b].val[addr*2-workCnt[i_b].off+1];
-	    break;
-	}*/
-    return rez;
-}
-
-int TMSOContr::getValTC( int addr, ResString &err )
-{
-    float rez = EVAL_REAL;
-    ResAlloc res( req_res, false );
-    for( int i_b = 0; i_b < acqTC.size(); i_b++ )
-    {
-        if (acqTC[i_b].addr==addr)
-        {
-            err.setVal( acqTC[i_b].err.getVal() );
- //           mess_info("getValTT","%u",i_b);
-            if( err.getVal().empty() ) {
-		        rez = (acqTC[i_b].val);
-            }
-        }
-    }
-
-/*    for( int i_b = 0; i_b < acqTT.size(); i_b++ )
-	if( (addr*2) >= workCnt[i_b].off && (addr*2+2) <= (workCnt[i_b].off+workCnt[i_b].val.size()) )
-	{
-	    err.setVal( workCnt[i_b].err.getVal() );
-	    if( err.getVal().empty() )
-		rez = (unsigned short)(workCnt[i_b].val[addr*2-workCnt[i_b].off]<<8)|(unsigned char)workCnt[i_b].val[addr*2-workCnt[i_b].off+1];
-	    break;
-	}*/
-    return rez;
 }
 
 int TMSOContr::getStateTC( int addr, ResString &err )
@@ -753,6 +615,8 @@ void TMSOPrm::enable()
     if(type().name == "tp_TT" ) mDA = new MezTT(this, cfg("DEV_ID").getI());
     if(type().name == "tp_TC" ) mDA = new MezTC(this, cfg("DEV_ID").getI());
     if(type().name == "tp_TU" ) mDA = new MezTU(this, cfg("DEV_ID").getI());
+    if(type().name == "tp_TI" ) mDA = new MezTI(this, cfg("DEV_ID").getI());
+    if(type().name == "tp_TR" ) mDA = new MezTR(this, cfg("DEV_ID").getI());
     TParamContr::enable();
 
 }
@@ -785,54 +649,6 @@ void TMSOPrm::vlGet( TVal &val )
     }
 
     if( owner().redntUse( ) ) return;
-
-//    int off = 0;
-    string tp = TSYS::strSepParse(val.fld().reserve(),0,':');
-//    string atp_sub = TSYS::strSepParse(tp,1,'_');
-//    bool isInputs = (tp.size()>=2 && tp[1]=='I');
-    string aids = TSYS::strSepParse(val.fld().reserve(),1,':');
-    string fld = TSYS::strSepParse(val.fld().reserve(),2,':');
-    int aid = strtol(aids.c_str(),NULL,0);
-    if( !tp.empty() )
-    {
-        if (tp == "TT")
-        {
-            if (fld=="value") val.setR(owner().getValTT(aid,acq_err),0,true);
-        }
-        if (tp == "TC")
-        {
-            if      (fld=="state") val.setI(owner().getStateTC(aid,acq_err),0,true);
-            else if (fld=="value") val.setI(owner().getValTC(aid,acq_err),0,true);
-        }
-/*	if( tp[0] == 'C' ) val.setB(owner().getValC(aid,acq_err,isInputs),0,true);
-	if( tp[0] == 'R' )
-	{
-	    int vl = owner().getValR(aid,acq_err,isInputs);
-	    if( !atp_sub.empty() && atp_sub[0] == 'b' ) val.setB((vl>>atoi(atp_sub.c_str()+1))&1,0,true);
-	    else if( !atp_sub.empty() && atp_sub == "f" )
-	    {
-		int vl2 = owner().getValR( strtol(TSYS::strSepParse(aids,1,',').c_str(),NULL,0), acq_err, isInputs );
-		if( vl == EVAL_INT || vl2 == EVAL_INT ) val.setR(EVAL_REAL,0,true);
-		union { uint32_t i; float f; } wl;
-		wl.i = ((vl2&0xffff)<<16) | (vl&0xffff);
-		val.setR(wl.f,0,true);
-	    }
-	    else if( !atp_sub.empty() && atp_sub == "i2" )	val.setI((int16_t)vl,0,true);
-	    else if( !atp_sub.empty() && atp_sub == "i4" )
-	    {
-		int vl2 = owner().getValR( strtol(TSYS::strSepParse(aids,1,',').c_str(),NULL,0), acq_err, isInputs );
-		if( vl == EVAL_INT || vl2 == EVAL_INT ) val.setI(EVAL_INT,0,true);
-		val.setI((int)(((vl2&0xffff)<<16)|(vl&0xffff)),0,true);
-	    }
-	    else val.setI(vl,0,true);
-	}*/
-    }
-    else if( val.name() == "err" )
-    {
-//	if( acq_err.getVal().empty() )
-	val.setS("0",0,true);
-//	else				val.setS(acq_err.getVal(),0,true);
-    }
 }
 
 void TMSOPrm::vlSet( TVal &valo, const TVariant &vl, const TVariant &pvl  )
@@ -854,56 +670,6 @@ void TMSOPrm::vlSet( TVal &valo, const TVariant &vl, const TVariant &pvl  )
     } else {
         return;
     }
-
-/*    if( !enableStat() )	valo.setS( EVAL_STR, 0, true );
-
-    //> Send to active reserve station
-    if( owner().redntUse( ) )
-    {
-	if( valo.getS(NULL,true) == pvl.getS() ) return;
-	XMLNode req("set");
-	req.setAttr("path",nodePath(0,true)+"/%2fserv%2fattr")->childAdd("el")->setAttr("id",valo.name())->setText(valo.getS(NULL,true));
-	SYS->daq().at().rdStRequest(owner().workId(),req);
-	return;
-    }
-
-    string vl = valo.getS(NULL,true);
-    if( vl == EVAL_STR || vl == pvl.getS() ) return;
-
-    //> Direct write
-    int off = 0;
-    string tp = TSYS::strSepParse(valo.fld().reserve(),0,':',&off);
-    string atp_sub = TSYS::strSepParse(tp,1,'_');
-    string aids = TSYS::strSepParse(valo.fld().reserve(),0,':',&off);
-    int aid = strtol(aids.c_str(),NULL,0);
-
-    if( !tp.empty() )
-    {
-	if( tp[0] == 'C' )	owner().setValC(valo.getB(NULL,true),aid,acq_err);
-	if( tp[0] == 'R' )
-	{
-	    if( !atp_sub.empty() && atp_sub[0] == 'b' )
-	    {
-		int vl = owner().getValR(aid,acq_err);
-		if( vl != EVAL_INT )
-		    owner().setValR( valo.getB(NULL,true) ? (vl|(1<<atoi(atp_sub.c_str()+1))) : (vl & ~(1<<atoi(atp_sub.c_str()+1))), aid, acq_err);
-	    }
-	    else if( !atp_sub.empty() && atp_sub == "f" )
-	    {
-		union { uint32_t i; float f; } wl;
-		wl.f = valo.getR(NULL,true);
-		owner().setValR( wl.i&0xFFFF, aid, acq_err );
-		owner().setValR( (wl.i>>16)&0xFFFF, strtol(TSYS::strSepParse(aids,1,',').c_str(),NULL,0), acq_err );
-	    }
-	    else if( !atp_sub.empty() && atp_sub == "i4" )
-	    {
-		int vl = valo.getI(NULL,true);
-		owner().setValR( vl&0xFFFF, aid, acq_err );
-		owner().setValR( (vl>>16)&0xFFFF, strtol(TSYS::strSepParse(aids,1,',').c_str(),NULL,0), acq_err );
-	    }
-	    else owner().setValR(valo.getI(NULL,true),aid,acq_err);
-	}
-    }*/
 }
 
 void TMSOPrm::vlArchMake( TVal &val )
@@ -921,15 +687,6 @@ void TMSOPrm::cntrCmdProc( XMLNode *opt )
     if(opt->name() == "info")
     {
 	TParamContr::cntrCmdProc(opt);
-/*	ctrMkNode("fld",opt,-1,"/prm/cfg/ATTR_LS",cfg("ATTR_LS").fld().descr(),RWRWR_,"root",SDAQ_ID,1,
-	    "help",_("Attributes configuration list. List must be written by lines in format: [dt:numb:id:name]\n"
-		    "Where:\n"
-		    "  dt - MSO data type (TT,TC).\n"
-		    "  numb - MSO channel number (dec, hex or octal);\n"
-		    "  id - created attribute identifier;\n"
-		    "  name - created attribute name.\n"
-		    "Example:\n"
-		    "  'R_b10:25:r:rBit:Reg bit' - get bit 10 from register 25."));*/
 	return;
     }
     //> Process command to page

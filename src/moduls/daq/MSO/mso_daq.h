@@ -245,10 +245,7 @@ class TMSOContr: public TController
 		endrun_req;			//Request to stop of the Process task
         vector<STTRec>          acqTT;          //Acquisition data blocks for TT
         vector<STCRec>          acqTC;          //Acquisition data blocks for TC
-	vector<SDataRec>	acqBlks;	//Acquisition data blocks for registers
-	vector<SDataRec>	acqBlksIn;	//Acquisition data blocks for input registers
-	vector<SDataRec>	acqBlksCoil;	//Acquisition data blocks for coils
-	vector<SDataRec>	acqBlksCoilIn;	//Acquisition data blocks for input coils
+
 
 	double	tmGath;				//Gathering time
 
