@@ -61,8 +61,7 @@ extern "C"
     TModule *attach( const TModule::SAt &AtMod, const string &source )
 #endif
     {
-	if(AtMod == TModule::SAt(MOD_ID,MOD_TYPE,VER_TYPE))
-	    return new VCA::Engine(source);
+	if(AtMod == TModule::SAt(MOD_ID,MOD_TYPE,VER_TYPE)) return new VCA::Engine(source);
 	return NULL;
     }
 }
@@ -88,7 +87,7 @@ Engine::Engine( string name ) : TUI(MOD_ID),
     idWlb = grpAdd("wlb_");
     idPrj = grpAdd("prj_");
     idSes = grpAdd("ses_");
-    idFnc = grpAdd("vca",true);
+    idFnc = grpAdd("vca", true);
 }
 
 Engine::~Engine( )
@@ -111,11 +110,11 @@ void Engine::postEnable( int flag )
     if(!(flag&TCntrNode::NodeConnect)) return;
 
     //Make lib's DB structure
-    lbwdg_el.fldAdd(new TFld("ID",_("ID"),TFld::String,TCfg::Key,"30"));
+    lbwdg_el.fldAdd(new TFld("ID",_("ID"),TFld::String,TCfg::Key|TFld::NoWrite,"30"));
     lbwdg_el.fldAdd(new TFld("NAME",_("Name"),TFld::String,TCfg::TransltText,OBJ_NM_SZ));
-    lbwdg_el.fldAdd(new TFld("DESCR",_("Description"),TFld::String,TCfg::TransltText,"300"));
-    lbwdg_el.fldAdd(new TFld("DB_TBL",_("Data base"),TFld::String,TFld::NoFlag,"30"));
-    lbwdg_el.fldAdd(new TFld("ICO",_("Icon"),TFld::String,TFld::NoFlag,"10000"));
+    lbwdg_el.fldAdd(new TFld("DESCR",_("Description"),TFld::String,TFld::FullText|TCfg::TransltText,"300"));
+    lbwdg_el.fldAdd(new TFld("DB_TBL",_("DB table"),TFld::String,TFld::NoFlag,"30"));
+    lbwdg_el.fldAdd(new TFld("ICO",_("Icon"),TFld::String,TFld::NoFlag,"100000"));
 
     //Make library widgets' data container
     wdgdata_el.fldAdd(new TFld("ID",_("ID"),TFld::String,TCfg::Key,"30"));
@@ -158,10 +157,10 @@ void Engine::postEnable( int flag )
     wdguio_el.fldAdd(new TFld("CFG_VAL",_("Configuration value"),TFld::String,TCfg::TransltText,"1000"));
 
     //Make project's DB structure
-    prj_el.fldAdd(new TFld("ID",_("ID"),TFld::String,TCfg::Key,"30"));
+    prj_el.fldAdd(new TFld("ID",_("ID"),TFld::String,TCfg::Key|TFld::NoWrite,"30"));
     prj_el.fldAdd(new TFld("NAME",_("Name"),TFld::String,TCfg::TransltText,OBJ_NM_SZ));
-    prj_el.fldAdd(new TFld("DESCR",_("Description"),TFld::String,TCfg::TransltText,"300"));
-    prj_el.fldAdd(new TFld("DB_TBL",_("Data base"),TFld::String,TFld::NoFlag,"30"));
+    prj_el.fldAdd(new TFld("DESCR",_("Description"),TFld::String,TFld::FullText|TCfg::TransltText,"300"));
+    prj_el.fldAdd(new TFld("DB_TBL",_("DB table"),TFld::String,TFld::NoFlag,"30"));
     prj_el.fldAdd(new TFld("ICO",_("Icon"),TFld::String,TFld::NoFlag,"10000"));
     prj_el.fldAdd(new TFld("USER",_("User"),TFld::String,TFld::NoFlag,OBJ_ID_SZ,"root"));
     prj_el.fldAdd(new TFld("GRP",_("Group"),TFld::String,TFld::NoFlag,OBJ_ID_SZ,"UI"));
@@ -562,10 +561,12 @@ void Engine::attrsLoad( Widget &w, const string &fullDB, const string &idw, cons
 	    continue;
 
 	c_el.cfg("ID").setS(tstr);
-	c_el.cfg("IO_VAL").setNoTransl(!(attr.at().type() == TFld::String &&
-		!(attr.at().flgGlob()&(TFld::NoStrTransl|Attr::DirRead|Attr::Image|Attr::DateTime|Attr::Color|Attr::Font|Attr::Address))));
-	c_el.cfg("CFG_VAL").setNoTransl(!(attr.at().type() == TFld::String &&
-		!(attr.at().flgGlob()&(TFld::NoStrTransl|Attr::DirRead|Attr::Image|Attr::DateTime|Attr::Color|Attr::Font|Attr::Address)) )); /*&&
+	c_el.cfg("IO_VAL").setNoTransl(!attr.at().isTransl());
+		/*(attr.at().type() == TFld::String &&
+		!(attr.at().flgGlob()&(TFld::NoStrTransl|Attr::DirRead|Attr::Image|Attr::DateTime|Attr::Color|Attr::Font|Attr::Address))));*/
+	c_el.cfg("CFG_VAL").setNoTransl(!attr.at().isTransl());
+		/*(attr.at().type() == TFld::String &&
+		!(attr.at().flgGlob()&(TFld::NoStrTransl|Attr::DirRead|Attr::Image|Attr::DateTime|Attr::Color|Attr::Font|Attr::Address)))); /*&&
 		(attr.at().flgSelf()&(Attr::CfgConst|Attr::CfgLnkIn))));*/
 
 	if(!SYS->db().at().dataGet(wdb,nodePath()+tbl,c_el,false,true)) continue;
@@ -594,11 +595,13 @@ void Engine::attrsLoad( Widget &w, const string &fullDB, const string &idw, cons
 	unsigned selfFlg = c_el.cfg("SELF_FLG").getI();
 
 	//Take before type
-	c_el.cfg("IO_VAL").setNoTransl(!(type == TFld::String &&
-	    !(flg&(TFld::NoStrTransl|Attr::Image|Attr::DateTime|Attr::Color|Attr::Font|Attr::Address))));
-	c_el.cfg("CFG_VAL").setNoTransl(!(type == TFld::String &&
-		    !(flg&(TFld::NoStrTransl|Attr::Image|Attr::DateTime|Attr::Color|Attr::Font|Attr::Address)) &&
-		    (selfFlg&(Attr::CfgConst|Attr::CfgLnkIn))));
+	c_el.cfg("IO_VAL").setNoTransl(!Attr::isTransl(TFld::Type(type),flg));
+	    /*(type == TFld::String &&
+	    !(flg&(TFld::NoStrTransl|Attr::Image|Attr::DateTime|Attr::Color|Attr::Font|Attr::Address))));*/
+	c_el.cfg("CFG_VAL").setNoTransl(!Attr::isTransl(TFld::Type(type),flg,selfFlg));
+		/*(type == TFld::String &&
+		!(flg&(TFld::NoStrTransl|Attr::Image|Attr::DateTime|Attr::Color|Attr::Font|Attr::Address)) &&
+		(selfFlg&(Attr::CfgConst|Attr::CfgLnkIn))));*/
 
 	//Load all: !!!! Rewrite further optimal !!!!
 	c_el.cfgViewAll(true);
@@ -638,32 +641,34 @@ string Engine::attrsSave( Widget &w, const string &fullDB, const string &idw, co
 	if(attr.at().flgSelf()&Attr::IsInher || !(attr.at().flgGlob()&Attr::IsUser))
 	{
 	    c_el.cfg("ID").setS( als[i_a] );
-	    c_el.cfg("IO_VAL").setNoTransl(!(attr.at().type() == TFld::String &&
-		    !(attr.at().flgGlob()&(TFld::NoStrTransl|Attr::DirRead|Attr::Image|Attr::DateTime|Attr::Color|Attr::Font|Attr::Address))));
+	    c_el.cfg("IO_VAL").setNoTransl(!attr.at().isTransl());
+		    /*(attr.at().type() == TFld::String &&
+		    !(attr.at().flgGlob()&(TFld::NoStrTransl|Attr::DirRead|Attr::Image|Attr::DateTime|Attr::Color|Attr::Font|Attr::Address))));*/
 	    c_el.cfg("IO_VAL").setS(attr.at().getS());
 	    c_el.cfg("SELF_FLG").setI(attr.at().flgSelf());
 	    c_el.cfg("CFG_TMPL").setS(attr.at().cfgTempl());
-	    c_el.cfg("CFG_VAL").setNoTransl(!(attr.at().type() == TFld::String &&
+	    c_el.cfg("CFG_VAL").setNoTransl(!attr.at().isTransl(true));
+		    /*(attr.at().type() == TFld::String &&
 		    !(attr.at().flgGlob()&(TFld::NoStrTransl|Attr::DirRead|Attr::Image|Attr::DateTime|Attr::Color|Attr::Font|Attr::Address)) &&
-		    (attr.at().flgSelf()&(Attr::CfgConst|Attr::CfgLnkIn))));
+		    (attr.at().flgSelf()&(Attr::CfgConst|Attr::CfgLnkIn))));*/
 	    c_el.cfg("CFG_VAL").setS(attr.at().cfgVal());
 	    SYS->db().at().dataSet(fullDB+"_io",nodePath()+tbl+"_io",c_el,false,true);
 	}
 	//User attributes store
 	else if(!ldGen) {
 	    c_elu.cfg("ID").setS( als[i_a] );
-	    c_elu.cfg("IO_VAL").setNoTransl( !(attr.at().type() == TFld::String &&
-		    !(attr.at().flgGlob()&(TFld::NoStrTransl|Attr::Image|Attr::DateTime|Attr::Color|Attr::Font|Attr::Address))) );
-	    c_elu.cfg("IO_VAL").setS(attr.at().getS()+"|"+
-		    attr.at().fld().values()+"|"+
-		    attr.at().fld().selNames());
+	    c_elu.cfg("IO_VAL").setNoTransl(!attr.at().isTransl());
+		    /*(attr.at().type() == TFld::String &&
+		    !(attr.at().flgGlob()&(TFld::NoStrTransl|Attr::Image|Attr::DateTime|Attr::Color|Attr::Font|Attr::Address))) );*/
+	    c_elu.cfg("IO_VAL").setS(attr.at().getS()+"|"+attr.at().fld().values()+"|"+attr.at().fld().selNames());
 	    c_elu.cfg("NAME").setS(attr.at().name());
 	    c_elu.cfg("IO_TYPE").setI(attr.at().fld().type()+(attr.at().fld().flg()<<4));
 	    c_elu.cfg("SELF_FLG").setI(attr.at().flgSelf());
 	    c_elu.cfg("CFG_TMPL").setS(attr.at().cfgTempl());
-	    c_elu.cfg("CFG_VAL").setNoTransl( !(attr.at().type() == TFld::String &&
+	    c_elu.cfg("CFG_VAL").setNoTransl(!attr.at().isTransl(true));
+		    /*(attr.at().type() == TFld::String &&
 		    !(attr.at().flgGlob()&(TFld::NoStrTransl|Attr::Image|Attr::DateTime|Attr::Color|Attr::Font|Attr::Address)) &&
-		    (attr.at().flgSelf()&(Attr::CfgConst|Attr::CfgLnkIn))) );
+		    (attr.at().flgSelf()&(Attr::CfgConst|Attr::CfgLnkIn))) );*/
 	    c_elu.cfg("CFG_VAL").setS(attr.at().cfgVal());
 	    SYS->db().at().dataSet(fullDB+"_uio",nodePath()+tbl+"_uio",c_elu,false,true);
 	}
@@ -672,8 +677,7 @@ string Engine::attrsSave( Widget &w, const string &fullDB, const string &idw, co
     if(!ldGen) {
 	//Clear no present IO for main io table
 	c_el.cfgViewAll(false);
-	for(int fld_cnt = 0; SYS->db().at().dataSeek(fullDB+"_io",nodePath()+tbl+"_io",fld_cnt++,c_el); )
-	{
+	for(int fld_cnt = 0; SYS->db().at().dataSeek(fullDB+"_io",nodePath()+tbl+"_io",fld_cnt++,c_el); ) {
 	    string sid = c_el.cfg("ID").getS();
 	    if(w.attrPresent(sid) || (idc.empty() && !TSYS::pathLev(sid,1).empty())) continue;
 
@@ -683,8 +687,7 @@ string Engine::attrsSave( Widget &w, const string &fullDB, const string &idw, co
 
 	//Clear no present IO for user io table
 	c_elu.cfgViewAll(false);
-	for(int fld_cnt = 0; SYS->db().at().dataSeek(fullDB+"_uio",nodePath()+tbl+"_uio",fld_cnt++,c_elu); )
-	{
+	for(int fld_cnt = 0; SYS->db().at().dataSeek(fullDB+"_uio",nodePath()+tbl+"_uio",fld_cnt++,c_elu); ) {
 	    string sid = c_elu.cfg("ID").getS();
 	    if(w.attrPresent(sid) || (idc.empty() && !TSYS::pathLev(sid,1).empty())) continue;
 
@@ -708,7 +711,7 @@ void Engine::perSYSCall( unsigned int cnt )
 
 void Engine::cntrCmdProc( XMLNode *opt )
 {
-    string a_path = opt->attr("path");
+    string a_path = opt->attr("path"), u = opt->attr("user");
 
     //Service commands process
     if(a_path == "/serv/sess") {	//Session operation
@@ -772,7 +775,7 @@ void Engine::cntrCmdProc( XMLNode *opt )
 	for(unsigned i_wlb = 0; i_wlb < ls.size(); i_wlb++) {
 	    if(!upd_lb.empty() && upd_lb != ls[i_wlb]) continue;
 	    AutoHD<WidgetLib> wlb = wlbAt(ls[i_wlb]);
-	    XMLNode *wlbN = opt->childAdd("wlb")->setAttr("id",ls[i_wlb])->setText(wlb.at().name());
+	    XMLNode *wlbN = opt->childAdd("wlb")->setAttr("id",ls[i_wlb])->setText(trU(wlb.at().name(),u));
 	    wlbN->childAdd("ico")->setText(wlb.at().ico());
 
 	    //  Widgets
@@ -781,7 +784,7 @@ void Engine::cntrCmdProc( XMLNode *opt )
 	    for(unsigned i_w = 0; i_w < wls.size(); i_w++) {
 		if(!upd_wdg.empty() && upd_wdg != wls[i_w])	continue;
 		AutoHD<LWidget> w = wlb.at().at(wls[i_w]);
-		XMLNode *wN = wlbN->childAdd("w")->setAttr("id",wls[i_w])->setAttr("parent",w.at().parentNm())->setText(w.at().name());
+		XMLNode *wN = wlbN->childAdd("w")->setAttr("id",wls[i_w])->setAttr("parent",w.at().parentNm())->setText(trU(w.at().name(),u));
 		wN->childAdd("ico")->setText(w.at().ico());
 
 		//  Child widgets
@@ -791,7 +794,8 @@ void Engine::cntrCmdProc( XMLNode *opt )
 		    for(unsigned i_c = 0; i_c < cwls.size(); i_c++) {
 			if(!upd_wdgi.empty() && upd_wdgi != cwls[i_c])	continue;
 			AutoHD<CWidget> cw = w.at().wdgAt(cwls[i_c]);
-			wN->childAdd("cw")->setAttr("id",cwls[i_c])->setText(cw.at().name())->childAdd("ico")->setText((cwls.size()>=100)?"":cw.at().ico());
+			wN->childAdd("cw")->setAttr("id",cwls[i_c])->setText(trU(cw.at().name(),u))->
+			    childAdd("ico")->setText((cwls.size()>=100)?"":cw.at().ico());
 		    }
 	    }
 	}
@@ -839,14 +843,14 @@ void Engine::cntrCmdProc( XMLNode *opt )
 	if(ctrChkNode(opt,"get",RWRWR_,"root",SUI_ID,SEC_RD)) {
 	    vector<string> lst;
 	    prjList(lst);
-	    bool chkUserPerm = atoi(opt->attr("chkUserPerm").c_str());
+	    bool chkUserPerm = s2i(opt->attr("chkUserPerm"));
 	    for(unsigned i_a = 0; i_a < lst.size(); i_a++) {
 		if(chkUserPerm) {
 		    AutoHD<Project> prj = prjAt(lst[i_a]);
 		    if(!SYS->security().at().access(opt->attr("user"),SEC_RD,prj.at().owner(),prj.at().grp(),prj.at().permit()))
 			continue;
 		}
-		opt->childAdd("el")->setAttr("id",lst[i_a])->setText(prjAt(lst[i_a]).at().name());
+		opt->childAdd("el")->setAttr("id",lst[i_a])->setText(trU(prjAt(lst[i_a]).at().name(),u));
 	    }
 	}
 	if(ctrChkNode(opt,"add",RWRWR_,"root",SUI_ID,SEC_WR)) {
@@ -861,7 +865,7 @@ void Engine::cntrCmdProc( XMLNode *opt )
 	    vector<string> lst;
 	    wlbList(lst);
 	    for(unsigned i_a=0; i_a < lst.size(); i_a++)
-		opt->childAdd("el")->setAttr("id",lst[i_a])->setText(wlbAt(lst[i_a]).at().name());
+		opt->childAdd("el")->setAttr("id",lst[i_a])->setText(trU(wlbAt(lst[i_a]).at().name(),u));
 	}
 	if(ctrChkNode(opt,"add",RWRWR_,"root",SUI_ID,SEC_WR)) {
 	    string vid = TSYS::strEncode(opt->attr("id"), TSYS::oscdID);
@@ -875,7 +879,7 @@ void Engine::cntrCmdProc( XMLNode *opt )
 	if(ctrChkNode(opt,"get",RWRWR_,"root",SUI_ID,SEC_RD)) {
 	    vector<string> lst;
 	    sesList(lst);
-	    bool chkUserPerm = atoi(opt->attr("chkUserPerm").c_str());
+	    bool chkUserPerm = s2i(opt->attr("chkUserPerm"));
 	    for(unsigned i_a=0; i_a < lst.size(); i_a++) {
 		if(chkUserPerm) {
 		    AutoHD<Project> prj = sesAt(lst[i_a]).at().parent();
@@ -934,7 +938,7 @@ void Engine::cntrCmdProc( XMLNode *opt )
     else if(a_path == "/br/vca" && ctrChkNode(opt)) {
 	vector<string> lst;
 	fList(lst);
-	for(unsigned i_f=0; i_f < lst.size(); i_f++)
+	for(unsigned i_f = 0; i_f < lst.size(); i_f++)
 	    opt->childAdd("el")->setAttr("id",lst[i_f])->setText(fAt(lst[i_f]).at().name());
     }
     else if(a_path == "/tts/code") {
@@ -961,8 +965,7 @@ AutoHD<TCntrNode> Engine::chldAt( int8_t igr, const string &name, const string &
 		prj.at().load(true);
 		prj.at().setEnable(true);
 		prj.at().modifGClr();
-	    }
-	    catch(TError err) { }
+	    } catch(TError err) { }
 	}
     }
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenSCADA 0.9\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-09-12 12:25+0300\n"
+"POT-Creation-Date: 2014-10-01 16:45+0300\n"
 "PO-Revision-Date: 2004-10-05 19:25+0300\n"
 "Last-Translator: Roman Savochenko <rom_as@oscada.org>\n"
 "Language-Team: <uk@li.org>\n"
@@ -1430,6 +1430,9 @@ msgstr "Повне ім'я"
 msgid "Password"
 msgstr "Пароль"
 
+msgid "Language"
+msgstr "Мова"
+
 msgid "User picture"
 msgstr "Картинка користувача"
 
@@ -1483,11 +1486,11 @@ msgstr "Групи користувачів"
 msgid "User "
 msgstr "Користувач: "
 
-msgid "User DB"
-msgstr "БД користувача"
-
 msgid "Include"
 msgstr "Включено до"
+
+msgid "User DB"
+msgstr "БД користувача"
 
 msgid "Group "
 msgstr "Група "
@@ -1659,10 +1662,10 @@ msgstr ""
 "------ Параметри станції '%s' у конфігураційному файлі --------\n"
 "StName     <ім'я>\tІм'я станції.\n"
 "WorkDB     <Тип.Ім'я>  Робоча БД (ім'я та тип).\n"
-"Workdir    <шлях>      Робоча директорія.\n"
-"ModDir     <path>      Директорія модулів.\n"
-"IcoDir     <path>      Директорія іконок.\n"
-"DocDir     <path>\tДиректорія документів.\n"
+"Workdir    <шлях>      Робоча тека.\n"
+"ModDir     <path>      Тека модулів.\n"
+"IcoDir     <path>      Тека іконок.\n"
+"DocDir     <path>\tТека документів.\n"
 "MessLev    <рівень>    Оброблюваний <рівень> повідомлень (0-7).\n"
 "SelDebCats <перелік>\tПерелік категорій налагодження (поділено ';').\n"
 "LogTarget  <напрямок>  Спрямування повідомлень до:\n"
@@ -1828,19 +1831,19 @@ msgid "Config-file"
 msgstr "Конфігураційний файл"
 
 msgid "Work directory"
-msgstr "Робоча директорія"
+msgstr "Робоча тека"
 
 msgid "Modules directory"
-msgstr "Директорія модулів"
+msgstr "Тека модулів"
 
 msgid "Icons directory"
-msgstr "Директорія іконок"
+msgstr "Тека іконок"
 
 msgid "Separate directory paths with icons by symbol ';'."
 msgstr "Відокремлювати шляхи тек із іконками символом ';'."
 
 msgid "Documents directory"
-msgstr "Директорія документів"
+msgstr "Тека документів"
 
 msgid "Separate directory paths with documents by symbol ';'."
 msgstr "Відокремлювати шляхи тек із документами символом ';'."
@@ -1871,18 +1874,6 @@ msgid ""
 msgstr ""
 "Використати не нульовий період (секунди) для періодичного збереження змін "
 "частин системи у БД."
-
-msgid "Language"
-msgstr "Мова"
-
-msgid "Text variable's base language"
-msgstr "Базова мова текстових змінних"
-
-msgid ""
-"Multilingual for variable texts support enabling by base language selection."
-msgstr ""
-"Вмикає багатомовну підтримку для текстових змінних шляхом вибору базової "
-"мови."
 
 msgid "Least level"
 msgstr "Найменший рівень"
@@ -1934,6 +1925,27 @@ msgstr "Вст. CPU"
 msgid "Translations"
 msgstr "Переклади"
 
+msgid "Text variable's base language"
+msgstr "Базова мова текстових змінних"
+
+msgid ""
+"Multilingual for variable texts support enabling by base language selection."
+msgstr ""
+"Вмикає багатомовну підтримку для текстових змінних шляхом вибору базової "
+"мови."
+
+msgid "Dynamic translation"
+msgstr "Динамічний переклад"
+
+msgid "Current dynamic translation state."
+msgstr "Поточний стан динамічного перекладу."
+
+msgid "Plan for dynamic translation at next start."
+msgstr "План динамічного перекладу на наступний запуск."
+
+msgid "Enable manager"
+msgstr "Ввімкнення менеджера"
+
 msgid ""
 "Enable common translation manage which cause full reloading for all built "
 "messages obtain."
@@ -1968,15 +1980,15 @@ msgstr "Перегляд повідомлень"
 msgid "Finished. "
 msgstr "Закінчено. "
 
-#, c-format
-msgid "Last: %s. Consume: %3.1f%% (%s from %s). Lag: %s. Cycles lost: %g."
+msgid ""
+"Last: %s. Consume: %3.1f[%3.1f]%% (%s from %s). Lag: %s[%s]. Cycles lost: %g."
 msgstr ""
-"Останній: %s. Використ.: %3.1f%% (%s із %s). Відстав.: %s. Втрата циклів: %g."
+"Останній: %s. Використ.: %3.1f[%3.1f]%% (%s із %s). Відстав.: %s[%s]. Втрата циклів: %g."
 
 msgid "Standard"
 msgstr "Стандарт"
 
-msgid "Round-robin"
+msgid "RT Round-robin"
 msgstr ""
 
 msgid "Style \"batch\""
@@ -2349,6 +2361,9 @@ msgstr "Жодного проекту не встановлено!"
 
 msgid "Set the project name to:"
 msgstr "Встановлено назву проекту у:"
+
+msgid "already started."
+msgstr "вже запущено."
 
 #~ msgid "Start archive"
 #~ msgstr "Запустити архів"

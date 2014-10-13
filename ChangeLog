@@ -1,3 +1,62 @@
+2014-10-09 Roman
+- LibsDB.{OscadaLibs,vcaBase}.db: Prescription editor expand for tree commands implement.
+    DAQ templates base.{anUnif,anUnifSt} fix for translation.
+- FIX:SYS: "Enable manager" property hide for no translation mode.
+- FIX:UI.WebUser: Crash at new HTTP variable processing into respond prevented.
+
+
+2014-10-08 Roman
+- SYS: Disable exeptions for value set into NoWrite mode, simple return at that. Mostly for fix problems into DAQ.BlockCalc.
+- DAQ.BlockCalc,Protocol.OPC_UA: Some code clean up.
+
+
+2014-10-04 Roman
+- LibsDB.{OscadaLibs,vcaBase}.db: Prescription units moved to single script with translation by tr().
+- FIX:UI.QTCfg: Internal XML value update fix at the table set into no reload mode, mostly for keys.
+
+
+2014-10-03 Roman
+- SYS: Remove conditional display for tab "Translations" of main configuration page.
+
+
+2014-10-01 Roman
+- SYS: To task status maximum call lag and consume is added for RT properties problems detect better.
+- DAQ.LogicLev: enRes moved from Res to mutex.
+- UI.VCAEngine: Attr::isTransl() separated to static varaint and used also into generic attributes loading and saving function.
+
+
+2014-09-30 Roman
+- !!!!:SYS,DB.*: Dynamic translation main implement is added:
+    TMess: Functions translDyn() and setTranslDyn() into plan mode for next start is added.
+	Function translGet() expanded for dynamic mode and translGetU() is added for take the language from user.
+	Functions translSet() and translSetU() is added for dynamic translations set.
+	Short templates to new dynamic translations functions is added: trL(), trU(), trSetL(), trSetU().
+    Security: Language property by function lang() and DB field "LANG" is added to users. Functions lName() and descr() is renamed to
+	descr() and longDescr() accordingly to the DB fields for users and the groups.
+    Property "Text variable's base language" moved from tab "Generic" to specific for that tab "Translations".
+    UI.Vision: Apply attributes rewote by dynamic translation specific.
+- FIX:Protocol.ModBus: Inconsistent diagnostic format of node to real counters fix.
+- FIX:UI.QTCfg: Size policy for Boolean value into RO mode fix.
+
+
+2014-09-28 Roman
+- SYS: Main start script "openscada_start" expanded for message about already start.
+- DAQ.SoundCard: Expand for X86_64 specific with short framesPerBuffer call to CallBack function.
+
+
+2014-09-23 Roman
+- FIX:UI:Vision: #include <algorithm> is added for STL sort() build into some environments, detected at CentOS 6.5.
+
+
+2014-09-22 Roman
+- FIX:DAQ.OneWire: Busses and devices list prepare fix.
+- UI:WebCfgD: Expanded for loading files WebCfgDVCA.html and WebCfgDVCA.js from work directory try.
+    Images cache expanded clean up like to UI.Vision and translations.
+    JavaScript code mostly clean up and Table expanded for simplify control and exit from cells edit mode.
+    Source code mostly clean up.
+- UI:WebVision: Source code some clean up.
+
+
 2014-09-19 Roman
 - SYS: MMS module build is added to RPM packages spec-file openscada_mod.spec.
 - !!!!:LibsDB.{OscadaLibs,vcaBase}.db: DAQ templates base.{anUnif,anUnifSt} and widget Main.ElCadr adapted as example-test

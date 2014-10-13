@@ -30,20 +30,21 @@ using namespace MSO;
 //* MezTU                                           *
 //*************************************************
 
-MezTU::MezTU( TMSOPrm *prm, uint16_t id ) : DA(prm), ID(id)
+MezTU::MezTU(TMSOPrm *prm, uint16_t id) :
+		DA(prm), ID(id)
 {
 	TFld * fld;
-	for (int i = 1; i <= 4; i++)	{
-		mPrm->p_el.fldAdd(fld = new TFld(TSYS::strMess("state_%d",i).c_str(),TSYS::strMess(_("State %d"),i).c_str(),TFld::Integer,TFld::NoWrite));
-	    fld->setReserve(TSYS::strMess("8:%d:0",i + ID * 4));
-		mPrm->p_el.fldAdd(fld = new TFld(TSYS::strMess("value_%d",i).c_str(),TSYS::strMess(_("Value %d"),i).c_str(),TFld::Integer,TFld::NoWrite));
-	    fld->setReserve(TSYS::strMess("8:%d:0",i + ID * 4));
-		mPrm->p_el.fldAdd(fld = new TFld(TSYS::strMess("control_%d",i).c_str(),TSYS::strMess(_("Control %d"),i).c_str(),TFld::Integer,TVal::DirWrite));
-		fld->setReserve(TSYS::strMess("8:%d:1",i + ID * 4));
+	for (int i = 1; i <= 4; i++) {
+		mPrm->p_el.fldAdd(fld = new TFld(TSYS::strMess("value_%d", i).c_str(), TSYS::strMess(_("Value %d"), i).c_str(), TFld::Boolean, TVal::DirWrite));
+		fld->setReserve(TSYS::strMess("8:%d:0", i + ID * 4));
+		mPrm->p_el.fldAdd(fld = new TFld(TSYS::strMess("timeTU_%d", i).c_str(), TSYS::strMess(_("TimeTU %d"), i).c_str(), TFld::Integer, TVal::DirWrite));
+		fld->setReserve(TSYS::strMess("19:%d:2:0", i + ID * 4));
+		mPrm->p_el.fldAdd(fld = new TFld(TSYS::strMess("timeTUs_%d", i).c_str(), TSYS::strMess(_("TimeTU (s) %d"), i).c_str(), TFld::Integer, TVal::DirWrite));
+		fld->setReserve(TSYS::strMess("19:%d:2:1", i + ID * 4));
 	}
 }
 
-MezTU::~MezTU( )
+MezTU::~MezTU()
 {
 
 }
@@ -51,14 +52,14 @@ MezTU::~MezTU( )
 uint16_t MezTU::Refresh()
 {
 	string pdu;
-	mess_info(mPrm->nodePath().c_str(),_("MezTU::Refresh"));
-	for (int i=0;i<4;i++){
+	mess_info(mPrm->nodePath().c_str(), _("MezTU::Refresh"));
+	for (int i = 0; i < 4; i++) {
 		mPrm->owner().MSOReq(i + ID * 4, 8, 0, pdu);
-		mPrm->owner().MSOReq(i + ID * 4, 8, 1, pdu);
+		mPrm->owner().MSOReq(i + ID * 4, 19, 2, pdu);
 	}
 }
 
-string  MezTU::getStatus(void )
+string MezTU::getStatus(void)
 {
 	string rez;
 	rez = _("0: Normal.");
@@ -75,52 +76,56 @@ uint16_t MezTU::Task(uint16_t uc)
 	return 0;
 }
 
-uint16_t MezTU::HandleEvent(unsigned int channel,unsigned int type,unsigned int param,unsigned int flag,const string &ireqst)
+uint16_t MezTU::HandleEvent(unsigned int channel, unsigned int type, unsigned int param, unsigned int flag, const string &ireqst)
 {
 //	mess_info(mPrm->nodePath().c_str(),_("HandleEvent"));
-	if (channel / 4 != ID) return 0;
+	if (channel / 4 != ID)
+		return 0;
 //	mess_info(mPrm->nodePath().c_str(),_("Channel %d"), channel);
-	switch (type){
+	switch (type) {
 		case 8:
-			switch (param){
+			switch (param) {
 				case 0:
 					switch (channel % 4) {
 						case 0:
-							mPrm->vlAt("value_1").at().setI(TSYS::getUnalign32(ireqst.data()),0,true);
-							mPrm->vlAt("state_1").at().setI(TSYS::getUnalign32(ireqst.data()+4),0,true);
+							mPrm->vlAt("value_1").at().setB(TSYS::getUnalign32(ireqst.data()), 0, true);
 							break;
 						case 1:
-							mPrm->vlAt("value_2").at().setI(TSYS::getUnalign32(ireqst.data()),0,true);
-							mPrm->vlAt("state_2").at().setI(TSYS::getUnalign32(ireqst.data()+4),0,true);
+							mPrm->vlAt("value_2").at().setB(TSYS::getUnalign32(ireqst.data()), 0, true);
 							break;
 						case 2:
-							mPrm->vlAt("value_3").at().setI(TSYS::getUnalign32(ireqst.data()),0,true);
-							mPrm->vlAt("state_3").at().setI(TSYS::getUnalign32(ireqst.data()+4),0,true);
-							 break;
+							mPrm->vlAt("value_3").at().setB(TSYS::getUnalign32(ireqst.data()), 0, true);
+							break;
 						case 3:
-							mPrm->vlAt("value_4").at().setI(TSYS::getUnalign32(ireqst.data()),0,true);
-							mPrm->vlAt("state_4").at().setI(TSYS::getUnalign32(ireqst.data()+4),0,true);
-							break;
-					}
-					break;
-				case 1:
-					switch (channel % 4) {
-						case 0:
-							mPrm->vlAt("control_1").at().setI(TSYS::getUnalign32(ireqst.data()),0,true);
-							break;
-						case 1:
-							mPrm->vlAt("control_2").at().setI(TSYS::getUnalign32(ireqst.data()),0,true);
-							break;
-						case 2:
-							mPrm->vlAt("control_3").at().setI(TSYS::getUnalign32(ireqst.data()),0,true);
-							 break;
-						case 3:
-							mPrm->vlAt("control_4").at().setI(TSYS::getUnalign32(ireqst.data()),0,true);
+							mPrm->vlAt("value_4").at().setB(TSYS::getUnalign32(ireqst.data()), 0, true);
 							break;
 					}
 					break;
 			}
 			break;
+		case 19:
+			switch (param) {
+				case 2:
+					switch (channel % 4) {
+						case 0:
+							mPrm->vlAt("timeTU_1").at().setI(TSYS::getUnalign32(ireqst.data()), 0, true);
+							mPrm->vlAt("timeTUs_1").at().setI(TSYS::getUnalign32(ireqst.data())/1000, 0, true);
+							break;
+						case 1:
+							mPrm->vlAt("timeTU_2").at().setI(TSYS::getUnalign32(ireqst.data()), 0, true);
+							mPrm->vlAt("timeTUs_2").at().setI(TSYS::getUnalign32(ireqst.data())/1000, 0, true);
+							break;
+						case 2:
+							mPrm->vlAt("timeTU_3").at().setI(TSYS::getUnalign32(ireqst.data()), 0, true);
+							mPrm->vlAt("timeTUs_3").at().setI(TSYS::getUnalign32(ireqst.data())/1000, 0, true);
+							break;
+						case 3:
+							mPrm->vlAt("timeTU_4").at().setI(TSYS::getUnalign32(ireqst.data()), 0, true);
+							mPrm->vlAt("timeTUs_4").at().setI(TSYS::getUnalign32(ireqst.data())/1000, 0, true);
+							break;
+					}
+					break;
+			}
 
 		default:
 			return 0;
@@ -131,35 +136,55 @@ uint16_t MezTU::HandleEvent(unsigned int channel,unsigned int type,unsigned int 
 uint16_t MezTU::setVal(TVal &val)
 {
 	int off = 0;
-	uint16_t type = strtol((TSYS::strParse(val.fld().reserve(), 0, ":", &off)).c_str(),NULL,0); // тип данных
-	uint16_t channel = strtol((TSYS::strParse(val.fld().reserve(), 0, ":", &off)).c_str(),NULL,0); // канал
-	uint16_t param = strtol((TSYS::strParse(val.fld().reserve(), 0, ":", &off)).c_str(),NULL,0); // параметр
-
-	mess_info(mPrm->nodePath().c_str(),_("setVal type %d channel %d param %d"),type,channel,param);
+	uint16_t type = strtol((TSYS::strParse(val.fld().reserve(), 0, ":", &off)).c_str(), NULL, 0); // тип данных
+	uint16_t channel = strtol((TSYS::strParse(val.fld().reserve(), 0, ":", &off)).c_str(), NULL, 0); // канал
+	uint16_t param = strtol((TSYS::strParse(val.fld().reserve(), 0, ":", &off)).c_str(), NULL, 0); // параметр
+	uint16_t subparam = strtol((TSYS::strParse(val.fld().reserve(), 0, ":", &off)).c_str(), NULL, 0); // параметр
+	mess_info(mPrm->nodePath().c_str(), _("setVal type %d channel %d param %d"), type, channel, param);
 	string pdu;
-/*	pdu = (char)0x00;
-	pdu += (char)0x00;
-	pdu += (char)0x00;
-	pdu += (char)0x00;
-	/*pdu += (char)0x00;
-	pdu += (char)0x00;
-	pdu += (char)0x00;
-	pdu += (char)0x00;*/
+	/*	pdu = (char)0x00;
+	 pdu += (char)0x00;
+	 pdu += (char)0x00;
+	 pdu += (char)0x00;
+	 /*pdu += (char)0x00;
+	 pdu += (char)0x00;
+	 pdu += (char)0x00;
+	 pdu += (char)0x00;*/
 	//mPrm->owner().MSOSet(channel, type, param, pdu);
 	uint8_t f[4];
-	switch (type){
+	switch (type) {
 		case 8:
-			switch (param){
-/*				case 0:
-					mPrm->owner().MSOSet(channel-1, type, param, pdu);
-					break;*/
-				case 1:
-					*(uint32_t *)(f)= (uint32_t)val.get(NULL,true).getI();
+			switch (param) {
+				/*				case 0:
+				 mPrm->owner().MSOSet(channel-1, type, param, pdu);
+				 break;*/
+				case 0:
+					*(uint32_t *) (f) = (uint32_t) val.get(NULL, true).getB();
 					pdu = f[0];
 					pdu += f[1];
 					pdu += f[2];
 					pdu += f[3];
-					mPrm->owner().MSOSet(channel-1, type, param, pdu);
+					mPrm->owner().MSOSet(channel - 1, type, param, pdu);
+					break;
+			}
+			break;
+		case 19:
+			switch (param) {
+				/*				case 0:
+				 mPrm->owner().MSOSet(channel-1, type, param, pdu);
+				 break;*/
+				case 2:
+					if (subparam == 0){
+						*(uint32_t *) (f) = (uint32_t) val.get(NULL, true).getI();
+					} else {
+						*(uint32_t *) (f) = ((uint32_t) val.get(NULL, true).getI()) * 1000;
+					}
+
+					pdu = f[0];
+					pdu += f[1];
+					pdu += f[2];
+					pdu += f[3];
+					mPrm->owner().MSOSet(channel - 1, type, param, pdu);
 					break;
 			}
 			break;

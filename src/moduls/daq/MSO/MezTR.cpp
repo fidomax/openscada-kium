@@ -33,10 +33,10 @@ using namespace MSO;
 MezTR::MezTR( TMSOPrm *prm, uint16_t id ) : DA(prm), ID(id)
 {
 	TFld * fld;
-	for (int i = 1; i <= 4; i++)	{
-		mPrm->p_el.fldAdd(fld = new TFld(TSYS::strMess("value_%d",i).c_str(),TSYS::strMess(_("Value %d"),i).c_str(),TFld::Real,TVal::DirWrite));
-		fld->setReserve(TSYS::strMess("9:%d:0",i + ID * 4));
-	}
+//	for (int i = 1; i <= 4; i++)	{
+		mPrm->p_el.fldAdd(fld = new TFld(TSYS::strMess("value_%d",1).c_str(),TSYS::strMess(_("Value %d"),1).c_str(),TFld::Real,TVal::DirWrite));
+		fld->setReserve(TSYS::strMess("9:%d:0",1 + ID * 4));
+//	}
 }
 
 MezTR::~MezTR( )
@@ -49,7 +49,7 @@ uint16_t MezTR::Refresh()
 	string pdu;
 	mess_info(mPrm->nodePath().c_str(),_("MezTR::Refresh"));
 	for (int i=0;i<4;i++){
-		mPrm->owner().MSOReq(i + ID * 4, 12, 0, pdu);
+		mPrm->owner().MSOReq(i + ID * 4, 9, 0, pdu);
 	}
 }
 
