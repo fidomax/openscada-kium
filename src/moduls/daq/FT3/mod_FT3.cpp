@@ -18,17 +18,17 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <getopt.h>
-#include <unistd.h>
+//#include <getopt.h>
+//#include <unistd.h>
 #include <signal.h>
 #include <fcntl.h>
 
 
-#include <terror.h>
-#include <tsys.h>
-#include <tmess.h>
+//#include <terror.h>
+//#include <tsys.h>
+//#include <tmess.h>
 #include <ttiparam.h>
-#include <tdaqs.h>
+//#include <tdaqs.h>
 
 #include "BUC.h"
 #include "BVI.h"
@@ -266,26 +266,7 @@ string TTpContr::optDescr( )
 //!!! Processing virtual function for load Root module to DB
 void TTpContr::load_( )
 {
-//	mess_info(nodePath().c_str(),_("TTpContr::load_"));
-    //> Load parameters from command line
-    int next_opt;
-    const char *short_opt="h";
-    struct option long_opt[] =
-    {
-	{"help"    ,0,NULL,'h'},
-	{NULL      ,0,NULL,0  }
-    };
 
-    optind=opterr=0;
-    do
-    {
-	next_opt=getopt_long(SYS->argc,(char * const *)SYS->argv,short_opt,long_opt,NULL);
-	switch(next_opt)
-	{
-	    case 'h': fprintf(stdout,"%s",optDescr().c_str()); break;
-	    case -1 : break;
-	}
-    } while(next_opt != -1);
 }
 
 //!!! Processing virtual function for save Root module to DB
@@ -388,9 +369,9 @@ TController *TTpContr::ContrAttach( const string &name, const string &daq_db )
 //* TMdContr                                      *
 //*************************************************
 //!!! Constructor for DAQ-subsystem controller object.
-TMdContr::TMdContr( string name_c, const string &daq_db, ::TElem *cfgelem) :
-	::TController(name_c,daq_db,cfgelem), prc_st(false), endrun_req(false), tm_gath(0), NeedInit(true),
-	m_per(cfg("PERIOD").getId()), m_prior(cfg("PRIOR").getId())//, mAddr(cfg("ADDR").getSd())
+TMdContr::TMdContr( string name_c, const string &daq_db, TElem *cfgelem) :
+	TController(name_c,daq_db,cfgelem), prc_st(false), endrun_req(false), tm_gath(0), NeedInit(true),
+	mPer(cfg("PERIOD").getI()), mPrior(cfg("PRIOR").getId())//, mAddr(cfg("ADDR").getSd())
 {
 //mess_info(nodePath().c_str(),_("TMdContr::TMdContr"));
     cfg("PRM_BD_BUC").setS("FT3Prm_BUC_"+name_c);
@@ -755,10 +736,10 @@ void TMdContr::start_( )
     	//> Start the gathering data task
     	if( !prc_st ){
     		if( cfg("CTRTYPE").getS()== "DAQ") {
-    			SYS->taskCreate( nodePath('.',true), m_prior, TMdContr::DAQTask, this);
+    			SYS->taskCreate( nodePath('.',true), mPrior, TMdContr::DAQTask, this);
     		} else {
     			if( cfg("CTRTYPE").getS()== "Logic") {
-    				SYS->taskCreate( nodePath('.',true), m_prior, TMdContr::LogicTask, this);
+    				SYS->taskCreate( nodePath('.',true), mPrior, TMdContr::LogicTask, this);
     			}
     		}
     	}
@@ -772,17 +753,16 @@ void TMdContr::stop_( )
     if( prc_st ) SYS->taskDestroy( nodePath('.',true), &endrun_req );
 }
 
-//!!! Parameters register function, on time it enable, for fast processing into background task.
-void TMdContr::prmEn( const string &id, bool val )
+void TMdContr::prmEn( TMdPrm *prm, bool val )
 {
-    int i_prm;
-//	mess_info(nodePath().c_str(),_("TMdContr::prmEn"));
-    ResAlloc res(en_res,true);
-    for( i_prm = 0; i_prm < p_hd.size(); i_prm++)
-	if( p_hd[i_prm].at().id() == id ) break;
+    unsigned i_prm;
 
-    if( val && i_prm >= p_hd.size() )	p_hd.push_back(at(id));
-    if( !val && i_prm < p_hd.size() )	p_hd.erase(p_hd.begin()+i_prm);
+    MtxAlloc res(enRes, true);
+    for(i_prm = 0; i_prm < pHd.size(); i_prm++)
+	if(&pHd[i_prm].at() == prm) break;
+
+    if(val && i_prm >= pHd.size())	pHd.push_back(prm);
+    if(!val && i_prm < pHd.size())	pHd.erase(pHd.begin()+i_prm);
 }
 
 //!!! Background task's function for periodic data acquisition.
@@ -800,7 +780,7 @@ void *TMdContr::DAQTask( void *icntr )
     while( !cntr.endrun_req )
     {
 		long long t_cnt = TSYS::curTime();
-		cntr.en_res.resRequestR( );
+		MtxAlloc prmRes(cntr.enRes, true);
     	if (cntr.NeedInit){
 			Msg.L = 3;
 			Msg.C = ResetChan;
@@ -845,7 +825,7 @@ void *TMdContr::DAQTask( void *icntr )
 				}
 			}
     	}
-		cntr.en_res.resRelease( );
+    	prmRes.unlock();
 
     	cntr.tm_gath = 1e-3*(TSYS::curTime()-t_cnt);
 
@@ -872,11 +852,11 @@ void *TMdContr::LogicTask( void *icntr )
     while( !cntr.endrun_req )
     {
 		long long t_cnt = TSYS::curTime();
-		cntr.en_res.resRequestR( );
+		MtxAlloc prmRes(cntr.enRes, true);
 
 		//TODO FT3 logic handler
 
-		cntr.en_res.resRelease( );
+		prmRes.unlock();
 
     	cntr.tm_gath = 1e-3*(TSYS::curTime()-t_cnt);
 
@@ -985,7 +965,7 @@ void TMdPrm::enable()
 //    else if(devTp.getVal() == "Ergomera")	mDA = new Ergomera(this);
     else throw TError(nodePath().c_str(),_("No one device selected."));
 
-    owner().prmEn( id(), true );
+    owner().prmEn(this, true);	//Put to process
 
 	needApply = false;
 }
@@ -996,7 +976,7 @@ void TMdPrm::disable()
 //	mess_info(nodePath().c_str(),_("TMdPrm::disable"));
     if( !enableStat() )  return;
 
-    owner().prmEn( id(), false );
+    owner().prmEn(this, false);	//Remove from process
 
     TParamContr::disable();
 

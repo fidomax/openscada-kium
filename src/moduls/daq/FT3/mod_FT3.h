@@ -1,8 +1,8 @@
 //!!! Module name, file name and module's license. Change for your need.
 //OpenSCADA system module DAQ.ft3 file: mod_ft3.h
 /***************************************************************************
- *   Copyright (C) 2009 by Roman Savochenko                                *
- *   rom_as@oscada.org, rom_as@fromru.com                                  *
+ *   Copyright (C) 2014 by Maxim Kochetkov                                 *
+ *   fido_max@inbox.ru                                                     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -19,19 +19,9 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-//!!! Multi-including this header file prevent. Change for your include file name
 #ifndef MOD_ft3_H
 #define MOD_ft3_H
 
-/*//!!! System's includings. Add need for your module includings.
-#include <string>
-#include <vector>
-
-//!!! OpenSCADA module's API includings. Add need for your module includings.
-#include <tcontroller.h>
-#include <ttipdaq.h>
-#include <tparamcontr.h>
-*/
 #include <string>
 #include <vector>
 #include <map>
@@ -39,13 +29,32 @@
 
 #include <tsys.h>
 
-#include "da.h"
-
-//!!! Individual module's translation function define. Don't change it!
 #undef _
 #define _(mess) mod->I18N(mess)
 
+using std::string;
+using std::vector;
+using std::map;
+using std::deque;
+using namespace OSCADA;
 
+
+//*************************************************
+//* Modul info!                                   *
+#define MOD_ID		"FT3"
+#define MOD_NAME	_("DAQ FT3")
+#define MOD_TYPE	SDAQ_ID
+#define VER_TYPE	SDAQ_VER
+#define MOD_VER		"0.1.1"
+#define AUTHORS		_("Maxim Kothetkov, Olga Avdeyeva, Olga Kuzmickaya")
+#define DESCRIPTION	_("Allow realization of FT3 master/slave service")
+#define LICENSE		"GPL2"
+//*************************************************
+
+#include "da.h"
+
+namespace FT3
+{
 typedef struct sMsg  // структура сообщения
 	{	
 		uint8_t D[252]; // данные
@@ -85,91 +94,57 @@ typedef enum eModeTask {
 #define task_Idle 1
 #define task_Refresh 2
 
-
-
-
-using std::string;
-using std::vector;
-using std::map;
-using std::deque;
-using namespace OSCADA;
-
-//!!! Module's meta-information.
-//*************************************************
-//* Modul info!                                   *
-#define MOD_ID		"FT3"
-#define MOD_NAME	_("DAQ FT3")
-#define MOD_TYPE	SDAQ_ID
-#define VER_TYPE	SDAQ_VER
-#define MOD_VER		"0.1.0"
-#define AUTHORS		_("Maxim Kothetkov, Olga Avdeyeva, Olga Kuzmickaya")
-#define DESCRIPTION	_("Allow realisation of FT3 client service")
-#define LICENSE		"GPL2"
-//*************************************************
-
-//!!! All module's objects you must include into self (individual) namespace. Change namespace for your module.
-namespace FT3
-{
-
 //!!! DAQ-subsystem parameter object realisation define. Add methods and attributes for your need.
 //*************************************************
 //* Modft3::TMdPrm                               *
 //*************************************************
 class TMdContr;
 
-class TMdPrm : public TParamContr
+class TMdPrm : public TParamContr, public TValFunc
 {
-    friend class DA;
+    //friend class DA;
     public:
 	//Methods
-	//!!! Constructor for DAQ-subsystem parameter object.
+
 	TMdPrm( string name, TTipParam *tp_prm );
-	//!!! Destructor for DAQ-subsystem parameter object.
 	~TMdPrm( );
 
-	//!!! Parameter's structure element link function
-	TElem &elem( )		{ return p_el; }
+	TCntrNode &operator=( TCntrNode &node );
 
-	//!!! Processing virtual functions for enable and disable parameter
 	void enable( );
 	void disable( );
 
-	//!!! Direct link to parameter's owner controller
+	TElem &elem( )		{ return p_el; }
 	TMdContr &owner( );
-
- //       ResString &devTp;	//Device type
-//	ResString devTp;
-
-	TElem	p_el;			//Work atribute elements
-	uint16_t Task(uint16_t);
-	uint16_t HandleEvent(uint8_t *);
-	bool	needApply;
 
 	//!!! Get data from Logic FT3 parameter
 	uint8_t GetData(uint16_t, uint8_t *);
+	uint16_t Task(uint16_t);
+	uint16_t HandleEvent(uint8_t *);
+	TElem	p_el;			//Work atribute elements
 
 		
 
     protected:
 	//Methods
-	//!!! Processing virtual functions for load and save parameter to DB
 	void load_( );
 	void save_( );
+	void cntrCmdProc( XMLNode *opt );
+
+
+
 
     private:
 	//Methods
-	//!!! Post-enable processing virtual function
 	void postEnable( int flag );
-	//!!! Processing virtual function for OpenSCADA control interface comands
-	void cntrCmdProc( XMLNode *opt );
-	//!!! Processing virtual function for setup archive's parameters which associated with the parameter on time archive creation
-	void vlArchMake( TVal &val );
-	void vlSet( TVal &val, const TVariant &pvl );
+	void postDisable( int flag );
 	void vlGet( TVal &val );
-
+	void vlSet( TVal &val, const TVariant &pvl );
+	void vlArchMake( TVal &val );
 	//Attributes
 	//!!! Parameter's structure element
 	DA	*mDA;
+	bool	needApply;
 
 };
 
@@ -182,42 +157,33 @@ class TMdContr: public TController
     friend class TMdPrm;
     public:
 	//Methods
-	//!!! Constructor for DAQ-subsystem controller object.
-	TMdContr( string name_c, const string &daq_db, ::TElem *cfgelem );
-	//!!! Destructor for DAQ-subsystem controller object.
+	TMdContr( string name_c, const string &daq_db, TElem *cfgelem );
 	~TMdContr( );
 
-	//!!! Status processing function for DAQ-controllers
 	string getStatus( );
 
-	//!!! The controller's background task properties
-	double	period( )	{ return vmax(m_per,0.1); }
-	int	prior( )	{ return m_prior; }
+	int64_t	period( )	{ return mPer; }
+//	string	cron( )		{ return mSched; }
+//	string	addr( )		{ return mAddr; }
+	int	prior( )	{ return mPrior; }
 
-	//!!! Request for connection to parameter-object of this controller
 	AutoHD<TMdPrm> at( const string &nm )	{ return TController::at(nm); }
 
-	//!!! Make transaction to transport
   	bool Transact(tagMsg * t);
 
-  	//!!! Convert FT3 DateTime to time_t
 	time_t DateTimeToTime_t(uint8_t * );
 
-	//!!! Convert time_t to FT3 DateTime
 	void Time_tToDateTime(uint8_t *,time_t );
 
-	//!!! Process commands to Logic FT3 controller
 	bool ProcessMessage(tagMsg *,tagMsg *);
 
 
     uint8_t devAddr;
-	//bool Transact(tagMsg *);
 
     protected:
 
 	//Methods
-	//!!! Parameters register function, on time it enable, for fast processing into background task.
-	void prmEn( const string &id, bool val );
+	void prmEn( TMdPrm *prm, bool val );
 
 	//!!! Processing virtual functions for start and stop DAQ-controller
 	void start_( );
@@ -247,10 +213,11 @@ class TMdContr: public TController
 	//Attributes
 //	ResString &mAddr;	//Transport device address
 	//!!! The resource for Enable parameters.
-	Res	en_res;		//Resource for enable params
+	//Res	en_res;		//Resource for enable params
+	pthread_mutex_t	enRes;
 	//!!! The links to the controller's background task properties into config.
-	int64_t	&m_per,		// s
-		&m_prior;	// Process task priority
+	int64_t	mPer;
+	int64_t	&mPrior;			//Process task priority
 
 	//!!! Background task's sync properties
 	bool	prc_st,		// Process task active
@@ -261,7 +228,7 @@ class TMdContr: public TController
 	int	mNode;
 
 	//!!! Enabled and processing parameter's links list container.
-	vector< AutoHD<TMdPrm> >  p_hd;
+	vector< AutoHD<TMdPrm> >  pHd;
 
 	double	tm_gath;	// Gathering time
         uint8_t FCB2,FCB3;

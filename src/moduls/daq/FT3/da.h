@@ -33,7 +33,7 @@ namespace FT3
 class TMdPrm;
 class TMdContr;
 
-class DA
+class DA: public TElem
 {
     public:
 	//Methods
