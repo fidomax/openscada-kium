@@ -109,7 +109,7 @@ class TMdPrm : public TParamContr, public TValFunc
 	TMdPrm( string name, TTipParam *tp_prm );
 	~TMdPrm( );
 
-	TCntrNode &operator=( TCntrNode &node );
+//	TCntrNode &operator=( TCntrNode &node );
 
 	void enable( );
 	void disable( );
@@ -137,7 +137,7 @@ class TMdPrm : public TParamContr, public TValFunc
     private:
 	//Methods
 	void postEnable( int flag );
-	void postDisable( int flag );
+//	void postDisable( int flag );
 	void vlGet( TVal &val );
 	void vlSet( TVal &val, const TVariant &pvl );
 	void vlArchMake( TVal &val );

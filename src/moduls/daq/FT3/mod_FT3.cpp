@@ -384,6 +384,10 @@ TMdContr::TMdContr( string name_c, const string &daq_db, TElem *cfgelem) :
 	cfg("PRM_BD_ACCOUNT").setS("FT3Prm_ACCOUNT_"+name_c);
 	cfg("PRM_BD_BTR").setS("FT3Prm_BTR_"+name_c);
 	cfg("PRM_BD_BTE").setS("FT3Prm_BTE_"+name_c);
+    pthread_mutexattr_t attrM;
+    pthread_mutexattr_init(&attrM);
+    pthread_mutexattr_settype(&attrM, PTHREAD_MUTEX_RECURSIVE);
+    pthread_mutex_init(&enRes, &attrM);
 }
 
 uint16_t TMdContr::CRC(char *data, uint16_t length)
