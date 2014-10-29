@@ -2193,9 +2193,7 @@ INSERT INTO "tmplib_S7_io" VALUES('test','in2','Input2',1,160,'DB Test|8',6,'В�
 INSERT INTO "tmplib_S7_io" VALUES('test','in1','Input1',1,160,'DB Test|6',5,'Вхід1','DB Тест|6','Вход1','DB Тест|6');
 INSERT INTO "tmplib_S7_io" VALUES('test','in','Input',1,160,'DB Test|4',4,'Вхід','DB Тест|4','Вход','DB Тест|4');
 CREATE TABLE 'tmplib_base_io' ("TMPL_ID" TEXT DEFAULT '' ,"ID" TEXT DEFAULT '' ,"NAME" TEXT DEFAULT '' ,"TYPE" INTEGER DEFAULT '' ,"FLAGS" INTEGER DEFAULT '' ,"VALUE" TEXT DEFAULT '' ,"POS" INTEGER DEFAULT '' ,"uk#NAME" TEXT DEFAULT '' ,"uk#VALUE" TEXT DEFAULT '' ,"ru#NAME" TEXT DEFAULT '' ,"ru#VALUE" TEXT DEFAULT '' , PRIMARY KEY ("TMPL_ID","ID"));
-INSERT INTO "tmplib_base_io" VALUES('digAlarm','alrm_md','Signal mode',3,64,' ',0,'Режим сигналу',' ','Режим сигнала','');
-INSERT INTO "tmplib_base_io" VALUES('digAlarm','alrm_mess','Error message',0,64,' ',1,'Повідомлення помилки',' ','Сообщение ошибки','');
-INSERT INTO "tmplib_base_io" VALUES('digAlarm','in','Input',3,144,' ',2,'Вхід',' ','Вход','');
+INSERT INTO "tmplib_base_io" VALUES('digAlarm','in','Input',3,144,'Input|in',1,'Вхід',' ','Вход','');
 INSERT INTO "tmplib_base_io" VALUES('simleBoard','in','Input',2,128,'Parameter|var',0,'Вхід','','Вход','');
 INSERT INTO "tmplib_base_io" VALUES('simleBoard','var','Variable',2,32,'0',1,'Змінна','','Переменная','');
 INSERT INTO "tmplib_base_io" VALUES('simleBoard','ed','Dimension',0,32,' ',2,'Од. виміру',' ','Ед. измерения','');
@@ -2426,6 +2424,11 @@ INSERT INTO "tmplib_base_io" VALUES('SNMP','this','The object',4,0,'',3,'Об''�
 INSERT INTO "tmplib_base_io" VALUES('SNMP','SHIFR','Code',0,0,'',4,'Шифр','','Шифр','');
 INSERT INTO "tmplib_base_io" VALUES('SNMP','NAME','Name',0,0,'',5,'Ім''я','','Имя','');
 INSERT INTO "tmplib_base_io" VALUES('SNMP','DESCR','Description',0,0,'',6,'Опис','','Описание','');
+INSERT INTO "tmplib_base_io" VALUES('digAlarm','alrm','Alarm "{st}:{lev}:{mess}"',0,64,' ',0,'','','','');
+INSERT INTO "tmplib_base_io" VALUES('digAlarm','SHIFR','Code',0,0,'',2,'','','','');
+INSERT INTO "tmplib_base_io" VALUES('digAlarm','NAME','Name',0,0,'',3,'','','','');
+INSERT INTO "tmplib_base_io" VALUES('digAlarm','DESCR','Description',0,0,'',4,'','','','');
+INSERT INTO "tmplib_base_io" VALUES('digAlarm','this','The object',4,0,'',5,'','','','');
 CREATE TABLE 'DAQ_JavaLikeCalc' ("ID" TEXT DEFAULT '' ,"NAME" TEXT DEFAULT '' ,"ru#NAME" TEXT DEFAULT '' ,"uk#NAME" TEXT DEFAULT '' ,"DESCR" TEXT DEFAULT '' ,"ru#DESCR" TEXT DEFAULT '' ,"uk#DESCR" TEXT DEFAULT '' ,"ENABLE" INTEGER DEFAULT '0' ,"START" INTEGER DEFAULT '0' ,"MESS_LEV" INTEGER DEFAULT '3' ,"REDNT" INTEGER DEFAULT '0' ,"REDNT_RUN" TEXT DEFAULT '<high>' ,"PRM_BD" TEXT DEFAULT 'system' ,"FUNC" TEXT DEFAULT '' ,"SCHEDULE" TEXT DEFAULT '1' ,"PRIOR" INTEGER DEFAULT '0' ,"ITER" INTEGER DEFAULT '1' , PRIMARY KEY ("ID"));
 INSERT INTO "DAQ_JavaLikeCalc" VALUES('prescr','Prescriptions','Рецепты','Рецепти','','','',1,1,3,0,'<high>','JavaLikePrm_prescr','Controller.prescr','0.2',0,1);
 CREATE TABLE 'tmplib_PrescrTempl' ("ID" TEXT DEFAULT '' ,"NAME" TEXT DEFAULT '' ,"uk#NAME" TEXT DEFAULT '' ,"ru#NAME" TEXT DEFAULT '' ,"DESCR" TEXT DEFAULT '' ,"uk#DESCR" TEXT DEFAULT '' ,"ru#DESCR" TEXT DEFAULT '' ,"MAXCALCTM" INTEGER DEFAULT '10' ,"PROGRAM" TEXT DEFAULT '' ,"uk#PROGRAM" TEXT DEFAULT '' ,"ru#PROGRAM" TEXT DEFAULT '' ,"TIMESTAMP" INTEGER DEFAULT '' , PRIMARY KEY ("ID"));
@@ -3309,8 +3312,8 @@ tErr = "";
 
 //Connect to source
 if(typeof(srcPrm) != "TCntrNode:TValue:TParamContr") srcPrm = SYS.DAQ.nodeAt(srcAddr,".");
-if(!srcPrm) { tErr = "No connection to source object"; alLev = 3; }
-else if(srcPrm.err.get() != 0)	 { tErr = "Source error: "+srcPrm.err.get().parse(1,":"); alLev = 3; }
+if(!srcPrm) { tErr = tr("No connection to source object"); alLev = 3; }
+else if(srcPrm.err.get() != 0)	 { tErr = tr("Source error")+": "+srcPrm.err.get().parse(1,":"); alLev = 3; }
 else {
 	//Attributes list get and "items" update
 	nLst = srcPrm.nodeList("a_");
@@ -3335,53 +3338,53 @@ else {
 
 	//Alarms process and mark
 	varS = "ups_status";
-	if(tP=srcPrm[varS]) {
-		if(tP.get() == "OB")	{ items[varS].alarm = 1; tErr += "Status \"On battery\"; "; }
-		else if(tP.get() == "LB")	{ items[varS].alarm = 2; tErr += "Status \"Low battery\"; "; }
-		else if(tP.get() == "SD")	{ items[varS].alarm = 2; tErr += "Status \"Shutdown load\"; "; }
-		else if(tP.get().indexOf("ALARM") != -1)	{ items[varS].alarm = 2; tErr += "Status \"ALARM\"; "; }
+	if(!(tP=srcPrm[varS]).isEVal()) {
+		if(tP.get() == "OB")	{ items[varS].alarm = 1; tErr += tr("Status")+" \""+tr("On battery")+"\"; "; }
+		else if(tP.get() == "LB")	{ items[varS].alarm = 2; tErr += tr("Status")+" \""+tr("Low battery")+"\"; "; }
+		else if(tP.get() == "SD")	{ items[varS].alarm = 2; tErr += tr("Status")+" \""+tr("Shutdown load")+"\"; "; }
+		else if(tP.get().indexOf("ALARM") != -1)	{ items[varS].alarm = 2; tErr += tr("Status")+" \""+tr("ALARM")+"\"; "; }
 		else items[varS].alarm = 0;
 	}
 	varS = "battery_packs";
-	if(tP=srcPrm[varS]) {
-		if(tP.get().toInt() == 0)	{ items[varS].alarm = 2; tErr += "None good battery present; "; }
+	if(!(tP=srcPrm[varS]).isEVal()) {
+		if(tP.get().toInt() == 0)	{ items[varS].alarm = 2; tErr += tr("None good battery present")+"; "; }
 		else items[varS].alarm = 0;
 	}
 	varS = "battery_charge";
-	if(tP=srcPrm[varS]) {
-		if(tP.get().toReal() < 20) { items[varS].alarm = 1; tErr += "Battery charge low; "; }
-		else if(tP.get().toReal() < 5) { items[varS].alarm = 2; tErr += "Battery charge critical; "; }
+	if(!(tP=srcPrm[varS]).isEVal()) {
+		if(tP.get().toReal() < 20) { items[varS].alarm = 1; tErr += tr("Battery charge low")+"; "; }
+		else if(tP.get().toReal() < 5) { items[varS].alarm = 2; tErr += tr("Battery charge critical")+"; "; }
 		else items[varS].alarm = 0;
 	}
 	varS = "battery_packs_bad";
-	if(tP=srcPrm[varS]) {
-		if(tP.get().toInt())	{ items[varS].alarm = 1; tErr += "Bad "+tP.get().toInt()+" batteries present"; }
+	if(!(tP=srcPrm[varS]).isEVal()) {
+		if(tP.get().toInt())	{ items[varS].alarm = 1; tErr += tr("Bad %1 batteries present").replace("%1",tP.get().toInt()); }
 		else items[varS].alarm = 0;
 	}
 	varS = "input_voltage";
-	if(tP=srcPrm[varS]) {
-		if(tP.get().toReal() < 210) { items[varS].alarm = 1; tErr += "Input voltage low; "; }
-		else if(tP.get().toReal() > 250) { items[varS].alarm = 1; tErr += "Input voltage high; "; }
+	if(!(tP=srcPrm[varS]).isEVal()) {
+		if(tP.get().toReal() > 10 && tP.get().toReal() < 210) { items[varS].alarm = 1; tErr += tr("Input voltage low")+"; "; }
+		else if(tP.get().toReal() > 250) { items[varS].alarm = 1; tErr += tr("Input voltage high")+"; "; }
 		else items[varS].alarm = 0;
 	}
 	varS = "input_frequency";
-	if(tP=srcPrm[varS]) {
-		if(tP.get().toReal() < 40) { items[varS].alarm = 2; tErr += "Input frequency too low; "; }
-		else if(tP.get().toReal() > 60) { items[varS].alarm = 2; tErr += "Input frequency too high; "; }
-		else if(tP.get().toReal() < 45) { items[varS].alarm = 1; tErr += "Input frequency low; "; }
-		else if(tP.get().toReal() > 55) { items[varS].alarm = 1; tErr += "Input frequency high; "; }
+	if(!(tP=srcPrm[varS]).isEVal()) {
+		if(tP.get().toReal() < 40) { items[varS].alarm = 2; tErr += tr("Input frequency too low")+"; "; }
+		else if(tP.get().toReal() > 60) { items[varS].alarm = 2; tErr += tr("Input frequency too high")+"; "; }
+		else if(tP.get().toReal() < 45) { items[varS].alarm = 1; tErr += tr("Input frequency low")+"; "; }
+		else if(tP.get().toReal() > 55) { items[varS].alarm = 1; tErr += tr("Input frequency high")+"; "; }
 		else items[varS].alarm = 0;
 	}
 	varS = "ups_load";
-	if(tP=srcPrm[varS]) {
-		if(tP.get().toReal() > 100)			{ items[varS].alarm = 2; tErr += "UPS overloaded; "; }
-		else if(tP.get().toReal() > 80)	{ items[varS].alarm = 1; tErr += "UPS load high; "; }
+	if(!(tP=srcPrm[varS]).isEVal()) {
+		if(tP.get().toReal() > 100)			{ items[varS].alarm = 2; tErr += tr("UPS overloaded")+"; "; }
+		else if(tP.get().toReal() > 80)	{ items[varS].alarm = 1; tErr += tr("UPS load high")+"; "; }
 		else items[varS].alarm = 0;
 	}
 	varS = "ups_temperature";
-	if(tP=srcPrm[varS]) {
-		if(tP.get().toReal() > 70) { items[varS].alarm = 2; tErr += "UPS overheated; "; }
-		else if(tP.get().toReal() > 50) { items[varS].alarm = 1; tErr += "Temperature high; "; }
+	if(!(tP=srcPrm[varS]).isEVal()) {
+		if(tP.get().toReal() > 70) { items[varS].alarm = 2; tErr += tr("UPS overheated")+"; "; }
+		else if(tP.get().toReal() > 50) { items[varS].alarm = 1; tErr += tr("Temperature high")+"; "; }
 		else items[varS].alarm = 0;
 	}
 
@@ -3405,8 +3408,8 @@ tErr = tErr.length ? ""+alLev+":"+tErr : "0";
 if(tErr.toInt() && tErr.toInt() != f_err.toInt())
 	this.nodePrev().alarmSet((NAME.length?NAME:SHIFR)+": "+DESCR+": "+tErr.parse(1,":"), -(2+alLev), SHIFR);
 else if(f_err.toInt() && !tErr.toInt())
-	this.nodePrev().alarmSet((NAME.length?NAME:SHIFR)+": "+DESCR+": NORMA", 1, SHIFR);
-f_err = tErr;','','',1403717899);
+	this.nodePrev().alarmSet((NAME.length?NAME:SHIFR)+": "+DESCR+": "+tr("NORMA"), 1, SHIFR);
+f_err = tErr;','','',1413790827);
 INSERT INTO "tmplib_DevLib" VALUES('VKT7','VKT-7','','','Firm "Teplocom" (http://www.teplocom.spb.ru) computer "VKT-7", St.Peterburg.','Фірма "Teplocom" (http://www.teplocom.spb.ru) комп''ютер "VKT-7", St.Peterburg.','Фирма "Teplocom" (http://www.teplocom.spb.ru) компьютер "VKT-7", St.Peterburg.',60,'JavaLikeCalc.JavaScript
 using Special.FLibSYS;
 
@@ -3764,9 +3767,19 @@ if(t_err.length) {
 else f_err = errAttrs.length ? "11:Quality errors: "+errAttrs : "0";','','',1404847065);
 CREATE TABLE 'tmplib_base' ("ID" TEXT DEFAULT '' ,"NAME" TEXT DEFAULT '' ,"uk#NAME" TEXT DEFAULT '' ,"ru#NAME" TEXT DEFAULT '' ,"DESCR" TEXT DEFAULT '' ,"uk#DESCR" TEXT DEFAULT '' ,"ru#DESCR" TEXT DEFAULT '' ,"MAXCALCTM" INTEGER DEFAULT '10' ,"PROGRAM" TEXT DEFAULT '' ,"uk#PROGRAM" TEXT DEFAULT '' ,"ru#PROGRAM" TEXT DEFAULT '' ,"TIMESTAMP" INTEGER DEFAULT '' , PRIMARY KEY ("ID"));
 INSERT INTO "tmplib_base" VALUES('digAlarm','Alarm digital','Сигн. дискретна','Сигн. дискретная','Alarm from a digital parameter.','Сигналізація за дискретним параметром.','Сигнализация по дискретному параметру.',10,'JavaLikeCalc.JavaScript
-f_err=(in==alrm_md)?"1:"+alrm_mess:"0";','JavaLikeCalc.JavaScript
-f_err=(in==alrm_md)?"1:"+alrm_mess:"0";','JavaLikeCalc.JavaScript
-f_err=(in==alrm_md)?"1:"+alrm_mess:"0";','');
+if(f_start)	f_err = "0", prevVar = EVAL_REAL;
+
+//State set
+tErr = "0", levErr = 0;
+if(in.isEVal())	tErr = "1:"+tr("No data or connection with source"), levErr = -5;
+else if(in == alrm.toInt())	tErr = "3:"+alrm.parse(2,":"), levErr = -alrm.parse(1,":").toInt();
+
+//Alarms forming
+if(tErr.toInt() && tErr.toInt() != f_err.toInt())
+	this.nodePrev().alarmSet((NAME.length?NAME:SHIFR)+": "+DESCR+": "+tErr.parse(1,":"), levErr, SHIFR);
+else if(f_err.toInt() && !tErr.toInt())
+	this.nodePrev().alarmSet((NAME.length?NAME:SHIFR)+": "+DESCR+": "+tr("NORMA"), 1, SHIFR);
+f_err = tErr;','','',1413964768);
 INSERT INTO "tmplib_base" VALUES('simleBoard','Analog alarm by borders','Сигн. аналог. за границями','Сигн. аналог. по границам','The template of simple parameter included boders and dimension variable.','Шаблон простого параметру з перевіркою границь та одиницею виміру.','Шаблон простого параметра с проверкой границ и единицей измерения.',10,'JavaLikeCalc.JavaScript
 var=iMult*(in+iAdd);
 if(var>max)			f_err="1:Upper work border violation";
@@ -6150,5 +6163,26 @@ INSERT INTO "Trs" VALUES('Command miss: ','Відсутня команда: ','�
 INSERT INTO "Trs" VALUES('Waiting %1s expired','Очікування %1с вичерпано','Ожидание %1c исчерпано');
 INSERT INTO "Trs" VALUES('Waiting %1s','Очікування %1с','Ожидание %1c');
 INSERT INTO "Trs" VALUES('Background waiting %1s','Фонове очікування %1с','Фоновое ожидание %1c');
-INSERT INTO "Trs" VALUES('No current node present','','');
+INSERT INTO "Trs" VALUES('No current node present','Поточний вузол відсутній','Текущий узел отсутствует');
+INSERT INTO "Trs" VALUES('No connection to source object','Немає з''єднання із об''єктом джерела','Нет подключения с объектом источника');
+INSERT INTO "Trs" VALUES('Source error','Помилка джерела','Ошибка источника');
+INSERT INTO "Trs" VALUES('Status','Статус','Статус');
+INSERT INTO "Trs" VALUES('On battery','Від батареї','От батареи');
+INSERT INTO "Trs" VALUES('Low battery','Батарею розряджено','Батарея разряжена');
+INSERT INTO "Trs" VALUES('Shutdown load','Скид навантаження','Сброс нагрузки');
+INSERT INTO "Trs" VALUES('ALARM','АВАРІЯ','АВАРИЯ');
+INSERT INTO "Trs" VALUES('None good battery present','Відсутні хорощі батареї','Отсутствуют хорошие батареи');
+INSERT INTO "Trs" VALUES('Battery charge low','Низький заряд батареї','Низкий заряд батареи');
+INSERT INTO "Trs" VALUES('Battery charge critical','Критичний заряд батареї','Критический заряд батареи');
+INSERT INTO "Trs" VALUES('Bad %1 batteries present','Зіпсованих батарей %1','Испорченных батарей %1');
+INSERT INTO "Trs" VALUES('Input voltage low','Низька вхідна напруга','Низкое входное напряжение');
+INSERT INTO "Trs" VALUES('Input voltage high','Висока вхідна напруга','Высокое входное напряжение');
+INSERT INTO "Trs" VALUES('Input frequency too low','Дуже низька вхідна частота','Очень низкая входная частота');
+INSERT INTO "Trs" VALUES('Input frequency too high','Дуже висока вхідна частота','Очень высокая входная частота');
+INSERT INTO "Trs" VALUES('Input frequency low','Низька вхідна частота','Низкая входная частота');
+INSERT INTO "Trs" VALUES('Input frequency high','Висока вхідна частота','Высокая входная частота');
+INSERT INTO "Trs" VALUES('UPS overloaded','ДБЖ перевантажено','ИБП перегружено');
+INSERT INTO "Trs" VALUES('UPS load high','Високе навантаження ДБЖ','Высокая нагрузка ИБП');
+INSERT INTO "Trs" VALUES('UPS overheated','ДБЖ перегрітий','ИБП перегретый');
+INSERT INTO "Trs" VALUES('Temperature high','Висока температура','Высокая температура');
 COMMIT;
