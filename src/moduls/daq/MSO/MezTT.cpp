@@ -82,9 +82,52 @@ MezTT::~MezTT( )
 
 uint16_t MezTT::Refresh()
 {
+
 	string pdu;
-	mess_info(mPrm->nodePath().c_str(),_("MezTT::Refresh"));
-	for (int i=0;i<4;i++){
+	for (int i = 0; i < 4; i++) {
+		if (mPrm->vlAt(TSYS::strMess("state_%d", i+1).c_str()).at().getI(0, true) == EVAL_INT)
+			if (!mPrm->owner().MSOReq(i + ID * 4, 11, 0, pdu))
+				return false;
+		if (mPrm->vlAt(TSYS::strMess("warn_min_%d", i+1).c_str()).at().getR(0, true) == EVAL_REAL)
+			if (!mPrm->owner().MSOReq(i + ID * 4, 15, 1, pdu))
+				return false;
+		if (mPrm->vlAt(TSYS::strMess("warn_max_%d", i+1).c_str()).at().getR(0, true) == EVAL_REAL)
+			if (!mPrm->owner().MSOReq(i + ID * 4, 15, 2, pdu))
+				return false;
+		if (mPrm->vlAt(TSYS::strMess("alarm_min_%d", i+1).c_str()).at().getR(0, true) == EVAL_REAL)
+			if (!mPrm->owner().MSOReq(i + ID * 4, 15, 3, pdu))
+				return false;
+		if (mPrm->vlAt(TSYS::strMess("alarm_max_%d", i+1).c_str()).at().getR(0, true) == EVAL_REAL)
+			if (!mPrm->owner().MSOReq(i + ID * 4, 15, 4, pdu))
+				return false;
+		if (mPrm->vlAt(TSYS::strMess("sens_%d", i+1).c_str()).at().getR(0, true) == EVAL_REAL)
+			if (!mPrm->owner().MSOReq(i + ID * 4, 15, 5, pdu))
+				return false;
+		if (mPrm->vlAt(TSYS::strMess("mode_%d", i+1).c_str()).at().getI(0, true) == EVAL_INT)
+			if (!mPrm->owner().MSOReq(i + ID * 4, 17, 1, pdu))
+				return false;
+		if (mPrm->vlAt(TSYS::strMess("period_%d", i+1).c_str()).at().getR(0, true) == EVAL_REAL)
+			if (!mPrm->owner().MSOReq(i + ID * 4, 17, 2, pdu))
+				return false;
+		if (mPrm->vlAt(TSYS::strMess("sensor_min_%d", i+1).c_str()).at().getR(0, true) == EVAL_REAL)
+			if (!mPrm->owner().MSOReq(i + ID * 4, 17, 3, pdu))
+				return false;
+		if (mPrm->vlAt(TSYS::strMess("sensor_max_%d", i+1).c_str()).at().getR(0, true) == EVAL_REAL)
+			if (!mPrm->owner().MSOReq(i + ID * 4, 17, 4, pdu))
+				return false;
+		if (mPrm->vlAt(TSYS::strMess("PV_min_%d", i+1).c_str()).at().getR(0, true) == EVAL_REAL)
+			if (!mPrm->owner().MSOReq(i + ID * 4, 17, 5, pdu))
+				return false;
+		if (mPrm->vlAt(TSYS::strMess("PV_max_%d", i+1).c_str()).at().getR(0, true) == EVAL_REAL)
+			if (!mPrm->owner().MSOReq(i + ID * 4, 17, 6, pdu))
+				return false;
+		//mPrm->owner().MSOReq(i + ID * 4, 19, 2, pdu);
+	}
+	NeedInit = false;
+	return true;
+
+	//mess_info(mPrm->nodePath().c_str(),_("MezTT::Refresh"));
+/*	for (int i=0;i<4;i++){
 		mPrm->owner().MSOReq(i + ID * 4, 11, 0, pdu);
 		mPrm->owner().MSOReq(i + ID * 4, 15, 1, pdu);
 		mPrm->owner().MSOReq(i + ID * 4, 15, 2, pdu);
@@ -97,7 +140,7 @@ uint16_t MezTT::Refresh()
 		mPrm->owner().MSOReq(i + ID * 4, 17, 4, pdu);
 		mPrm->owner().MSOReq(i + ID * 4, 17, 5, pdu);
 		mPrm->owner().MSOReq(i + ID * 4, 17, 6, pdu);
-	}
+	}*/
 }
 
 string  MezTT::getStatus(void )
@@ -110,10 +153,10 @@ string  MezTT::getStatus(void )
 
 uint16_t MezTT::Task(uint16_t uc)
 {
-	if (NeedInit) {
+//	if (NeedInit) {
 		Refresh();
-		NeedInit = false;
-	}
+//		NeedInit = false;
+//	}
 	return 0;
 }
 

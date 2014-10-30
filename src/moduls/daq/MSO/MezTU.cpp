@@ -52,11 +52,18 @@ MezTU::~MezTU()
 uint16_t MezTU::Refresh()
 {
 	string pdu;
-	mess_info(mPrm->nodePath().c_str(), _("MezTU::Refresh"));
+	//mess_info(mPrm->nodePath().c_str(), _("MezTU::Refresh"));
 	for (int i = 0; i < 4; i++) {
-		mPrm->owner().MSOReq(i + ID * 4, 8, 0, pdu);
-		mPrm->owner().MSOReq(i + ID * 4, 19, 2, pdu);
+		if (mPrm->vlAt(TSYS::strMess("value_%d", i+1).c_str()).at().getB(0, true) == EVAL_BOOL)
+			if (!mPrm->owner().MSOReq(i + ID * 4, 8, 0, pdu))
+				return false;
+		if (mPrm->vlAt(TSYS::strMess("timeTU_%d", i+1).c_str()).at().getI(0, true) == EVAL_INT)
+			if (!mPrm->owner().MSOReq(i + ID * 4, 19, 2, pdu))
+				return false;
+		//mPrm->owner().MSOReq(i + ID * 4, 19, 2, pdu);
 	}
+	NeedInit = false;
+	return true;
 }
 
 string MezTU::getStatus(void)
@@ -69,10 +76,9 @@ string MezTU::getStatus(void)
 
 uint16_t MezTU::Task(uint16_t uc)
 {
-	if (NeedInit) {
+//	if (NeedInit) {
 		Refresh();
-		NeedInit = false;
-	}
+//	}
 	return 0;
 }
 

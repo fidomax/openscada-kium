@@ -115,7 +115,7 @@ class TMSOContr: public TController
 	char getValC( int addr, ResString &err, bool in = false );	//Get coins value
 	void setValR( int val, int addr, ResString &err );			//Set register value
 	void setValC( char val, int addr, ResString &err );		//Set coins value
-	string MSOReq( string &pdu );
+//	string MSOReq( string &pdu );
 	bool HandleData(unsigned int node, unsigned int channel, unsigned int type, unsigned int param, unsigned int flag, const string &ireqst);
 
     protected:

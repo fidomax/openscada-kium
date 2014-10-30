@@ -388,9 +388,9 @@ void TMSOContr::setValC( char val, int addr, ResString &err )
 	}*/
 }
 
-bool TMSOContr::MSOReq( unsigned int channel, unsigned int type, unsigned int param, const string &pdu)
+int TMSOContr::MSOReq( unsigned int channel, unsigned int type, unsigned int param, const string &pdu)
 {
-	mess_info("MSOReq","MSOReq");
+//	mess_info("MSOReq","MSOReq");
    AutoHD<TTransportOut> tr = SYS->transport().at().at(TSYS::strSepParse(mAddr,0,'.')).at().outAt(TSYS::strSepParse(mAddr,1,'.'));
     if( !tr.at().startStat() ) tr.at().start();
     struct can_frame frame;
@@ -404,8 +404,8 @@ bool TMSOContr::MSOReq( unsigned int channel, unsigned int type, unsigned int pa
        //strcpy( frame.data, "foo" );
     frame.can_dlc = 0;//strlen( frame.data );
     if (mess_lev() == TMess::Debug) mess_debug(nodePath().c_str(),"MSOReq id<%08X> dlc<%u>",frame.can_id,frame.can_dlc);
-    tr.at().messIO((const char *)&frame, sizeof(frame));
-//    mess_info("---------MSOReq","---------MSOReq");
+   // tro.messIO(mbap.data(), mbap.size(), buf, sizeof(buf), reqTm, true);
+    try{ tr.at().messIO((const char *)&frame, sizeof(frame),NULL,0,0,true); } catch(TError err){ return false; }
 
     return true;
 }

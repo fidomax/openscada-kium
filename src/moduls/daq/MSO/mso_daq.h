@@ -182,7 +182,7 @@ class TMSOContr: public TController
 	void setValC( char val, int addr, ResString &err );		//Set coins value
 	//string MSOReq( string &pdu );
 	bool HandleData(unsigned int node, unsigned int channel, unsigned int type, unsigned int param, unsigned int flag, const string &ireqst);
-	bool MSOReq(unsigned int channel, unsigned int type, unsigned int param, const string &pdu);
+	int MSOReq(unsigned int channel, unsigned int type, unsigned int param, const string &pdu);
 	bool MSOSet(unsigned int channel, unsigned int type, unsigned int param, const string &pdu);
 	bool MSOSetV(unsigned int channel, unsigned int type, unsigned int param, const string &pdu);
     protected:
