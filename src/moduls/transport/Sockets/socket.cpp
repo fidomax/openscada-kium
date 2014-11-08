@@ -473,7 +473,7 @@ void *TSocketIn::Task( void *sock_in )
 			struct can_frame frame;
 			string req, answ;
 			r_len = recv(sock->sock_fd, &frame, sizeof(frame), 0);
-			sock->trIn += (float) r_len / 1024;
+			sock->trIn += r_len;
 			if (r_len <= 0)
 				continue;
 			req.assign((char *) frame.data, frame.can_dlc);
@@ -484,7 +484,11 @@ void *TSocketIn::Task( void *sock_in )
 			sock->messPut(sock->sock_fd, req, answ, TSYS::uint2str(frame.can_id), prot_in);
 			if (!prot_in.freeStat())
 				continue;
+//		    if(mess_lev() == TMess::Debug)
+//			mess_debug(sock->nodePath().c_str(), _("Socket replied can frame!"));
 
+		    r_len = send(sock->sock_fd, answ.c_str(), answ.size(), 0);
+		    sock->trOut += vmax(0,r_len);
 		}
     }
     pthread_attr_destroy(&pthr_attr);
