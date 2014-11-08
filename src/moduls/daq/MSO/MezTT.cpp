@@ -50,6 +50,8 @@ MezTT::MezTT( TMSOPrm *prm, uint16_t id ) : DA(prm), ID(id)
 		fld->setReserve(TSYS::strMess("17:%d:5",i + ID * 4));
 		mPrm->p_el.fldAdd(fld = new TFld(TSYS::strMess("PV_max_%d",i).c_str(),TSYS::strMess(_("PV max %d"),i).c_str(),TFld::Real,TVal::DirWrite));
 		fld->setReserve(TSYS::strMess("17:%d:6",i + ID * 4));
+		mPrm->p_el.fldAdd(fld = new TFld(TSYS::strMess("coeff_%d",i).c_str(),TSYS::strMess(_("Coeff %d"),i).c_str(),TFld::Real,TVal::DirWrite));
+		fld->setReserve(TSYS::strMess("17:%d:7",i + ID * 4));
 		mPrm->p_el.fldAdd(fld = new TFld(TSYS::strMess("save_params_%d",i).c_str(),TSYS::strMess(_("Save params %d"),i).c_str(),TFld::Boolean,TVal::DirWrite));
 		fld->setReserve(TSYS::strMess("17:%d:0",i + ID * 4));
 		mPrm->p_el.fldAdd(fld = new TFld(TSYS::strMess("calibrate_0_%d",i).c_str(),TSYS::strMess(_("Calibrate 0 %d"),i).c_str(),TFld::Boolean,TVal::DirWrite));
@@ -120,6 +122,9 @@ uint16_t MezTT::Refresh()
 				return false;
 		if (mPrm->vlAt(TSYS::strMess("PV_max_%d", i+1).c_str()).at().getR(0, true) == EVAL_REAL)
 			if (!mPrm->owner().MSOReq(i + ID * 4, 17, 6, pdu))
+				return false;
+		if (mPrm->vlAt(TSYS::strMess("coeff_%d", i+1).c_str()).at().getR(0, true) == EVAL_REAL)
+			if (!mPrm->owner().MSOReq(i + ID * 4, 17, 7, pdu))
 				return false;
 		//mPrm->owner().MSOReq(i + ID * 4, 19, 2, pdu);
 	}
@@ -225,6 +230,9 @@ uint16_t MezTT::HandleEvent(unsigned int channel,unsigned int type,unsigned int 
 				case 6:
 					mPrm->vlAt(TSYS::strMess("PV_max_%d",channel % 4 + 1).c_str()).at().setR(TSYS::getUnalignFloat(ireqst.data()),0,true);
 					break;
+				case 7:
+					mPrm->vlAt(TSYS::strMess("coeff_%d",channel % 4 + 1).c_str()).at().setR(TSYS::getUnalignFloat(ireqst.data()),0,true);
+					break;
 			}
 			break;
 		default:
@@ -266,7 +274,7 @@ uint16_t MezTT::setVal(TVal &val)
 					pdu += f[3];
 					mPrm->owner().MSOSet(channel-1, type, param, pdu);
 					break;
-				case 3:case 4:case 5:case 6:
+				case 3:case 4:case 5:case 6:case 7:
 					*(float *)(f)= (float)val.get(NULL,true).getR();
 					pdu = f[0];
 					pdu += f[1];

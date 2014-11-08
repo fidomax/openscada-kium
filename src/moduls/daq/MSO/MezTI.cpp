@@ -36,6 +36,10 @@ MezTI::MezTI( TMSOPrm *prm, uint16_t id ) : DA(prm), ID(id)
 	for (int i = 1; i <= 4; i++)	{
 		mPrm->p_el.fldAdd(fld = new TFld(TSYS::strMess("count_%d",i).c_str(),TSYS::strMess(_("Count %d"),i).c_str(),TFld::Integer,TVal::DirWrite));
 		fld->setReserve(TSYS::strMess("12:%d:0",i + ID * 4));
+		mPrm->p_el.fldAdd(fld = new TFld(TSYS::strMess("value_%d",i).c_str(),TSYS::strMess(_("Value %d"),i).c_str(),TFld::Real,TVal::DirWrite));
+		fld->setReserve(TSYS::strMess("12:%d:1",i + ID * 4));
+		mPrm->p_el.fldAdd(fld = new TFld(TSYS::strMess("coeff_%d",i).c_str(),TSYS::strMess(_("Coeff %d"),i).c_str(),TFld::Real,TVal::DirWrite));
+		fld->setReserve(TSYS::strMess("12:%d:2",i + ID * 4));
 	}
 }
 
@@ -47,10 +51,20 @@ MezTI::~MezTI( )
 uint16_t MezTI::Refresh()
 {
 	string pdu;
-	mess_info(mPrm->nodePath().c_str(),_("MezTI::Refresh"));
+	//mess_info(mPrm->nodePath().c_str(),_("MezTI::Refresh"));
 	for (int i=0;i<4;i++){
-		mPrm->owner().MSOReq(i + ID * 4, 12, 0, pdu);
+		if (mPrm->vlAt(TSYS::strMess("count_%d", i+1).c_str()).at().getI(0, true) == EVAL_INT)
+			if (!mPrm->owner().MSOReq(i + ID * 4, 12, 0, pdu))
+				return false;
+		if (mPrm->vlAt(TSYS::strMess("value_%d", i+1).c_str()).at().getR(0, true) == EVAL_REAL)
+			if (!mPrm->owner().MSOReq(i + ID * 4, 12, 1, pdu))
+				return false;
+		if (mPrm->vlAt(TSYS::strMess("coeff_%d", i+1).c_str()).at().getR(0, true) == EVAL_REAL)
+			if (!mPrm->owner().MSOReq(i + ID * 4, 12, 2, pdu))
+				return false;
 	}
+	NeedInit = false;
+	return true;
 }
 
 string  MezTI::getStatus(void )
@@ -63,10 +77,10 @@ string  MezTI::getStatus(void )
 
 uint16_t MezTI::Task(uint16_t uc)
 {
-	if (NeedInit) {
+	//if (NeedInit) {
 		Refresh();
-		NeedInit = false;
-	}
+		//NeedInit = false;
+	//}
 	return 0;
 }
 
@@ -77,7 +91,17 @@ uint16_t MezTI::HandleEvent(unsigned int channel,unsigned int type,unsigned int 
 //	mess_info(mPrm->nodePath().c_str(),_("Channel %d"), channel);
 	switch (type){
 		case 12:
-			mPrm->vlAt(TSYS::strMess("count_%d",channel % 4 + 1).c_str()).at().setI(TSYS::getUnalign32(ireqst.data()),0,true);
+			switch (param){
+				case 0:
+					mPrm->vlAt(TSYS::strMess("count_%d",channel % 4 + 1).c_str()).at().setI(TSYS::getUnalign32(ireqst.data()),0,true);
+					break;
+				case 1:
+					mPrm->vlAt(TSYS::strMess("value_%d",channel % 4 + 1).c_str()).at().setR(TSYS::getUnalignFloat(ireqst.data()),0,true);
+					break;
+				case 2:
+					mPrm->vlAt(TSYS::strMess("coeff_%d",channel % 4 + 1).c_str()).at().setR(TSYS::getUnalignFloat(ireqst.data()),0,true);
+					break;
+			}
 			break;
 		default:
 			return 0;
@@ -104,11 +128,20 @@ uint16_t MezTI::setVal(TVal &val)
 	pdu += (char)0x00;*/
 	//mPrm->owner().MSOSet(channel, type, param, pdu);
 	uint8_t f[4];
+
 	switch (type){
 		case 12:
 			switch (param){
 				case 0:
 					*(uint32_t *)(f)= (uint32_t)val.get(NULL,true).getI();
+					pdu = f[0];
+					pdu += f[1];
+					pdu += f[2];
+					pdu += f[3];
+					mPrm->owner().MSOSet(channel-1, type, param, pdu);
+					break;
+				case 2:
+					*(float *)(f)= (float)val.get(NULL,true).getR();
 					pdu = f[0];
 					pdu += f[1];
 					pdu += f[2];
