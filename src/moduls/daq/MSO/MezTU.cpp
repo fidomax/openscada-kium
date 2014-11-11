@@ -30,7 +30,7 @@ using namespace MSO;
 //* MezTU                                           *
 //*************************************************
 
-MezTU::MezTU(TMSOPrm *prm, uint16_t id) :
+MezTU::MezTU(TMdPrm *prm, uint16_t id) :
 		DA(prm), ID(id)
 {
 	TFld * fld;

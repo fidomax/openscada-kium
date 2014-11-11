@@ -30,7 +30,7 @@ using namespace MSO;
 //* MezTT                                           *
 //*************************************************
 
-MezTT::MezTT( TMSOPrm *prm, uint16_t id ) : DA(prm), ID(id)
+MezTT::MezTT( TMdPrm *prm, uint16_t id ) : DA(prm), ID(id)
 {
 	TFld * fld;
 	for (int i = 1; i <= 4; i++)	{

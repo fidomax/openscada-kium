@@ -439,7 +439,7 @@ bool TProtIn::mess( const string &ireqst, string &answer/*, const string &sender
     vector<string> lst;
 //    SYS->daq().at().at("MSO").at().list(lst);
 //    for(int i_l=0; i_l < lst.size(); i_l++){
-//        AutoHD<TMSOContr> t = SYS->daq().at().at("MSO").at().at(lst[i_l]);
+//        AutoHD<TMdContr> t = SYS->daq().at().at("MSO").at().at(lst[i_l]);
 //        if (t.at().DataIn(0)) break;
 //    }
 //	if( SYS->daq().at().at("MSO").at().at(lst[i_l]).at().DataIn(0) ){}

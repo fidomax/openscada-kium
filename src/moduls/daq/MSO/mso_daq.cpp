@@ -119,13 +119,13 @@ void TTpContr::save_()
 
 TController *TTpContr::ContrAttach( const string &name, const string &daq_db )
 {
-    return new TMSOContr(name,daq_db,this);
+    return new TMdContr(name,daq_db,this);
 }
 
 //******************************************************
-//* TMSOContr                                           *
+//* TMdContr                                           *
 //******************************************************
-TMSOContr::TMSOContr( string name_c, const string &daq_db, TElem *cfgelem ) :
+TMdContr::TMdContr( string name_c, const string &daq_db, TElem *cfgelem ) :
 	TController( name_c, daq_db, cfgelem ), prc_st(false), endrun_req(false), tmGath(0),
 	numRx(0), numTx(0),
 	mSched(cfg("SCHEDULE")), mPrior(cfg("PRIOR").getId()),
@@ -139,12 +139,12 @@ TMSOContr::TMSOContr( string name_c, const string &daq_db, TElem *cfgelem ) :
     cfg("PRM_BD_TR").setS("MSOPrm_TR_"+name_c);
 }
 
-TMSOContr::~TMSOContr()
+TMdContr::~TMdContr()
 {
     if(run_st) stop();
 }
 
-string TMSOContr::getStatus( )
+string TMdContr::getStatus( )
 {
     string val = TController::getStatus( );
 
@@ -167,9 +167,9 @@ string TMSOContr::getStatus( )
     return val;
 }
 
-TParamContr *TMSOContr::ParamAttach( const string &name, int type )
+TParamContr *TMdContr::ParamAttach( const string &name, int type )
 {
-    return new TMSOPrm( name, &owner().tpPrmAt(type) );
+    return new TMdPrm( name, &owner().tpPrmAt(type) );
 }
 
 bool TTpContr::DataIn(const string &ireqst, const uint32_t node )
@@ -186,13 +186,13 @@ bool TTpContr::DataIn(const string &ireqst, const uint32_t node )
     vector<string> lst;
     SYS->daq().at().at("MSO").at().list(lst);
     for(int i_l=0; i_l < lst.size(); i_l++){
-        AutoHD<TMSOContr> t = SYS->daq().at().at("MSO").at().at(lst[i_l]);
+        AutoHD<TMdContr> t = SYS->daq().at().at("MSO").at().at(lst[i_l]);
         if (t.at().HandleData(mso, channel, type, param, flag, ireqst)) break;
     }
     return true;
 }
 
-bool TMSOContr::HandleData(unsigned int node, unsigned int channel, unsigned int type, unsigned int param, unsigned int flag, const string &ireqst)
+bool TMdContr::HandleData(unsigned int node, unsigned int channel, unsigned int type, unsigned int param, unsigned int flag, const string &ireqst)
 {
 //    mess_info("ContrHandle","node %u mNode %u flag %u",node, mNode,flag);
     if ((flag == 7)&& (node==mNode))
@@ -201,7 +201,7 @@ bool TMSOContr::HandleData(unsigned int node, unsigned int channel, unsigned int
 		vector<string> lst;
 		list(lst);
 		for(int i_l=0; i_l < lst.size(); i_l++){
-			AutoHD<TMSOPrm> t = at(lst[i_l]);
+			AutoHD<TMdPrm> t = at(lst[i_l]);
 //			mess_info("ContrHandle","trying  %u",i_l);
 			if (t.at().HandleEvent(channel,type,param,flag,ireqst)) return true;
 
@@ -244,11 +244,11 @@ bool TMSOContr::HandleData(unsigned int node, unsigned int channel, unsigned int
     return false;
 }
 
-void TMSOContr::disable_( )
+void TMdContr::disable_( )
 {
 }
 
-void TMSOContr::start_( )
+void TMdContr::start_( )
 {
     if( prc_st ) return;
 
@@ -264,10 +264,10 @@ void TMSOContr::start_( )
     numRx = numTx = 0;
 
     //> Start the gathering data task
-    SYS->taskCreate( nodePath('.',true), mPrior, TMSOContr::Task, this );
+    SYS->taskCreate( nodePath('.',true), mPrior, TMdContr::Task, this );
 }
 
-void TMSOContr::stop_( )
+void TMdContr::stop_( )
 {
     //> Stop the request and calc data task
     SYS->taskDestroy( nodePath('.',true), &endrun_req );
@@ -276,7 +276,18 @@ void TMSOContr::stop_( )
     numRx = numTx = 0;
 }
 
-bool TMSOContr::cfgChange( TCfg &co, const TVariant &pc )
+void TMdContr::prmEn( TMdPrm *prm, bool val )
+{
+    unsigned i_prm;
+
+//    MtxAlloc res(enRes, true);
+    for(i_prm = 0; i_prm < pHd.size(); i_prm++)
+	if(&pHd[i_prm].at() == prm) break;
+
+    if(val && i_prm >= pHd.size())	pHd.push_back(prm);
+    if(!val && i_prm < pHd.size())	pHd.erase(pHd.begin()+i_prm);
+}
+bool TMdContr::cfgChange( TCfg &co, const TVariant &pc )
 {
 	TController::cfgChange(co, pc);
 
@@ -284,7 +295,7 @@ bool TMSOContr::cfgChange( TCfg &co, const TVariant &pc )
     return true;
 }
 
-int TMSOContr::getStateTC( int addr, ResString &err )
+int TMdContr::getStateTC( int addr, ResString &err )
 {
     float rez = EVAL_REAL;
     ResAlloc res( req_res, false );
@@ -311,7 +322,7 @@ int TMSOContr::getStateTC( int addr, ResString &err )
     return rez;
 }
 
-int TMSOContr::getValR( int addr, ResString &err, bool in )
+int TMdContr::getValR( int addr, ResString &err, bool in )
 {
     int rez = EVAL_INT32;
  /*   ResAlloc res( req_res, false );
@@ -327,7 +338,7 @@ int TMSOContr::getValR( int addr, ResString &err, bool in )
     return rez;
 }
 
-char TMSOContr::getValC( int addr, ResString &err, bool in )
+char TMdContr::getValC( int addr, ResString &err, bool in )
 {
     char rez = EVAL_BOOL;
 /*    ResAlloc res( req_res, false );
@@ -343,7 +354,7 @@ char TMSOContr::getValC( int addr, ResString &err, bool in )
     return rez;
 }
 
-void TMSOContr::setValR( int val, int addr, ResString &err )
+void TMdContr::setValR( int val, int addr, ResString &err )
 {
 /*    //> Encode request PDU (Protocol Data Units)
     string pdu;
@@ -366,7 +377,7 @@ void TMSOContr::setValR( int val, int addr, ResString &err )
 	}*/
 }
 
-void TMSOContr::setValC( char val, int addr, ResString &err )
+void TMdContr::setValC( char val, int addr, ResString &err )
 {
 /*    //> Encode request PDU (Protocol Data Units)
     string pdu;
@@ -388,7 +399,7 @@ void TMSOContr::setValC( char val, int addr, ResString &err )
 	}*/
 }
 
-int TMSOContr::MSOReq( unsigned int channel, unsigned int type, unsigned int param, const string &pdu)
+int TMdContr::MSOReq( unsigned int channel, unsigned int type, unsigned int param, const string &pdu)
 {
 //	mess_info("MSOReq","MSOReq");
    AutoHD<TTransportOut> tr = SYS->transport().at().at(TSYS::strSepParse(mAddr,0,'.')).at().outAt(TSYS::strSepParse(mAddr,1,'.'));
@@ -410,7 +421,7 @@ int TMSOContr::MSOReq( unsigned int channel, unsigned int type, unsigned int par
     return true;
 }
 
-bool TMSOContr::MSOSet( unsigned int channel, unsigned int type, unsigned int param, const string &pdu)
+bool TMdContr::MSOSet( unsigned int channel, unsigned int type, unsigned int param, const string &pdu)
 {
 	mess_info("MSOSet","MSOSet");
    AutoHD<TTransportOut> tr = SYS->transport().at().at(TSYS::strSepParse(mAddr,0,'.')).at().outAt(TSYS::strSepParse(mAddr,1,'.'));
@@ -437,7 +448,7 @@ bool TMSOContr::MSOSet( unsigned int channel, unsigned int type, unsigned int pa
     return true;
 }
 
-bool TMSOContr::MSOSetV( unsigned int channel, unsigned int type, unsigned int param, const string &pdu)
+bool TMdContr::MSOSetV( unsigned int channel, unsigned int type, unsigned int param, const string &pdu)
 {
 	mess_info("MSOSetV","MSOSetV");
    AutoHD<TTransportOut> tr = SYS->transport().at().at(TSYS::strSepParse(mAddr,0,'.')).at().outAt(TSYS::strSepParse(mAddr,1,'.'));
@@ -464,10 +475,10 @@ bool TMSOContr::MSOSetV( unsigned int channel, unsigned int type, unsigned int p
     return true;
 }
 
-void *TMSOContr::Task( void *icntr )
+void *TMdContr::Task( void *icntr )
 {
     string pdu;
-    TMSOContr &cntr = *(TMSOContr *)icntr;
+    TMdContr &cntr = *(TMdContr *)icntr;
 
     cntr.endrun_req = false;
     cntr.prc_st = true;
@@ -479,7 +490,7 @@ void *TMSOContr::Task( void *icntr )
 		vector<string> lst;
 		cntr.list(lst);
 		for(int i_l=0; i_l < lst.size(); i_l++){
-			AutoHD<TMSOPrm> t = cntr.at(lst[i_l]);
+			AutoHD<TMdPrm> t = cntr.at(lst[i_l]);
 			t.at().Task(0);
 		}
 
@@ -493,7 +504,7 @@ void *TMSOContr::Task( void *icntr )
     return NULL;
 }
 
-uint16_t TMSOPrm::Task(uint16_t cod)
+uint16_t TMdPrm::Task(uint16_t cod)
 {
 	if (enableStat()){
 		if (mDA) {
@@ -506,7 +517,7 @@ uint16_t TMSOPrm::Task(uint16_t cod)
 
 }
 
-uint16_t TMSOPrm::HandleEvent(unsigned int channel,unsigned int type,unsigned int param,unsigned int flag,const string &ireqst)
+uint16_t TMdPrm::HandleEvent(unsigned int channel,unsigned int type,unsigned int param,unsigned int flag,const string &ireqst)
 {
 	if (enableStat()){
 		if (mDA) {
@@ -520,7 +531,7 @@ uint16_t TMSOPrm::HandleEvent(unsigned int channel,unsigned int type,unsigned in
 
 }
 
-void TMSOContr::setCntrDelay( const string &err )
+void TMdContr::setCntrDelay( const string &err )
 {
 /*    tmDelay = restTm;
     ResAlloc res( req_res, false );
@@ -530,7 +541,7 @@ void TMSOContr::setCntrDelay( const string &err )
     for( int i_b = 0; i_b < acqBlksIn.size(); i_b++ )	acqBlksIn[i_b].err.setVal( err );*/
 }
 
-void TMSOContr::cntrCmdProc( XMLNode *opt )
+void TMdContr::cntrCmdProc( XMLNode *opt )
 {
     //> Get page info
     if(opt->name() == "info")
@@ -561,26 +572,26 @@ void TMSOContr::cntrCmdProc( XMLNode *opt )
     else TController::cntrCmdProc(opt);
 }
 
-TMSOContr::SDataRec::SDataRec( int ioff, int v_rez ) : off(ioff)
+TMdContr::SDataRec::SDataRec( int ioff, int v_rez ) : off(ioff)
 {
     val.assign(v_rez,0);
     err.setVal(_("11:Value not gathered."));
 }
 
-TMSOContr::STTRec::STTRec(unsigned int adr) : addr(adr), val(0.0)
+TMdContr::STTRec::STTRec(unsigned int adr) : addr(adr), val(0.0)
 {
     err.setVal(_("11:Value not gathered."));
 }
 
-TMSOContr::STCRec::STCRec(unsigned int adr) : addr(adr), val(0), state(0)
+TMdContr::STCRec::STCRec(unsigned int adr) : addr(adr), val(0), state(0)
 {
     err.setVal(_("11:Value not gathered."));
 }
 
 //******************************************************
-//* TMSOPrm                                             *
+//* TMdPrm                                             *
 //******************************************************
-TMSOPrm::TMSOPrm( string name, TTipParam *tp_prm ) :
+TMdPrm::TMdPrm( string name, TTipParam *tp_prm ) :
     TParamContr( name, tp_prm ),
     p_el("w_attr")
     //m_attrLs(cfg("ATTR_LS").getS())
@@ -588,20 +599,20 @@ TMSOPrm::TMSOPrm( string name, TTipParam *tp_prm ) :
 
 }
 
-TMSOPrm::~TMSOPrm( )
+TMdPrm::~TMdPrm( )
 {
     nodeDelAll( );
 }
 
-void TMSOPrm::postEnable( int flag )
+void TMdPrm::postEnable( int flag )
 {
     TParamContr::postEnable(flag);
     if( !vlElemPresent(&p_el) )	vlElemAtt(&p_el);
 }
 
-TMSOContr &TMSOPrm::owner( )	{ return (TMSOContr&)TParamContr::owner(); }
+TMdContr &TMdPrm::owner( )	{ return (TMdContr&)TParamContr::owner(); }
 
-void TMSOPrm::enable()
+void TMdPrm::enable()
 {
 //mess_info(nodePath().c_str(),"-------------");
     if( enableStat() )	return;
@@ -621,10 +632,11 @@ void TMSOPrm::enable()
 
 }
 
-void TMSOPrm::disable()
+void TMdPrm::disable()
 {
     if( !enableStat() )  return;
 
+//    owner().prmEn(this, false);	//Remove from process
     TParamContr::disable();
 
     //> Set EVAL to parameter attributes
@@ -634,7 +646,7 @@ void TMSOPrm::disable()
 	vlAt(ls[i_el]).at().setS( EVAL_STR, 0, true );
 }
 
-void TMSOPrm::vlGet( TVal &val )
+void TMdPrm::vlGet( TVal &val )
 {
 //    mess_info("-----------vlGET","%s",val.name().c_str());
     if( !enableStat() || !owner().startStat() )
@@ -651,7 +663,7 @@ void TMSOPrm::vlGet( TVal &val )
     if( owner().redntUse( ) ) return;
 }
 
-void TMSOPrm::vlSet( TVal &valo, const TVariant &vl, const TVariant &pvl  )
+void TMdPrm::vlSet( TVal &valo, const TVariant &vl, const TVariant &pvl  )
 {
     if( !enableStat() || !owner().startStat() )	valo.setI( EVAL_INT, 0, true );
     string rez;
@@ -672,7 +684,7 @@ void TMSOPrm::vlSet( TVal &valo, const TVariant &vl, const TVariant &pvl  )
     }
 }
 
-void TMSOPrm::vlArchMake( TVal &val )
+void TMdPrm::vlArchMake( TVal &val )
 {
     if( val.arch().freeStat() ) return;
     val.arch().at().setSrcMode( TVArchive::ActiveAttr, val.arch().at().srcData() );
@@ -681,7 +693,7 @@ void TMSOPrm::vlArchMake( TVal &val )
     val.arch().at().setHighResTm( true );
 }
 
-void TMSOPrm::cntrCmdProc( XMLNode *opt )
+void TMdPrm::cntrCmdProc( XMLNode *opt )
 {
     //> Get page info
     if(opt->name() == "info")

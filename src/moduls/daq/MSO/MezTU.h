@@ -28,7 +28,7 @@ class MezTU: public DA
 {
     public:
 	//Methods
-	MezTU( TMSOPrm *prm, uint16_t id);
+	MezTU( TMdPrm *prm, uint16_t id);
 	~MezTU( );
 	uint16_t ID;
 	uint16_t Task(uint16_t);

@@ -30,14 +30,14 @@ namespace MSO
 //*************************************************
 //* DA                                            *
 //*************************************************
-class TMSOPrm;
-class TMSOContr;
+class TMdPrm;
+class TMdContr;
 
 class DA
 {
     public:
 	//Methods
-	DA( TMSOPrm *prm ) : mPrm(prm), NeedInit(true)	{ }
+	DA( TMdPrm *prm ) : mPrm(prm), NeedInit(true)	{ }
 	virtual ~DA( )			{ }
 
 	virtual void getVals( )		{ }
@@ -52,7 +52,7 @@ class DA
 
     protected:
 	//Attributes
-	TMSOPrm *mPrm;
+	TMdPrm *mPrm;
 	bool NeedInit;
 };
 

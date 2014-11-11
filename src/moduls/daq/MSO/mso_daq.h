@@ -118,22 +118,22 @@ namespace MSO
 
 
 //******************************************************
-//* TMSOPrm                                             *
+//* TMdPrm                                             *
 //******************************************************
-class TMSOContr;
+class TMdContr;
 
-class TMSOPrm : public TParamContr
+class TMdPrm : public TParamContr
 {
     public:
 	//Methods
-	TMSOPrm( string name, TTipParam *tp_prm );
-	~TMSOPrm( );
+	TMdPrm( string name, TTipParam *tp_prm );
+	~TMdPrm( );
 
 	void enable( );
 	void disable( );
 
 	TElem &elem( )		{ return p_el; }
-	TMSOContr &owner( );
+	TMdContr &owner( );
 	TElem		p_el;		//Work atribute elements
 	uint16_t Task(uint16_t);
 	uint16_t HandleEvent(unsigned int channel,unsigned int type,unsigned int param,unsigned int flag,const string &ireqst);
@@ -155,14 +155,14 @@ class TMSOPrm : public TParamContr
 };
 
 //******************************************************
-//* TMSOContr                                           *
+//* TMdContr                                           *
 //******************************************************
-class TMSOContr: public TController
+class TMdContr: public TController
 {
     public:
 	//Methods
-	TMSOContr( string name_c, const string &daq_db, TElem *cfgelem);
-	~TMSOContr( );
+	TMdContr( string name_c, const string &daq_db, TElem *cfgelem);
+	~TMdContr( );
 
 	string getStatus( );
 
@@ -170,7 +170,7 @@ class TMSOContr: public TController
 	string	cron( )		{ return mSched; }
 	int	prior( )	{ return mPrior; }
 
-	AutoHD<TMSOPrm> at( const string &nm )	{ return TController::at(nm); }
+	AutoHD<TMdPrm> at( const string &nm )	{ return TController::at(nm); }
 
 	void regVal( int addr, const string &dt = "TT" );		//Register value for acquisition
 	int  getValR( int addr, ResString &err, bool in = false );	//Get register value
@@ -192,6 +192,7 @@ class TMSOContr: public TController
 	void stop_( );
 	void cntrCmdProc( XMLNode *opt );	//Control interface command process
 	bool cfgChange( TCfg &co, const TVariant &pc );
+	void prmEn( TMdPrm *prm, bool val );
 
     private:
 	//Data
@@ -248,8 +249,9 @@ class TMSOContr: public TController
 
 
 	double	tmGath;				//Gathering time
-
+	vector< AutoHD<TMdPrm> > pHd;
 	float numRx, numTx;
+
 };
 
 //*************************************************
