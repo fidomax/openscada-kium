@@ -132,16 +132,25 @@ TMdContr::TMdContr( string name_c, const string &daq_db, TElem *cfgelem ) :
 	mAddr(cfg("ADDR")),mNode(cfg("NODE").getId()),
 	reqTm(cfg("TM_REQ").getId())
 {
+    pthread_mutexattr_t attrM;
+    pthread_mutexattr_init(&attrM);
+    pthread_mutexattr_settype(&attrM, PTHREAD_MUTEX_RECURSIVE);
+    pthread_mutex_init(&enRes, &attrM);
+    pthread_mutexattr_destroy(&attrM);
+
     cfg("PRM_BD_TT").setS("MSOPrm_TT_"+name_c);
     cfg("PRM_BD_TC").setS("MSOPrm_TC_"+name_c);
     cfg("PRM_BD_TU").setS("MSOPrm_TU_"+name_c);
     cfg("PRM_BD_TI").setS("MSOPrm_TI_"+name_c);
     cfg("PRM_BD_TR").setS("MSOPrm_TR_"+name_c);
+
 }
 
 TMdContr::~TMdContr()
 {
     if(run_st) stop();
+
+    pthread_mutex_destroy(&enRes);
 }
 
 string TMdContr::getStatus( )
@@ -198,15 +207,19 @@ bool TMdContr::HandleData(unsigned int node, unsigned int channel, unsigned int 
     if ((flag == 7)&& (node==mNode))
     {
 //        mess_info("ContrHandle","node %u found!",node);
-		vector<string> lst;
-		list(lst);
-		for(int i_l=0; i_l < lst.size(); i_l++){
-			AutoHD<TMdPrm> t = at(lst[i_l]);
+    	MtxAlloc prmRes(enRes, true);
+		for(unsigned i_p=0; i_p < pHd.size(); i_p++)
+			if (pHd[i_p].at().HandleEvent(channel,type,param,flag,ireqst)) return true;
+//		vector<string> lst;
+//		list(lst);
+//		for(int i_l=0; i_l < lst.size(); i_l++){
+//			AutoHD<TMdPrm> t = at(lst[i_l]);
 //			mess_info("ContrHandle","trying  %u",i_l);
-			if (t.at().HandleEvent(channel,type,param,flag,ireqst)) return true;
+//			if (t.at().HandleEvent(channel,type,param,flag,ireqst)) return true;
 
 
-		}
+//		}
+		prmRes.unlock();
 /*        if (type==11){
             mess_info("typeHandle","type %u found!",param);
             mess_info("typeHandle","acqTT size is %u",acqTT.size());
@@ -274,13 +287,14 @@ void TMdContr::stop_( )
 
     //> Clear statistic
     numRx = numTx = 0;
+    pHd.clear();
 }
 
 void TMdContr::prmEn( TMdPrm *prm, bool val )
 {
     unsigned i_prm;
 
-//    MtxAlloc res(enRes, true);
+    MtxAlloc res(enRes, true);
     for(i_prm = 0; i_prm < pHd.size(); i_prm++)
 	if(&pHd[i_prm].at() == prm) break;
 
@@ -487,12 +501,16 @@ void *TMdContr::Task( void *icntr )
     {
 	while( !cntr.endrun_req )
 	{
-		vector<string> lst;
-		cntr.list(lst);
-		for(int i_l=0; i_l < lst.size(); i_l++){
-			AutoHD<TMdPrm> t = cntr.at(lst[i_l]);
-			t.at().Task(0);
-		}
+//		vector<string> lst;
+//		cntr.list(lst);
+		MtxAlloc prmRes(cntr.enRes, true);
+//		for(int i_l=0; i_l < lst.size(); i_l++){
+//			AutoHD<TMdPrm> t = cntr.at(lst[i_l]);
+//			t.at().Task(0);
+//		}
+		for(unsigned i_p=0; i_p < cntr.pHd.size(); i_p++)
+		    cntr.pHd[i_p].at().Task(0);
+		prmRes.unlock();
 
 	    TSYS::taskSleep(cntr.period(),cntr.period()?0:TSYS::cron(cntr.cron()));
 	}
@@ -614,29 +632,28 @@ TMdContr &TMdPrm::owner( )	{ return (TMdContr&)TParamContr::owner(); }
 
 void TMdPrm::enable()
 {
-//mess_info(nodePath().c_str(),"-------------");
     if( enableStat() )	return;
-//mess_info(nodePath().c_str(),"-------------");
+    TParamContr::enable();
     for(unsigned i_f = 0; i_f < p_el.fldSize(); )
     {
 	try { p_el.fldDel(i_f); }
 	catch(TError err) { mess_warning(err.cat.c_str(),err.mess.c_str()); i_f++; }
     }
+    if (mDA) delete mDA;
 
     if(type().name == "tp_TT" ) mDA = new MezTT(this, cfg("DEV_ID").getI());
     if(type().name == "tp_TC" ) mDA = new MezTC(this, cfg("DEV_ID").getI());
     if(type().name == "tp_TU" ) mDA = new MezTU(this, cfg("DEV_ID").getI());
     if(type().name == "tp_TI" ) mDA = new MezTI(this, cfg("DEV_ID").getI());
     if(type().name == "tp_TR" ) mDA = new MezTR(this, cfg("DEV_ID").getI());
-    TParamContr::enable();
-
+    owner().prmEn(this, true);	//Put to process
 }
 
 void TMdPrm::disable()
 {
     if( !enableStat() )  return;
 
-//    owner().prmEn(this, false);	//Remove from process
+    owner().prmEn(this, false);	//Remove from process
     TParamContr::disable();
 
     //> Set EVAL to parameter attributes
