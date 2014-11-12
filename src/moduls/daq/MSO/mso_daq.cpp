@@ -639,7 +639,7 @@ void TMdPrm::enable()
 	try { p_el.fldDel(i_f); }
 	catch(TError err) { mess_warning(err.cat.c_str(),err.mess.c_str()); i_f++; }
     }
-    if (mDA) delete mDA;
+    if (mDA) {delete mDA; mDA = NULL;}
 
     if(type().name == "tp_TT" ) mDA = new MezTT(this, cfg("DEV_ID").getI());
     if(type().name == "tp_TC" ) mDA = new MezTC(this, cfg("DEV_ID").getI());
