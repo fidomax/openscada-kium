@@ -611,7 +611,8 @@ TMdContr::STCRec::STCRec(unsigned int adr) : addr(adr), val(0), state(0)
 //******************************************************
 TMdPrm::TMdPrm( string name, TTipParam *tp_prm ) :
     TParamContr( name, tp_prm ),
-    p_el("w_attr")
+    p_el("w_attr"),
+	mDA(NULL)
     //m_attrLs(cfg("ATTR_LS").getS())
 {
 
@@ -633,20 +634,20 @@ TMdContr &TMdPrm::owner( )	{ return (TMdContr&)TParamContr::owner(); }
 void TMdPrm::enable()
 {
     if( enableStat() )	return;
-    TParamContr::enable();
-    for(unsigned i_f = 0; i_f < p_el.fldSize(); )
+
+/*    for(unsigned i_f = 0; i_f < p_el.fldSize(); )
     {
 	try { p_el.fldDel(i_f); }
 	catch(TError err) { mess_warning(err.cat.c_str(),err.mess.c_str()); i_f++; }
     }
-    if (mDA) {delete mDA; mDA = NULL;}
-
-    if(type().name == "tp_TT" ) mDA = new MezTT(this, cfg("DEV_ID").getI());
-    if(type().name == "tp_TC" ) mDA = new MezTC(this, cfg("DEV_ID").getI());
-    if(type().name == "tp_TU" ) mDA = new MezTU(this, cfg("DEV_ID").getI());
-    if(type().name == "tp_TI" ) mDA = new MezTI(this, cfg("DEV_ID").getI());
-    if(type().name == "tp_TR" ) mDA = new MezTR(this, cfg("DEV_ID").getI());
+    if (mDA) {delete mDA; mDA = NULL;}*/
+    if((type().name == "tp_TT" ) && (mDA == NULL)) mDA = new MezTT(this, cfg("DEV_ID").getI());
+    if((type().name == "tp_TC" ) && (mDA == NULL)) mDA = new MezTC(this, cfg("DEV_ID").getI());
+    if((type().name == "tp_TU" ) && (mDA == NULL)) mDA = new MezTU(this, cfg("DEV_ID").getI());
+    if((type().name == "tp_TI" ) && (mDA == NULL)) mDA = new MezTI(this, cfg("DEV_ID").getI());
+    if((type().name == "tp_TR" ) && (mDA == NULL)) mDA = new MezTR(this, cfg("DEV_ID").getI());
     owner().prmEn(this, true);	//Put to process
+    TParamContr::enable();
 }
 
 void TMdPrm::disable()
