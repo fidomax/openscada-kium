@@ -273,8 +273,7 @@ void TSocketIn::start( )
 	memset(&name_un, 0, sizeof(name_un));
 	name_un.sun_family = AF_UNIX;
 	strncpy(name_un.sun_path, path.c_str(), sizeof(name_un.sun_path));
-	if(bind(sock_fd,(sockaddr*)&name_un,sizeof(name_un)) == -1)
-	{
+	if(bind(sock_fd,(sockaddr*)&name_un,sizeof(name_un)) == -1) {
 	    close(sock_fd);
 	    throw TError(nodePath().c_str(),_("UNIX socket doesn't bind to '%s'!"),addr().c_str());
 	}
@@ -336,8 +335,7 @@ int TSocketIn::writeTo( const string &sender, const string &data )
 
     ResAlloc resN(nodeRes(), true);	//Prevent simultaneous writing
 
-    switch(type)
-    {
+    switch(type) {
 	case SOCK_TCP: case SOCK_UNIX: {
 	    int sId = atoi(TSYS::strLine(sender,1).c_str());
 	    if(sId < 0) return -1;
@@ -349,7 +347,7 @@ int TSocketIn::writeTo( const string &sender, const string &data )
 		if(wL == 0) { mess_err(nodePath().c_str(), _("Write: reply for zero bytes.")); break; }
 		else if(wL < 0) {
 		    if(errno == EAGAIN) {
-			tv.tv_sec = 1; tv.tv_usec = 0;		//!!!! Where the time take?
+			tv.tv_sec = 1; tv.tv_usec = 0;		//!!!! Where the time get?
 			FD_ZERO(&rw_fd); FD_SET(sId, &rw_fd);
 			int kz = select(sId+1, NULL, &rw_fd, NULL, &tv);
 			if(kz > 0 && FD_ISSET(sId,&rw_fd)) { wL = 0; continue; }
@@ -408,8 +406,7 @@ void *TSocketIn::Task( void *sock_in )
 		    continue;
 		}
 		//Create presenting the client connection output transport
-		if(sock->protocol().empty() && (int)sock->assTrs().size() <= sock->maxFork())
-		{
+		if(sock->protocol().empty() && (int)sock->assTrs().size() <= sock->maxFork()) {
 		    sock->assTrO("SOCK:"+i2s(sock_fd_CL));
 		    sock->connNumb++;
 		    continue;
@@ -548,8 +545,7 @@ void *TSocketIn::ClTask( void *s_inf )
 	    if(mess_lev() == TMess::Debug)
 		mess_debug(s.s->nodePath().c_str(), _("Socket replied message '%d' to '%s'."), answ.size(), s.sender.c_str());
 	    ssize_t wL = 1;
-	    for(unsigned wOff = 0; wOff != answ.size() && wL > 0; wOff += wL)
-	    {
+	    for(unsigned wOff = 0; wOff != answ.size() && wL > 0; wOff += wL) {
 		wL = write(s.cSock, answ.data()+wOff, answ.size()-wOff);
 		if(wL == 0) { mess_err(s.s->nodePath().c_str(), _("Write: reply for zero bytes.")); break; }
 		else if(wL < 0) {
@@ -571,7 +567,7 @@ void *TSocketIn::ClTask( void *s_inf )
 	cnt++;
 	tm = time(NULL);
 	sessOk = true;
-    }while(!s.s->endrun_cl && (!s.s->keepAliveTm() || (time(NULL)-tm) < s.s->keepAliveTm()) &&
+    } while(!s.s->endrun_cl && (!s.s->keepAliveTm() || (time(NULL)-tm) < s.s->keepAliveTm()) &&
 	    (!sessOk || ((s.s->mode || !prot_in.freeStat()) && (!s.s->keepAliveReqs() || cnt < s.s->keepAliveReqs()))));
 
     //Close protocol on broken connection

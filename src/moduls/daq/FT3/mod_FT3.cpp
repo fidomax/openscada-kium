@@ -711,7 +711,7 @@ uint16_t TMdContr::Len(uint16_t l)
 TMdContr::~TMdContr( )
 {
 //mess_info(nodePath().c_str(),_("TMdContr::~TMdContr"));
-    if( run_st ) stop();
+    if(startStat()) stop();
 }
 
 //!!! Status processing function for DAQ-controllers

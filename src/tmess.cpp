@@ -221,7 +221,6 @@ string TMess::translGet( const string &base, const string &lang, const string &s
     map<string,CacheEl>::iterator itr = trMessCache.find(cKey);
     if(itr != trMessCache.end()) { itr->second.tm = SYS->sysTm(); rez = itr->second.val; }
     else {
-	//if(base == "Roman Savochenko") printf("TEST 00: trLang='%s'; cKey='%s'\n", trLang.c_str(), cKey.c_str());
 	//Request to data source direct
 	if(src.compare(0,5,"uapi:") == 0) {	// Check/Get/Place from user API translations table
 	    string srcAddrs = src.substr(5), tStrVl;
@@ -323,7 +322,7 @@ string TMess::translSet( const string &base, const string &lang, const string &m
 	if((isCfg=trSrc.compare(0,4,"cfg:") == 0) || trSrc.compare(0,3,"db:") == 0) {	//Source is config file
 	    req.elem().fldAdd(new TFld(setFld.c_str(),setFld.c_str(),TFld::String,0));
 	    req.cfg(setFld).setReqKey(true);
-	    req.cfg(setFld).setS(base, chBase?TCfg::KeyUpdtBase|TCfg::ForceUse:0);
+	    req.cfg(setFld).setS(base, chBase?TCfg::DblValTwo|TCfg::ForceUse:0);
 	    if(!chBase) {
 		setFld = translFld(trLang, setFld, isCfg);
 		req.elem().fldAdd(new TFld(setFld.c_str(),setFld.c_str(),TFld::String,0));

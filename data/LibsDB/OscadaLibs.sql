@@ -2401,7 +2401,7 @@ INSERT INTO "tmplib_base_io" VALUES('pidUnifImp','this','Object',4,1,'',50,'Об
 INSERT INTO "tmplib_base_io" VALUES('pidUnifImp','SHIFR','Code',0,0,'',51,'Шифр','','Шифр','');
 INSERT INTO "tmplib_base_io" VALUES('pidUnifImp','NAME','Name',0,0,'',52,'Ім''я','','Имя','');
 INSERT INTO "tmplib_base_io" VALUES('pidUnifImp','DESCR','Description',0,0,'',53,'Опис','','Описание','');
-INSERT INTO "tmplib_base_io" VALUES('anUnif','HystBnd','Hysteresis of boders violation',2,32,'0',14,'Гістерезиз поруш. границь','','Гистерезиз наруш. границ','');
+INSERT INTO "tmplib_base_io" VALUES('anUnif','HystBnd','Hysteresis of boders violation',2,32,'1',14,'Гістерезиз поруш. границь','','Гистерезиз наруш. границ','');
 INSERT INTO "tmplib_base_io" VALUES('anUnif','inProc','Input processing procedure',0,68,'',1,'Процедура обробки входу','','Процедура обработки входа','');
 INSERT INTO "tmplib_base_io" VALUES('anUnif','subMode','Substitute:mode (0-no; 1-last; 2-substitute)',1,32,'0',7,'Заміна:режим (0-немає; 1-останне; 2-заміна)','','Замена:режим (0-нет; 1-последний; 2-замена)','');
 INSERT INTO "tmplib_base_io" VALUES('anUnif','subVar','Substitute:variable',2,32,'0',8,'Заміна:змінна','','Замена:переменная','');
@@ -2411,7 +2411,7 @@ INSERT INTO "tmplib_base_io" VALUES('anUnifSt','subMode','Substitute:mode (0-no;
 INSERT INTO "tmplib_base_io" VALUES('anUnifSt','subVar','Substitute:variable',2,32,'0',13,'Заміна:змінна','','Замена:переменная','');
 INSERT INTO "tmplib_base_io" VALUES('anUnifSt','alSup','Alarms suppress',3,32,'0',14,'Придушення порушень','','Подавление нарушений','');
 INSERT INTO "tmplib_base_io" VALUES('manInUnif','alSup','Alarms suppress',3,32,'0',7,'Придушення порушень','','Подавление нарушений','');
-INSERT INTO "tmplib_base_io" VALUES('manInUnif','HystBnd','Hysteresis of boders violation',2,32,'0',12,'Гістерезиз поруш. границь','','Гистерезиз наруш. границ','');
+INSERT INTO "tmplib_base_io" VALUES('manInUnif','HystBnd','Hysteresis of boders violation',2,32,'1',12,'Гістерезиз поруш. границь','','Гистерезиз наруш. границ','');
 INSERT INTO "tmplib_base_io" VALUES('manInUnif','prec','Precision (signs)',1,32,'2',14,'Точність (знаків)','','Точность (знаков)','');
 INSERT INTO "tmplib_base_io" VALUES('manInUnif','this','Object',4,1,'',21,'Об''єкт','','Объект','');
 INSERT INTO "tmplib_base_io" VALUES('manInUnif','SHIFR','Code',0,0,'',22,'Шифр','','Шифр','');
@@ -3806,54 +3806,20 @@ else if(wMax>wMin && var>wMax)	f_err="5:Нарушение верхней пре
 else if(wMax>wMin && var<wMin)	f_err="6:Нарушение нижней предупредительной границы";
 else f_err="0";','');
 INSERT INTO "tmplib_base" VALUES('digitBlock','Diskret parameters block','Блок дискр. параметрів','Блок дискр. параметров','The block for union of Diskret parameters for one device control.','Блок для збору дискретних параметрів, керуючих одним апаратом.','Блок для сборки дискретных параметров управляющих одним аппаратом.',10,'JavaLikeCalc.JavaScript
-set=false;
-if(cmdOpen && last_cmd!=1) { last_cmd=1; set=true; }
-if(cmdClose && last_cmd!=2) { last_cmd=2; set=true; }
-if(cmdStop && last_cmd!=3) { last_cmd=3; set=true; }
-if(set && tCmd>0) w_tm=tCmd;
-if(w_tm>0) w_tm-=1./f_frq;
-else
-{
-  w_tm=0;
-  if(tCmd>0)
-  {
-    if(last_cmd==1) cmdOpen=false;
-    if(last_cmd==2) cmdClose=false;
-    if(last_cmd==3) cmdStop=false;
-  }
-}','JavaLikeCalc.JavaScript
-set=false;
-if(cmdOpen && last_cmd!=1) { last_cmd=1; set=true; }
-if(cmdClose && last_cmd!=2) { last_cmd=2; set=true; }
-if(cmdStop && last_cmd!=3) { last_cmd=3; set=true; }
-if(set && tCmd>0) w_tm=tCmd;
-if(w_tm>0) w_tm-=1./f_frq;
-else
-{
-  w_tm=0;
-  if(tCmd>0)
-  {
-    if(last_cmd==1) cmdOpen=false;
-    if(last_cmd==2) cmdClose=false;
-    if(last_cmd==3) cmdStop=false;
-  }
-}','JavaLikeCalc.JavaScript
-set=false;
-if(cmdOpen && last_cmd!=1) { last_cmd=1; set=true; }
-if(cmdClose && last_cmd!=2) { last_cmd=2; set=true; }
-if(cmdStop && last_cmd!=3) { last_cmd=3; set=true; }
-if(set && tCmd>0) w_tm=tCmd;
-if(w_tm>0) w_tm-=1./f_frq;
-else
-{
-  w_tm=0;
-  if(tCmd>0)
-  {
-    if(last_cmd==1) cmdOpen=false;
-    if(last_cmd==2) cmdClose=false;
-    if(last_cmd==3) cmdStop=false;
-  }
-}','');
+set = false;
+if(cmdOpen && !(last_cmd&0x1))	{ last_cmd = last_cmd|0x1; set = true; }
+if(cmdClose && !(last_cmd&0x2))	{ last_cmd = last_cmd|0x2; set = true; }
+if(cmdStop && !(last_cmd&0x4))	{ last_cmd = last_cmd|0x4; set = true; }
+if(set && tCmd > 0) w_tm = tCmd;
+if(w_tm > 0) w_tm -= 1/f_frq;
+else {
+	w_tm = 0;
+	if(tCmd > 0) {
+		if(last_cmd&0x1) { cmdOpen = false; last_cmd = last_cmd&(~0x1); }
+		if(last_cmd&0x2) { cmdClose = false; last_cmd = last_cmd&(~0x2); }
+		if(last_cmd&0x4) { cmdStop = false; last_cmd = last_cmd&(~0x4); }
+	}
+}','','',1414519215);
 INSERT INTO "tmplib_base" VALUES('gasPoint','Flow control point','Витрато-вимірювальний вузол','Расходомерный узел',' ',' ','',10,'JavaLikeCalc.JavaScript
 F=200+(rand(5)-2.5);
 Q+=F/3600;
@@ -4045,7 +4011,7 @@ else {
 	else if(f_err.toInt() && !tErr.toInt())
 		this.nodePrev().alarmSet((NAME.length?NAME:SHIFR)+": "+DESCR+": НОРМА", 1, SHIFR);
 	f_err = tErr;
-}',1402043101);
+}',1414688109);
 INSERT INTO "tmplib_base" VALUES('anUnif','Analog sign. (Unif)','Аналог. сигнал (Уніф)','Аналог. сигн. (Униф)','Unified template for analog input signals processing.','Уніфікований шаблон для обробки аналогових вхідних сигналів.','Унифицированный шаблон обработки аналогового входного сигнала.',10,'JavaLikeCalc.JavaScript
 if(f_start) {
 	f_err = "0";
@@ -4212,7 +4178,7 @@ else {
 	else if(f_err.toInt() && !tErr.toInt())
 		this.nodePrev().alarmSet((NAME.length?NAME:SHIFR)+": "+DESCR+": "+tr("NORMA"), 1, SHIFR);
 	f_err = tErr;
-}','',1412878770);
+}','',1414688065);
 INSERT INTO "tmplib_base" VALUES('digitBlockUnif','Diskret block (Unif)','Блок дискретних (Уніф)','Блок дискр. (Униф)','The block for union of Diskret parameters for one device control.','Блок поєднання дискретних сигналів контролю одним пристроєм.','Блок для дискретных параметров управляющих одним аппаратом.',10,'JavaLikeCalc.JavaScript
 set=false;
 if( com != EVAL_BOOL && com && last_cmd!=1 ) { last_cmd=1; set=true; }
@@ -4454,10 +4420,7 @@ else if(in < (min(pMax,pMin)-plcExcess*abs(pMax-pMin)/100)) {
 	if(subMode == 1) var = prevVar.isEVal() ? min-plcExcess*(max-min)/100 : prevVar;
 	else if(subMode == 2) var = subVar;
 }
-if(tErr) {
-  EVAL = true;
-  HH = H = LL = L = false;
-}
+if(tErr)	EVAL = true, HH = H = LL = L = false;
 else {
 	vCalibr = iMult*(in+iAdd);
 	if(passIn) { pMin = iMult*(pMin+iAdd); pMax = iMult*(pMax+iAdd); }
@@ -4472,16 +4435,17 @@ else {
 	prevVar = var;
 
 	bndVarHyst = (max-min)*HystBnd/100;
+	EVAL = HH_ = H_ = LL_ = L_ = false;
+	if(speed && varDt > speed)	{ tErr = "7:"+tr("Too big parameter''s motion speed"); levErr = -2; }
+	if(wMin > min && wMax > wMin && (var <= wMin || (L && var <= (wMin+bndVarHyst))))
+	{ tErr = "6:"+tr("Lower warning border error"); levErr = -2; L_ = true; }
+	if(wMax < max && wMax > wMin && (var >= wMax || (H && var >= (wMax-bndVarHyst))))
+	{ tErr = "5:"+tr("Upper warning border error"); levErr = -2; H_ = true; }
+	if(aMin > min && aMax > aMin && (var <= aMin || (LL && var <= (aMin+bndVarHyst))))
+	{ tErr = "4:"+tr("Lower alarm border error"); levErr = -4; LL_ = true; }
 	if(aMax < max && aMax > aMin && (var >= aMax || (HH && var >= (aMax-bndVarHyst))))
-	{ tErr = "3:"+tr("Upper alarm border error"); levErr = -4; HH = true; EVAL = H = LL = L = false; }
-	else if(aMin > min && aMax > aMin && (var <= aMin || (LL && var <= (aMin+bndVarHyst))))
-	{ tErr = "4:"+tr("Lower alarm border error"); levErr = -4; LL = true; EVAL = HH = H = L = false; }
-	else if(wMax < max && wMax > wMin && (var >= wMax || (H && var >= (wMax-bndVarHyst))))
-	{ tErr = "5:"+tr("Upper warning border error"); levErr = -2; H = true; EVAL = HH = LL = L = false; }
-	else if(wMin > min && wMax > wMin && (var <= wMin || (L && var <= (wMin+bndVarHyst))))
-	{ tErr = "6:"+tr("Lower warning border error"); levErr = -2; L = true; EVAL = HH = H = LL = false; }
-	else if(speed && varDt > speed)	{ tErr = "7:"+tr("Too big parameter''s motion speed"); levErr = -2; }
-	else EVAL = HH = H = LL = L = false;
+	{ tErr = "3:"+tr("Upper alarm border error"); levErr = -4; HH_ = true; }
+	HH = HH_; H = H_; LL = LL_; L = L_;
 }
 
 //Alarms forming
@@ -4580,7 +4544,7 @@ else {
 	else if(f_err.toInt() && !tErr.toInt())
 		this.nodePrev().alarmSet((NAME.length?NAME:SHIFR)+": "+DESCR+": "+tr("NORMA"), 1, SHIFR);
 	f_err = tErr;
-}','',1412878882);
+}','',1415296612);
 INSERT INTO "tmplib_base" VALUES('pidUnif','PID sign. (Unif, stats)','ПІД сигнал (Уніф, стани)','ПИД сигн. (Униф, состояния)','The unified template for process analog signals with properties PID.','Уніфікований шаблон для обробки аналогового сигналу з властивостями ПІД.','Унифицированный шаблон обработки аналогового сигнала со свойствами ПИД.',10,'JavaLikeCalc.JavaScript
 if(f_start) f_err = "0";
 

@@ -1552,8 +1552,7 @@ void TSYS::taskCreate( const string &path, int priority, void *(*start_routine)(
 	//Wait for thread structure initialization finish for not detachable tasks
 	while(!(htsk.flgs&STask::Detached) && !htsk.thr) TSYS::sysSleep(1e-3); //sched_yield(); !!! don't use for hard realtime systems with high priority
 	//Wait for start status
-	for(time_t c_tm = time(NULL); !(htsk.flgs&STask::Detached) && startSt && !(*startSt); )
-	{
+	for(time_t c_tm = time(NULL); !(htsk.flgs&STask::Detached) && startSt && !(*startSt); ) {
 	    if(time(NULL) >= (c_tm+wtm)) throw TError(nodePath().c_str(),_("Task '%s' start timeouted!"),path.c_str());
 	    sysSleep(STD_WAIT_DELAY*1e-3);
 	}
@@ -1645,7 +1644,7 @@ void *TSYS::taskWrap( void *stas )
     struct sched_param param;
     pthread_getschedparam(pthread_self(), &policy, &param);
     tsk->policy = policy;
-    //tsk->prior = param.sched_priority;	//!!!! Commented by nice
+    //tsk->prior = param.sched_priority;	//!!!! Commented for nice
 
 #if __GLIBC_PREREQ(2,4)
     //Load and init CPU set
@@ -2554,7 +2553,6 @@ void TSYS::cntrCmdProc( XMLNode *opt )
 				XMLNode *recNd = ns[i_n]->childGet(-1);
 				if(firstInst) { recNd->setText(tMath); haveMatch = true; }
 				else {
-				    //printf("TEST 00: Check to match for %s\n",im->first.c_str());
 				    if(!s2i(recNd->attr("unmatch"))) {
 					if(tMath == recNd->text()) haveMatch = true;
 					else {

@@ -172,7 +172,7 @@ TMdContr::TMdContr(string name_c, const string &daq_db, TElem *cfgelem) :
 
 TMdContr::~TMdContr()
 {
-    if(run_st) stop();
+    if(startStat()) stop();
 }
 
 string TMdContr::getStatus( )
@@ -343,8 +343,10 @@ string TMdContr::serReq( string req, char mSlot, bool CRC )
 
     if(messLev() == TMess::Debug) mess_debug_(nodePath().c_str(), _("REQ -> '%s'"), req.c_str());
 
+    ResAlloc res(reqRes, true);
+
     //Request by ICP DAS serial API
-    if(mBus == 0 && mSlot != mCurSlot)	{ pBusRes.resRequestW(); ChangeToSlot(mSlot); mCurSlot = mSlot; pBusRes.resRelease(); }
+    if(mBus == 0 && mSlot != mCurSlot) { pBusRes.resRequestW(); ChangeToSlot(mSlot); mCurSlot = mSlot; pBusRes.resRelease(); }
 
     //Request by OpenSCADA output transport
     if(bus() >= 0 && trOscd() != TrIcpDasNm) {
@@ -356,14 +358,16 @@ string TMdContr::serReq( string req, char mSlot, bool CRC )
 	    char buf[1000];
 
 	    ResAlloc resN(tr.at().nodeRes(), true);
-	    for(int i_tr = 0; i_tr < vmax(1,vmin(10,connTry)); i_tr++) {
-		int resp_len = tr.at().messIO(req.data(), req.size(), buf, sizeof(buf), 0, true);
-		rez.assign(buf, resp_len);
-		// Wait tail
-		while(resp_len && (rez.size() < 2 || rez[rez.size()-1] != '\r')) {
-		    try{ resp_len = tr.at().messIO(NULL, 0, buf, sizeof(buf), 0, true); } catch(TError er){ break; }
-		    rez.append(buf, resp_len);
-		}
+	    for(int i_tr = 0, resp_len = 0; i_tr < vmax(1,vmin(10,connTry)); i_tr++) {
+		try {
+		    resp_len = tr.at().messIO(req.data(), req.size(), buf, sizeof(buf), 0, true);
+		    rez.assign(buf, resp_len);
+		    // Wait tail
+		    while(resp_len && (rez.size() < 2 || rez[rez.size()-1] != '\r')) {
+			try{ resp_len = tr.at().messIO(NULL, 0, buf, sizeof(buf), 0, true); } catch(TError er){ break; }
+			rez.append(buf, resp_len);
+		    }
+		} catch(TError er) { err = "10:" + er.mess; continue; } //By possible the send request breakdown and no response
 		if(rez.size() < 2 || rez[rez.size()-1] != '\r') { err = _("13:Error respond: Not full."); continue; }
 		rez = rez.substr(0,rez.size()-1);
 		if(CRC) {
@@ -385,8 +389,6 @@ string TMdContr::serReq( string req, char mSlot, bool CRC )
     }
 
     //Request by ICP DAS serial API
-    ResAlloc res(reqRes, true);
-
     WORD wT, rez;
     char szReceive[255]; szReceive[0] = 0;
 
