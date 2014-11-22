@@ -132,6 +132,7 @@ uint16_t MezTU::HandleEvent(unsigned int channel, unsigned int type, unsigned in
 					}
 					break;
 			}
+			break;
 
 		default:
 			return 0;
