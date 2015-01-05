@@ -55,9 +55,15 @@ uint16_t MezTC::Refresh()
 	string pdu;
 	mess_info(mPrm->nodePath().c_str(),_("MezTC::Refresh"));
 	for (int i=0;i<4;i++){
-		mPrm->owner().MSOReq(i + ID * 4, 10, 0, pdu);
-		mPrm->owner().MSOReq(i + ID * 4, 18, 1, pdu);
+		if (mPrm->vlAt(TSYS::strMess("value_%d", i + 1).c_str()).at().getI(0, true) == EVAL_INT)
+			if (!mPrm->owner().MSOReq(i + ID * 4, 10, 0, pdu))
+				return false;
+		if (mPrm->vlAt(TSYS::strMess("mode_%d", i + 1).c_str()).at().getI(0, true) == EVAL_INT)
+			if (!mPrm->owner().MSOReq(i + ID * 4, 18, 1, pdu))
+				return false;
 	}
+	NeedInit = false;
+	return true;
 }
 
 string  MezTC::getStatus(void )
@@ -72,7 +78,7 @@ uint16_t MezTC::Task(uint16_t uc)
 {
 	if (NeedInit) {
 		Refresh();
-		NeedInit = false;
+		//NeedInit = false;
 	}
 	return 0;
 }
