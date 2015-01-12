@@ -47,13 +47,16 @@ MezTR::~MezTR( )
 uint16_t MezTR::Refresh()
 {
 	string pdu;
+    bool bInit = false;
 	mess_info(mPrm->nodePath().c_str(),_("MezTR::Refresh"));
 	for (int i=0;i<4;i++){
-		if (mPrm->vlAt(TSYS::strMess("value_%d", i + 1).c_str()).at().getR(0, true) == EVAL_REAL)
+		if (mPrm->vlAt(TSYS::strMess("value_%d", i + 1).c_str()).at().getR(0, true) == EVAL_REAL){
+            bInit = true;
 			if (!mPrm->owner().MSOReq(i + ID * 4, 9, 0, pdu))
 				return false;
+		}
 	}
-	NeedInit = false;
+	NeedInit = bInit;
 	return true;
 }
 

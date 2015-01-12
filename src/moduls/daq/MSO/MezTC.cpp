@@ -53,16 +53,21 @@ MezTC::~MezTC( )
 uint16_t MezTC::Refresh()
 {
 	string pdu;
+    bool bInit = false;
 	mess_info(mPrm->nodePath().c_str(),_("MezTC::Refresh"));
 	for (int i=0;i<4;i++){
-		if (mPrm->vlAt(TSYS::strMess("value_%d", i + 1).c_str()).at().getI(0, true) == EVAL_INT)
+		if (mPrm->vlAt(TSYS::strMess("value_%d", i + 1).c_str()).at().getI(0, true) == EVAL_INT){
+            bInit = true;
 			if (!mPrm->owner().MSOReq(i + ID * 4, 10, 0, pdu))
 				return false;
-		if (mPrm->vlAt(TSYS::strMess("mode_%d", i + 1).c_str()).at().getI(0, true) == EVAL_INT)
+		}
+		if (mPrm->vlAt(TSYS::strMess("mode_%d", i + 1).c_str()).at().getI(0, true) == EVAL_INT){
+            bInit = true;
 			if (!mPrm->owner().MSOReq(i + ID * 4, 18, 1, pdu))
 				return false;
+		}
 	}
-	NeedInit = false;
+	NeedInit = bInit;
 	return true;
 }
 

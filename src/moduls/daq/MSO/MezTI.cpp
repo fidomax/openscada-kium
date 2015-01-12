@@ -51,19 +51,26 @@ MezTI::~MezTI( )
 uint16_t MezTI::Refresh()
 {
 	string pdu;
+    bool bInit = false;
 	//mess_info(mPrm->nodePath().c_str(),_("MezTI::Refresh"));
 	for (int i=0;i<4;i++){
-		if (mPrm->vlAt(TSYS::strMess("count_%d", i+1).c_str()).at().getI(0, true) == EVAL_INT)
+		if (mPrm->vlAt(TSYS::strMess("count_%d", i+1).c_str()).at().getI(0, true) == EVAL_INT){
+            bInit = true;
 			if (!mPrm->owner().MSOReq(i + ID * 4, 12, 0, pdu))
 				return false;
-		if (mPrm->vlAt(TSYS::strMess("value_%d", i+1).c_str()).at().getR(0, true) == EVAL_REAL)
+		}
+		if (mPrm->vlAt(TSYS::strMess("value_%d", i+1).c_str()).at().getR(0, true) == EVAL_REAL){
+            bInit = true;
 			if (!mPrm->owner().MSOReq(i + ID * 4, 12, 1, pdu))
 				return false;
-		if (mPrm->vlAt(TSYS::strMess("coeff_%d", i+1).c_str()).at().getR(0, true) == EVAL_REAL)
+		}
+		if (mPrm->vlAt(TSYS::strMess("coeff_%d", i+1).c_str()).at().getR(0, true) == EVAL_REAL){
+            bInit = true;
 			if (!mPrm->owner().MSOReq(i + ID * 4, 12, 2, pdu))
 				return false;
+		}
 	}
-	NeedInit = false;
+	NeedInit = bInit;
 	return true;
 }
 
@@ -77,10 +84,10 @@ string  MezTI::getStatus(void )
 
 uint16_t MezTI::Task(uint16_t uc)
 {
-	//if (NeedInit) {
+	if (NeedInit) {
 		Refresh();
 		//NeedInit = false;
-	//}
+	}
 	return 0;
 }
 
