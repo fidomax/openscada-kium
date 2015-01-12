@@ -91,29 +91,31 @@ uint16_t MezTI::Task(uint16_t uc)
 	return 0;
 }
 
-uint16_t MezTI::HandleEvent(unsigned int channel,unsigned int type,unsigned int param,unsigned int flag,const string &ireqst)
+uint16_t MezTI::HandleEvent(unsigned int channel, unsigned int type, unsigned int param, unsigned int flag, const string &ireqst)
 {
-//	mess_info(mPrm->nodePath().c_str(),_("HandleEvent"));
-	if (channel / 4 != ID) return 0;
-//	mess_info(mPrm->nodePath().c_str(),_("Channel %d"), channel);
-	switch (type){
-		case 12:
-			switch (param){
-				case 0:
-					mPrm->vlAt(TSYS::strMess("count_%d",channel % 4 + 1).c_str()).at().setI(TSYS::getUnalign32(ireqst.data()),0,true);
-					break;
-				case 1:
-					mPrm->vlAt(TSYS::strMess("value_%d",channel % 4 + 1).c_str()).at().setR(TSYS::getUnalignFloat(ireqst.data()),0,true);
-					break;
-				case 2:
-					mPrm->vlAt(TSYS::strMess("coeff_%d",channel % 4 + 1).c_str()).at().setR(TSYS::getUnalignFloat(ireqst.data()),0,true);
-					break;
-			}
-			break;
-		default:
-			return 0;
-	}
-	return 0;
+    uint16_t rc = 1;
+    if (channel / 4 != ID)
+        return rc = 0;
+    switch (type) {
+        case 12:
+            switch (param) {
+                case 0:
+                    mPrm->vlAt(TSYS::strMess("count_%d", channel % 4 + 1).c_str()).at().setI(TSYS::getUnalign32(ireqst.data()), 0, true);
+                    break;
+                case 1:
+                    mPrm->vlAt(TSYS::strMess("value_%d", channel % 4 + 1).c_str()).at().setR(TSYS::getUnalignFloat(ireqst.data()), 0, true);
+                    break;
+                case 2:
+                    mPrm->vlAt(TSYS::strMess("coeff_%d", channel % 4 + 1).c_str()).at().setR(TSYS::getUnalignFloat(ireqst.data()), 0, true);
+                    break;
+                default:
+                    rc = 0;
+            }
+            break;
+        default:
+            rc = 0;
+    }
+    return rc;
 }
 
 uint16_t MezTI::setVal(TVal &val)

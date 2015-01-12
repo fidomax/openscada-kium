@@ -84,60 +84,67 @@ uint16_t MezTU::Task(uint16_t uc)
 
 uint16_t MezTU::HandleEvent(unsigned int channel, unsigned int type, unsigned int param, unsigned int flag, const string &ireqst)
 {
-//	mess_info(mPrm->nodePath().c_str(),_("HandleEvent"));
-	if (channel / 4 != ID)
-		return 0;
-//	mess_info(mPrm->nodePath().c_str(),_("Channel %d"), channel);
-	switch (type) {
-		case 8:
-			switch (param) {
-				case 0:
-					switch (channel % 4) {
-						case 0:
-							mPrm->vlAt("value_1").at().setB(TSYS::getUnalign32(ireqst.data()), 0, true);
-							break;
-						case 1:
-							mPrm->vlAt("value_2").at().setB(TSYS::getUnalign32(ireqst.data()), 0, true);
-							break;
-						case 2:
-							mPrm->vlAt("value_3").at().setB(TSYS::getUnalign32(ireqst.data()), 0, true);
-							break;
-						case 3:
-							mPrm->vlAt("value_4").at().setB(TSYS::getUnalign32(ireqst.data()), 0, true);
-							break;
-					}
-					break;
-			}
-			break;
-		case 19:
-			switch (param) {
-				case 2:
-					switch (channel % 4) {
-						case 0:
-							mPrm->vlAt("timeTU_1").at().setI(TSYS::getUnalign32(ireqst.data()), 0, true);
-							mPrm->vlAt("timeTUs_1").at().setI(TSYS::getUnalign32(ireqst.data())/1000, 0, true);
-							break;
-						case 1:
-							mPrm->vlAt("timeTU_2").at().setI(TSYS::getUnalign32(ireqst.data()), 0, true);
-							mPrm->vlAt("timeTUs_2").at().setI(TSYS::getUnalign32(ireqst.data())/1000, 0, true);
-							break;
-						case 2:
-							mPrm->vlAt("timeTU_3").at().setI(TSYS::getUnalign32(ireqst.data()), 0, true);
-							mPrm->vlAt("timeTUs_3").at().setI(TSYS::getUnalign32(ireqst.data())/1000, 0, true);
-							break;
-						case 3:
-							mPrm->vlAt("timeTU_4").at().setI(TSYS::getUnalign32(ireqst.data()), 0, true);
-							mPrm->vlAt("timeTUs_4").at().setI(TSYS::getUnalign32(ireqst.data())/1000, 0, true);
-							break;
-					}
-					break;
-			}
-			break;
+    uint16_t rc = 1;
+    if (channel / 4 != ID)
+        return rc = 0;
+    switch (type) {
+        case 8:
+            switch (param) {
+                case 0:
+                    switch (channel % 4) {
+                        case 0:
+                            mPrm->vlAt("value_1").at().setB(TSYS::getUnalign32(ireqst.data()), 0, true);
+                            break;
+                        case 1:
+                            mPrm->vlAt("value_2").at().setB(TSYS::getUnalign32(ireqst.data()), 0, true);
+                            break;
+                        case 2:
+                            mPrm->vlAt("value_3").at().setB(TSYS::getUnalign32(ireqst.data()), 0, true);
+                            break;
+                        case 3:
+                            mPrm->vlAt("value_4").at().setB(TSYS::getUnalign32(ireqst.data()), 0, true);
+                            break;
+                        default:
+                            rc = 0;
+                    }
+                    break;
+                default:
+                    rc = 0;
+            }
+            break;
+        case 19:
+            switch (param) {
+                case 2:
+                    switch (channel % 4) {
+                        case 0:
+                            mPrm->vlAt("timeTU_1").at().setI(TSYS::getUnalign32(ireqst.data()), 0, true);
+                            mPrm->vlAt("timeTUs_1").at().setI(TSYS::getUnalign32(ireqst.data()) / 1000, 0, true);
+                            break;
+                        case 1:
+                            mPrm->vlAt("timeTU_2").at().setI(TSYS::getUnalign32(ireqst.data()), 0, true);
+                            mPrm->vlAt("timeTUs_2").at().setI(TSYS::getUnalign32(ireqst.data()) / 1000, 0, true);
+                            break;
+                        case 2:
+                            mPrm->vlAt("timeTU_3").at().setI(TSYS::getUnalign32(ireqst.data()), 0, true);
+                            mPrm->vlAt("timeTUs_3").at().setI(TSYS::getUnalign32(ireqst.data()) / 1000, 0, true);
+                            break;
+                        case 3:
+                            mPrm->vlAt("timeTU_4").at().setI(TSYS::getUnalign32(ireqst.data()), 0, true);
+                            mPrm->vlAt("timeTUs_4").at().setI(TSYS::getUnalign32(ireqst.data()) / 1000, 0, true);
+                            break;
+                        default:
+                            rc = 0;
+                    }
+                    break;
+                default:
+                    rc = 0;
+            }
+            break;
 
-		default:
-			return 0;
-	}
-	return 0;
+        default:
+            rc = 0;
+    }
+    return rc;
 }
 
 uint16_t MezTU::setVal(TVal &val)

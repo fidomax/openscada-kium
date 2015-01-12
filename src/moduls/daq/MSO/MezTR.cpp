@@ -49,13 +49,13 @@ uint16_t MezTR::Refresh()
 	string pdu;
     bool bInit = false;
 	mess_info(mPrm->nodePath().c_str(),_("MezTR::Refresh"));
-	for (int i=0;i<4;i++){
-		if (mPrm->vlAt(TSYS::strMess("value_%d", i + 1).c_str()).at().getR(0, true) == EVAL_REAL){
+//	for (int i=0;i<4;i++){
+		if (mPrm->vlAt(TSYS::strMess("value_%d", 1).c_str()).at().getR(0, true) == EVAL_REAL){
             bInit = true;
-			if (!mPrm->owner().MSOReq(i + ID * 4, 9, 0, pdu))
+			if (!mPrm->owner().MSOReq(ID * 4, 9, 0, pdu))
 				return false;
 		}
-	}
+//	}
 	NeedInit = bInit;
 	return true;
 }
@@ -79,17 +79,17 @@ uint16_t MezTR::Task(uint16_t uc)
 
 uint16_t MezTR::HandleEvent(unsigned int channel,unsigned int type,unsigned int param,unsigned int flag,const string &ireqst)
 {
-//	mess_info(mPrm->nodePath().c_str(),_("HandleEvent"));
-	if (channel / 4 != ID) return 0;
-//	mess_info(mPrm->nodePath().c_str(),_("Channel %d"), channel);
+    uint16_t rc = 1;
+    if (channel / 4 != ID)
+        return rc = 0;
 	switch (type){
 		case 9:
 			mPrm->vlAt(TSYS::strMess("value_%d",channel % 4 + 1).c_str()).at().setR(TSYS::getUnalignFloat(ireqst.data()),0,true);
 			break;
 		default:
-			return 0;
+		    rc = 0;
 	}
-	return 0;
+	return rc;
 }
 
 uint16_t MezTR::setVal(TVal &val)

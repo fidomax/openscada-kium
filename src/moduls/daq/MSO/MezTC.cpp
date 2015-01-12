@@ -90,9 +90,9 @@ uint16_t MezTC::Task(uint16_t uc)
 
 uint16_t MezTC::HandleEvent(unsigned int channel,unsigned int type,unsigned int param,unsigned int flag,const string &ireqst)
 {
-//	mess_info(mPrm->nodePath().c_str(),_("HandleEvent"));
-	if (channel / 4 != ID) return 0;
-//	mess_info(mPrm->nodePath().c_str(),_("Channel %d"), channel);
+    uint16_t rc = 1;
+    if (channel / 4 != ID)
+        return rc = 0;
 	switch (type){
 		case 10:
 			switch (channel % 4) {
@@ -112,6 +112,8 @@ uint16_t MezTC::HandleEvent(unsigned int channel,unsigned int type,unsigned int 
 					mPrm->vlAt("value_4").at().setI(TSYS::getUnalign32(ireqst.data()),0,true);
 					mPrm->vlAt("state_4").at().setI(TSYS::getUnalign32(ireqst.data()+4),0,true);
 		            break;
+                default:
+                    rc = 0;
 			}
 			break;
 		case 18:
@@ -119,12 +121,14 @@ uint16_t MezTC::HandleEvent(unsigned int channel,unsigned int type,unsigned int 
 				case 1:
 					mPrm->vlAt(TSYS::strMess("mode_%d",channel % 4 + 1).c_str()).at().setI(TSYS::getUnalign32(ireqst.data()),0,true);
 					break;
+                default:
+                    rc = 0;
 			}
 			break;
 		default:
-			return 0;
+		    rc = 0;
 	}
-	return 0;
+	return rc;
 }
 
 uint16_t MezTC::setVal(TVal &val)
